@@ -13,8 +13,8 @@ class Podman(Generic):
         if not sync:
             args.append("-d")
 
-        args.extend(["registry.fedoraproject.org/fedora", "/bin/echo", "Hello World"])
-        output = subprocess.run(args, capture_output=True)
+        args.extend(["docker.io/library/alpine", "/bin/echo", "Hello World"])
+        output = subprocess.run(args, stdout=subprocess.PIPE)
         if log:
             print(output)
 

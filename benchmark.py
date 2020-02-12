@@ -2,6 +2,7 @@ import time
 from docker import Docker
 from inginious import Inginious
 from podman import Podman
+from runc import RunC
 
 
 def test_number(tool, rep=1, start=1, end=10, sync=True):
@@ -24,3 +25,5 @@ if __name__ == "__main__":
     test_number(Inginious(), rep=5, start=1, end=10, sync=False)
     test_number(Podman(), rep=5, start=1, end=10, sync=True)
     test_number(Podman(), rep=5, start=1, end=10, sync=False)
+    test_number(RunC(), rep=5, start=1, end=10, sync=True)
+    test_number(RunC(), rep=5, start=1, end=10, sync=False)

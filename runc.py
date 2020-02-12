@@ -1,24 +1,22 @@
 import subprocess
-from threading import Thread
-
+from random import randint
 from generic import Generic
 
 
-class Inginious(Generic):
+class RunC(Generic):
 
     def __init__(self):
         super().__init__()
 
     def launch_one(self, sync=True, log=False):
-        args = ["docker", "run", "--rm"]
+        args = ["runc", "run"]
         if not sync:
             args.append("-d")
 
-        args.extend(["centos:7", "/bin/echo", "Hello World"])
+        args.extend(["-b", "resources/runc/hello-world", str(randint(1000000, 9999999))])
         output = subprocess.run(args, stdout=subprocess.PIPE)
         if log:
             print(output)
-        pass
 
     def get_name(self):
-        return 'Inginious'
+        return 'runC'

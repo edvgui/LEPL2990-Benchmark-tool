@@ -15,7 +15,7 @@ class Docker(Generic):
             args.append("-d")
 
         args.extend(["alpine:latest", "/bin/echo", "Hello World"])
-        output = subprocess.run(args, capture_output=True)
+        output = subprocess.run(args, stdout=subprocess.PIPE)
         if log:
             print(output)
 

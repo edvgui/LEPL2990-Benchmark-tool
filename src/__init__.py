@@ -1,8 +1,21 @@
 import time
+import matplotlib.pyplot as plt
+
 from src.docker import Docker
 from src.inginious import Inginious
 from src.podman import Podman
 from src.runc import RunC
+
+
+def plot(graphs, title):
+    for (x, y, label) in graphs:
+        plt.plot(x, y, label=label)
+
+    plt.xlabel('Number of parallel containers')
+    plt.ylabel('Time to launch (in s)')
+    plt.title(title)
+    plt.legend()
+    plt.show()
 
 
 def warm_up(tool):
@@ -12,7 +25,9 @@ def warm_up(tool):
 
 
 def test_number(tool, rep=1, start=1, end=10, sync=True):
+    x, y = [], []
     for i in range(start, end + 1):
+        x.append(i)
         total = 0
         for j in range(1, rep):
             top = time.time()
@@ -21,12 +36,27 @@ def test_number(tool, rep=1, start=1, end=10, sync=True):
             if not sync:
                 time.sleep(2)
 
+        y.append(total / rep)
         print(str(tool.get_name()) + ', ' + str(i) + ', ' + str(sync) + ', ' + str(total / rep))
+
+    return x, y
 
 
 if __name__ == "__main__":
     tools = [Docker(), Inginious(), Podman(), RunC()]
+
+    graphs = []
+    print('Full execution')
     for tool in tools:
         warm_up(tool)
-        test_number(tool, rep=5, start=1, end=10, sync=True)
-        test_number(tool, rep=5, start=1, end=10, sync=False)
+        x, y = test_number(tool, rep=5, start=1, end=10, sync=True)
+        graphs.append((x, y, tool.get_name()))
+    plot(graphs, 'Full execution')
+
+    graphs = []
+    print('Container launch only')
+    for tool in tools:
+        warm_up(tool)
+        x, y = test_number(tool, rep=5, start=1, end=10, sync=False)
+        graphs.append((x, y, tool.get_name()))
+    plot(graphs, 'Container launch only')

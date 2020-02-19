@@ -13,7 +13,7 @@ class RunC(Generic):
         if not sync:
             args.append("-d")
 
-        args.extend(["-b", "resources/runc/hello-world", str(randint(1000000, 9999999))])
+        args.extend(["-b", "../resources/runc/hello-world", str(randint(1000000, 9999999))])
         output = subprocess.run(args, stdout=subprocess.PIPE)
         if log:
             print(output)

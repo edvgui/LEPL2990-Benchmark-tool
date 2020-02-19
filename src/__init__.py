@@ -1,8 +1,8 @@
 import time
-from docker import Docker
-from inginious import Inginious
-from podman import Podman
-from runc import RunC
+from src.docker import Docker
+from src.inginious import Inginious
+from src.podman import Podman
+from src.runc import RunC
 
 
 def warm_up(tool):

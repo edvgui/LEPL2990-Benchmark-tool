@@ -1,10 +1,9 @@
 import subprocess
-from threading import Thread
 
-from generic import Generic
+from src.generic import Generic
 
 
-class Inginious(Generic):
+class Docker(Generic):
 
     def __init__(self):
         super().__init__()
@@ -14,11 +13,10 @@ class Inginious(Generic):
         if not sync:
             args.append("-d")
 
-        args.extend(["centos:7", "/bin/echo", "Hello World"])
+        args.extend(["alpine:latest", "/bin/echo", "Hello World"])
         output = subprocess.run(args, stdout=subprocess.PIPE)
         if log:
             print(output)
-        pass
 
     def get_name(self):
-        return 'Inginious'
+        return 'Docker'

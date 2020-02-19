@@ -1,6 +1,6 @@
 import subprocess
 
-from generic import Generic
+from src.generic import Generic
 
 
 class Podman(Generic):

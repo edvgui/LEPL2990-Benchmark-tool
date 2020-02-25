@@ -25,6 +25,7 @@ def warm_up(tool):
 
 
 def test_number(tool, rep=1, start=1, end=10, sync=True):
+    print('name, concurrent, full, time')
     x, y = [], []
     for i in range(start, end + 1):
         x.append(i)
@@ -42,8 +43,28 @@ def test_number(tool, rep=1, start=1, end=10, sync=True):
     return x, y
 
 
+def test_io(tool, rep=1):
+    print('name, read, write')
+    read, write = 0, 0
+    for i in range(1, rep):
+        start = time.time()
+        tool.launch_read()
+        read += time.time() - start
+
+        start = time.time()
+        tool.launch_write()
+        write += time.time() - start
+
+    print(str(tool.get_name()) + ', ' + str(read / rep) + ', ' + str(write / rep))
+
+
 if __name__ == "__main__":
     tools = [Docker(), Inginious(), Podman(), RunC()]
+
+    print('Container io tests')
+    for tool in tools:
+        warm_up(tool)
+        test_io(tool, rep=5)
 
     graphs = []
     print('Full execution')

@@ -9,6 +9,22 @@ class Generic(ABC):
         super().__init__()
 
     @abstractmethod
+    def ping(self, log=False):
+        pass
+
+    @abstractmethod
+    def launch_big(self, sync=True, log=False):
+        pass
+
+    @abstractmethod
+    def launch_read(self, log=False):
+        pass
+
+    @abstractmethod
+    def launch_write(self, log=False):
+        pass
+
+    @abstractmethod
     def launch_one(self, sync=True, log=False):
         pass
 

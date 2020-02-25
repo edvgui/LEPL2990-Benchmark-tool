@@ -5,6 +5,18 @@ from src.generic import Generic
 
 class Inginious(Generic):
 
+    def ping(self, log=False):
+        pass
+
+    def launch_big(self, sync=True, log=False):
+        pass
+
+    def launch_read(self, log=False):
+        pass
+
+    def launch_write(self, log=False):
+        pass
+
     def __init__(self):
         super().__init__()
 

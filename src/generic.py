@@ -9,6 +9,10 @@ class Generic(ABC):
         super().__init__()
 
     @abstractmethod
+    def serve(self, log=False):
+        pass
+
+    @abstractmethod
     def ping(self, log=False):
         pass
 

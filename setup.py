@@ -39,7 +39,8 @@ setup(
     packages=find_packages(where='src'),
     python_requires='>=3.5',
     install_requires=[
-        'matplotlib'
+        'matplotlib',
+        'pycurl'
     ],
     entry_points={
         'console_scripts': [

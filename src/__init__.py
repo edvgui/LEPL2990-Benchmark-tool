@@ -1,4 +1,6 @@
 import time
+from threading import Thread
+
 import matplotlib.pyplot as plt
 
 from src.docker import Docker
@@ -7,7 +9,8 @@ from src.podman import Podman
 from src.runc import RunC
 
 
-def plot(graphs, title):
+def plot(graphs, title, num):
+    plt.figure(num)
     for (x, y, label) in graphs:
         plt.plot(x, y, label=label)
 
@@ -66,13 +69,16 @@ if __name__ == "__main__":
         warm_up(tool)
         test_io(tool, rep=5)
 
+    plots = []
     graphs = []
     print('Full execution')
     for tool in tools:
         warm_up(tool)
         x, y = test_number(tool, rep=5, start=1, end=10, sync=True)
         graphs.append((x, y, tool.get_name()))
-    plot(graphs, 'Full execution')
+    new_plot = Thread(target=plot, args=(graphs, 'Full execution', 1, ))
+    new_plot.start()
+    plots.append(new_plot)
 
     graphs = []
     print('Container launch only')
@@ -80,4 +86,9 @@ if __name__ == "__main__":
         warm_up(tool)
         x, y = test_number(tool, rep=5, start=1, end=10, sync=False)
         graphs.append((x, y, tool.get_name()))
-    plot(graphs, 'Container launch only')
+    new_plot = Thread(target=plot, args=(graphs, 'Container launch only', 2, ))
+    new_plot.start()
+    plots.append(new_plot)
+
+    for plot in plots:
+        plot.join()

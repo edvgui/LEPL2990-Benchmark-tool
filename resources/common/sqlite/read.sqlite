@@ -102,6 +102,7 @@ select Borders.country1,Borders.country2
 from Borders left join Borders as Borders2 
 on Borders.country1 = Borders2.country2 and Borders.country2 = Borders2.country1 
 where Borders2.country1 is null;
+
 with CountryLanguages as (
 	select country, count(name) as cnt 
 	from Language group by country

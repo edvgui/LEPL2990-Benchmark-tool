@@ -5,3 +5,5 @@ RUN apk update \
 	&& apk add lighttpd \
 	&& rm -rf /var/cash/apk/* \
 	&& echo "Hello World" > /var/www/localhost/htdocs/index.html
+
+CMD /usr/sbin/lighttpd -D -f /etc/lighttpd/lighttpd.conf

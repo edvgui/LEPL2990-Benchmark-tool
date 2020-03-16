@@ -1,11 +1,10 @@
 import subprocess
 import time
-from threading import Thread
-
 import pycurl
+from threading import Thread
+from io import BytesIO
 
 from src.generic import Generic
-from io import BytesIO
 
 
 class Docker(Generic):
@@ -15,8 +14,7 @@ class Docker(Generic):
 
     def serve(self, log=False):
         def launch_server(return_vals):
-            args = ["docker", "run", "--rm", "-d", "-p", "127.0.0.1:3000:80", "http-server",
-                    "/usr/sbin/lighttpd", "-D", "-f", "/etc/lighttpd/lighttpd.conf"]
+            args = ["docker", "run", "--rm", "-d", "-p", "127.0.0.1:3000:80", "alpine-http-server"]
             response = subprocess.run(args, stdout=subprocess.PIPE)
             return_vals.append(str(response.stdout)[2:-3])
 
@@ -55,7 +53,7 @@ class Docker(Generic):
         return stop - start
 
     def ping(self, log=False):
-        args = ["docker", "run", "--rm", "network", "/run.sh"]
+        args = ["docker", "run", "--rm", "alpine-network"]
         output = subprocess.run(args, stdout=subprocess.PIPE)
         if log:
             print(output)
@@ -68,19 +66,19 @@ class Docker(Generic):
         if not sync:
             args.append("-d")
 
-        args.extend(["mondial-read", "/bin/echo", "Hello World"])
+        args.extend(["alpine-mondial-read", "/bin/echo", "Hello World"])
         output = subprocess.run(args, stdout=subprocess.PIPE)
         if log:
             print(output)
 
     def launch_read(self, log=False):
-        args = ["docker", "run", "--rm", "mondial-read", "/run.sh"]
+        args = ["docker", "run", "--rm", "alpine-mondial-read"]
         output = subprocess.run(args, stdout=subprocess.PIPE)
         if log:
             print(output)
 
     def launch_write(self, log=False):
-        args = ["docker", "run", "--rm", "mondial-write", "/run.sh"]
+        args = ["docker", "run", "--rm", "alpine-mondial-write"]
         output = subprocess.run(args, stdout=subprocess.PIPE)
         if log:
             print(output)
@@ -90,7 +88,7 @@ class Docker(Generic):
         if not sync:
             args.append("-d")
 
-        args.extend(["alpine:latest", "/bin/echo", "Hello World"])
+        args.extend(["alpine-hello-world"])
         output = subprocess.run(args, stdout=subprocess.PIPE)
         if log:
             print(output)

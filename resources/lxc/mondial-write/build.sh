@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
-LOG_FILE="${DIR}/build.log"
 
 BASE="images:alpine/3.11/i386"
 CONTAINER="tmp"
 SNAPSHOT="export"
 NAME="alpine-mondial-write"
 
-lxc launch ${BASE} ${CONTAINER}
+lxc image list | grep ${NAME} > /dev/null
+if [ $(echo $?) -eq 0 ]; then
+  echo "Deleting previous build"
+  lxc image delete ${NAME}
+fi
+
+lxc launch -e ${BASE} ${CONTAINER}
 
 lxc exec ${CONTAINER} -- apk update
 lxc exec ${CONTAINER} -- apk add sqlite
@@ -21,4 +26,3 @@ lxc exec ${CONTAINER} -- chmod +x /root/write.sh
 lxc snapshot ${CONTAINER} ${SNAPSHOT}
 lxc publish ${CONTAINER}/${SNAPSHOT} --alias ${NAME}
 lxc stop ${CONTAINER}
-lxc delete ${CONTAINER}

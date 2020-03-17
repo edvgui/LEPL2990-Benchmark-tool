@@ -1,6 +1,8 @@
 FROM alpine:latest
 
-RUN apk add sqlite
+RUN apk update \
+	&& apk upgrade \
+    && apk add sqlite
 
 RUN mkdir src
 COPY common/sqlite/mondial-orig.db src/mondial-orig.db

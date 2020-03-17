@@ -7,14 +7,8 @@ build() {
   local folder=$1
   local name="alpine-${folder}"
 
-  docker images | grep ${name} > /dev/null
-  if [ $(echo $?) -eq 0 ]; then
-    echo "INFO: ${name}: Deleting previous build"
-    docker rmi ${name} &>> "${LOG_FILE}"
-  fi
-
   echo "INFO: ${name}: Building"
-  docker build -t "${name}" -f "${DIR}/${folder}/Dockerfile" "${DIR}/../../" &>> "${LOG_FILE}"
+  "${DIR}/${folder}/build.sh" &>> "${LOG_FILE}"
 }
 
 echo "" > "${LOG_FILE}"

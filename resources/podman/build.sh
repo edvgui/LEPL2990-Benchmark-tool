@@ -5,11 +5,25 @@ LOG_FILE="${DIR}/build.log"
 
 build() {
   local folder=$1
+  local name="alpine-${folder}"
 
-  echo "Pulling alpine-${folder}"
-  podman pull "docker-daemon:alpine-${folder}:latest" &>> "${LOG_FILE}"
+  docker images | grep ${name} > /dev/null
+  if [ $(echo $?) -eq 1 ]; then
+    echo "ERROR: ${name}: not found in docker images"
+    return 1
+  fi
+
+  podman images | grep ${name} > /dev/null
+  if [ $(echo $?) -eq 0 ]; then
+    echo "INFO: ${name}: Deleting previous build"
+    podman rmi ${name} &>> "${LOG_FILE}"
+  fi
+
+  echo "INFO: ${name}: Pulling"
+  podman pull "docker-daemon:${name}:latest" &>> "${LOG_FILE}"
 }
 
+echo "" > "${LOG_FILE}"
 for arg in "$@"
 do
   case ${arg} in
@@ -24,3 +38,4 @@ do
       ;;
   esac
 done
+echo "Done"

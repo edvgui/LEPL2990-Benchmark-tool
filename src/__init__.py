@@ -1,12 +1,11 @@
 import time
-from threading import Thread
-
 import matplotlib.pyplot as plt
 
-from src.docker import Docker
-from src.inginious import Inginious
-from src.podman import Podman
-from src.runc import RunC
+from src.procedure.hello_world import HelloWorld
+from src.procedure.http_server import HttpServer
+from src.procedure.mondial_read import MondialRead
+from src.procedure.mondial_write import MondialWrite
+from src.procedure.network import Network
 
 
 def plot(graphs, title, num):
@@ -62,33 +61,7 @@ def test_io(tool, rep=1):
 
 
 if __name__ == "__main__":
-    tools = [Docker(), Inginious(), Podman(), RunC()]
-
-    print('Container io tests')
-    for tool in tools:
-        warm_up(tool)
-        test_io(tool, rep=5)
-
-    plots = []
-    graphs = []
-    print('Full execution')
-    for tool in tools:
-        warm_up(tool)
-        x, y = test_number(tool, rep=5, start=1, end=10, sync=True)
-        graphs.append((x, y, tool.get_name()))
-    new_plot = Thread(target=plot, args=(graphs, 'Full execution', 1, ))
-    new_plot.start()
-    plots.append(new_plot)
-
-    graphs = []
-    print('Container launch only')
-    for tool in tools:
-        warm_up(tool)
-        x, y = test_number(tool, rep=5, start=1, end=10, sync=False)
-        graphs.append((x, y, tool.get_name()))
-    new_plot = Thread(target=plot, args=(graphs, 'Container launch only', 2, ))
-    new_plot.start()
-    plots.append(new_plot)
-
-    for plot in plots:
-        plot.join()
+    procs = [HttpServer(), HelloWorld(), MondialRead(), MondialWrite(), Network()]
+    for p in procs:
+        results = p.execute(1, False)
+        print(results)

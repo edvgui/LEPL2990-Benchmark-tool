@@ -11,7 +11,7 @@ def init(image, log=False):
     """
     args = ["lxc", "init", image]
     tic = time.time()
-    output = subprocess.run(args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE)
     toc = time.time()
     if log:
         print(output)
@@ -27,7 +27,7 @@ def start(container, log=False):
     """
     args = ["lxc", "start", container]
     tic = time.time()
-    output = subprocess.run(args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE)
     toc = time.time()
     if log:
         print(output)
@@ -45,11 +45,29 @@ def exec(container, command, log=False):
     args = ["lxc", "exec", container, "--"]
     args.extend(command)
     tic = time.time()
-    output = subprocess.run(args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE)
     toc = time.time()
     if log:
         print(output)
     return output.stdout.decode('utf-8'), toc - tic
+
+
+def launch(image, options, log=False):
+    """
+    Build and start a new container with the command 'lxc launch'
+    :param image: The image to build the container from
+    :param options: The options to give for the launch
+    :param log: Whether to display some logs or not
+    :return: The id of the launched container, the command execution time
+    """
+    args = ["lxc", "launch", image]
+    args.extend(options)
+    tic = time.time()
+    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    toc = time.time()
+    if log:
+        print(output)
+    return output.stdout.decode('utf-8').split(" ")[6].strip(), toc - tic
 
 
 def stop(container, log=False):
@@ -61,7 +79,7 @@ def stop(container, log=False):
     """
     args = ["lxc", "stop", container]
     tic = time.time()
-    output = subprocess.run(args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE)
     toc = time.time()
     if log:
         print(output)
@@ -77,7 +95,43 @@ def rm(container, log=False):
     """
     args = ["lxc", "rm", container]
     tic = time.time()
-    output = subprocess.run(args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    toc = time.time()
+    if log:
+        print(output)
+    return toc - tic
+
+
+def config_proxy_add(container, device, address, log=False):
+    """
+    Attach a proxy to a running container with the command 'lxc config device add'
+    :param container: The container to attach the device to
+    :param device: The name to give to the device
+    :param address: The address of the device on the host
+    :param log: Whether to display some logs or not
+    :return: The command execution time
+    """
+    args = ["lxc", "config", "device", "add", container, device, "proxy", "listen=tcp:" + address,
+            "connect=tcp:127.0.0.1:80"]
+    tic = time.time()
+    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    toc = time.time()
+    if log:
+        print(output)
+    return toc - tic
+
+
+def config_proxy_rm(container, device, log=False):
+    """
+    Detach a proxy from a running container with the command 'lxc config device remove'
+    :param container: The container to detach the device from
+    :param device: The device to detach from the container
+    :param log: Whether to display some logs or not
+    :return: The command execution time
+    """
+    args = ["lxc", "config", "device", "remove", container, device]
+    tic = time.time()
+    output = subprocess.run(args=args, stdout=subprocess.PIPE)
     toc = time.time()
     if log:
         print(output)

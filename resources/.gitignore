@@ -1,2 +1,2 @@
-/runc/bash/rootfs/
-/runc/hello-world/rootfs/
+/runc/base-containers/shell/rootfs/
+/runc/base-containers/hello-world/rootfs/

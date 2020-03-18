@@ -1,2 +1,2 @@
 #!/bin/sh
-ping -c3 www.google.com | tail -n 1
+ping -c10 www.google.com | tail -n 1

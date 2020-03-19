@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
+LOG_FILE="${DIR}/build.log"
+
+# Check if container exists
+CONTAINER=$1
+VALID=1
+for i in $(cd ${DIR}/../pool && ls -d */ | cut -f1 -d'/'); do
+	if [ "${CONTAINER}" == "${i}" ]; then
+		VALID=0
+	fi
+done
+
+if [ ${VALID} -eq 1 ]; then
+	echo "The container ${CONTAINER} doesn't exist"
+	exit 1
+fi
+
+# Unmount the read-only part of the image
+fusermount -u ${DIR}/../pool/${CONTAINER}/rootfs/mnt
+
+# Delete all the container files
+rm -rf ${DIR}/../pool/${CONTAINER}

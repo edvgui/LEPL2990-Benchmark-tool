@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
+LOG_FILE="${DIR}/build.log"
+
+cd ${DIR}
+
+cd ro-rootfs
+rm -rf media mnt opt proc root srv sys tmp
+cd ..
+
+mv ro-rootfs/home rootfs/home
+
+cd rootfs
+mkdir media mnt opt proc root srv sys tmp
+
+for d in bin dev etc lib run sbin usr var; do
+  ln -s mnt/${d} ${d}
+done
+
+cd ..

@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-COPY common/network/ping.sh run.sh
-RUN chmod +x run.sh
+COPY common/network/ping.sh /run/run.sh
+RUN chmod +x /run/run.sh
 
-CMD /run.sh
+CMD /run/run.sh 10

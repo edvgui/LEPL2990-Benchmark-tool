@@ -38,7 +38,7 @@ class Network(Generic):
 
     def lxc(self):
         container, launching_time = lxc.launch("alpine-network", ["-e"])
-        response, execution_time = lxc.exec(container, ["./ping.sh"])
+        response, execution_time = lxc.exec(container, ["./ping.sh", "10"])
         lxc.stop(container)
         if '=' not in response:
             print('Error: wrong response: ' + response)

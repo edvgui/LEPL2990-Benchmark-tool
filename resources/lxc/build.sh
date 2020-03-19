@@ -8,7 +8,7 @@ build() {
   local name="alpine-${folder}"
 
   echo "INFO: ${name}: Building"
-  "${DIR}/${folder}/build.sh" &>> "${LOG_FILE}"
+  "${DIR}/${folder}/build.sh"
 }
 
 echo "" > "${LOG_FILE}"

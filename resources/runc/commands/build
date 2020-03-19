@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
+
+build() {
+	local image=$1
+	
+	# Checking original image availability
+	docker images | grep ${image} > /dev/null
+	if [ $(echo $?) -eq 1 ]; then
+		echo "ERROR: ${image}: not found in docker images"
+		return 1
+	fi
+	
+	# Cleaning previous build
+	rm -rf ${DIR}/../images/${image}/rootfs/
+	rm -rf ${DIR}/../images/${image}/ro-rootfs/
+	
+	mkdir ${DIR}/../images/${image}/rootfs/
+	mkdir ${DIR}/../images/${image}/ro-rootfs/
+	
+	# Export from docker
+	docker export $(docker run -d ${image}:latest) | tar -C ${DIR}/../images/${image}/ro-rootfs/ -xv > /dev/null
+	if [ $(echo $?) -eq 1 ]; then
+		echo "ERROR: while exporting image from docker"
+		return 1
+  fi
+	
+	${DIR}/../images/${image}/setup
+}
+
+for arg in "$@"
+do
+  case ${arg} in
+    -a| --all)
+      for folder in $(cd ${DIR}/../images && ls -d */ | cut -f1 -d'/')
+      do
+        build "${folder}"
+      done
+      ;;
+    *)
+      build "${arg}"
+      ;;
+  esac
+done
+echo "Done"

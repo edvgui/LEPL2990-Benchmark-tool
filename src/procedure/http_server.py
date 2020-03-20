@@ -5,7 +5,6 @@ import src.api.api_lxc as lxc
 import pycurl
 import time
 from io import BytesIO
-from concurrent.futures import ThreadPoolExecutor
 
 
 def server_get(url, timeout=10):
@@ -43,42 +42,34 @@ class HttpServer(Generic):
 
     def docker_alpine(self):
         address = "127.0.0.1:3000"
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            thread = executor.submit(server_get, 'http://' + address)
-            container, duration = docker.run("alpine-http-server", ["--rm", "-d", "-p", address + ":80"], [])
-            result = thread.result()
-            docker.stop(container)
-            return result
+        container, duration = docker.run("alpine-http-server", ["--rm", "-d", "-p", address + ":80"], [])
+        result = server_get("http://" + address)
+        docker.stop(container)
+        return result + duration
 
     def docker_centos(self):
         address = "127.0.0.1:3001"
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            thread = executor.submit(server_get, 'http://' + address)
-            container, duration = docker.run("centos-http-server", ["--rm", "-d", "-p", address + ":80"], [])
-            result = thread.result()
-            docker.stop(container)
-            return result
+        container, duration = docker.run("centos-http-server", ["--rm", "-d", "-p", address + ":80"], [])
+        result = server_get("http://" + address)
+        docker.stop(container)
+        return result + duration
 
     def podman(self):
         address = "127.0.0.1:3002"
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            thread = executor.submit(server_get, 'http://' + address)
-            container, duration = podman.run("alpine-http-server", ["--rm", "-d", "-p", address + ":80"], [])
-            result = thread.result()
-            podman.stop(container)
-            return result
+        container, duration = podman.run("alpine-http-server", ["--rm", "-d", "-p", address + ":80"], [])
+        result = server_get("http://" + address)
+        podman.stop(container)
+        return result + duration
 
     def lxc(self):
         address = "127.0.0.1:3003"
         device = "my-device"
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            thread = executor.submit(server_get, 'http://' + address)
-            container, duration = lxc.launch("alpine-http-server", ["-e"], [])
-            lxc.config_proxy_add(container, device, address)
-            result = thread.result()
-            lxc.config_proxy_rm(container, device)
-            lxc.stop(container)
-            return result
+        container, creation_duration = lxc.launch("alpine-http-server", ["-e"], [])
+        config_duration = lxc.config_proxy_add(container, device, address)
+        result = server_get("http://" + address)
+        lxc.config_proxy_rm(container, device)
+        lxc.stop(container)
+        return result + creation_duration + config_duration
 
     def runc(self):
         return 0

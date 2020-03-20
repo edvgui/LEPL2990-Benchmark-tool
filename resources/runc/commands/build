@@ -4,6 +4,7 @@ DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
 
 build() {
 	local image=$1
+	echo "INFO: Building ${image}"
 	
 	# Checking original image availability
 	docker images | grep ${image} > /dev/null
@@ -12,21 +13,36 @@ build() {
 		return 1
 	fi
 	
-	# Cleaning previous build
-	rm -rf ${DIR}/../images/${image}/rootfs/
-	rm -rf ${DIR}/../images/${image}/ro-rootfs/
+	local rootfs=${DIR}/../images/${image}/rootfs/
+	local ro_rootfs=${DIR}/../images/${image}/ro-rootfs/
 	
-	mkdir ${DIR}/../images/${image}/rootfs/
-	mkdir ${DIR}/../images/${image}/ro-rootfs/
+	# Cleaning previous build
+	echo "INFO: Removing previous build if any"
+	rm -rf ${rootfs} ${ro_rootfs}
+	mkdir ${rootfs} ${ro_rootfs}
 	
 	# Export from docker
-	docker export $(docker run -d ${image}:latest) | tar -C ${DIR}/../images/${image}/ro-rootfs/ -xv > /dev/null
+	local base=$(docker run -d ${image}:latest)
+	docker export ${base} | tar -C ${ro_rootfs} -xv > /dev/null
 	if [ $(echo $?) -eq 1 ]; then
 		echo "ERROR: while exporting image from docker"
 		return 1
+  else
+    echo "INFO: Image succesfully imported from docker"
   fi
+  docker rm ${base} > /dev/null
 	
-	${DIR}/../images/${image}/setup
+	# Moving editable folder in editable rootfs
+	for d in home media mnt opt root srv sys tmp; do
+	  mv ${ro_rootfs}${d} ${rootfs}${d}
+	done
+	rm -rf ${ro_rootfs}proc
+	mkdir ${rootfs}proc
+	
+	# Creating links to no yet mounted read-only folders
+	for d in bin dev etc lib run sbin usr var; do
+	  ln -s mnt/${d} ${rootfs}/${d}
+	done
 }
 
 for arg in "$@"

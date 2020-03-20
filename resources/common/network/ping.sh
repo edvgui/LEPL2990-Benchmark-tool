@@ -1,2 +1,2 @@
 #!/bin/sh
-ping -c"$1" www.google.com | tail -n 1
+ping -c"$1" 1.1.1.1 | tail -n 1

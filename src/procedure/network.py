@@ -39,14 +39,14 @@ class Network(Generic):
 
     def lxc(self):
         container, launching_time = lxc.launch("alpine-network", ["-e"])
-        for i in range(0, 20):
+        for i in range(0, 10):
             response, execution_time = lxc.exec(container, ["./ping.sh", "10"])
             if '=' not in response:
                 print('Error (lxc): wrong response: ' + response)
             else:
                 lxc.stop(container)
                 return float(response.split(" ")[3].split("/")[1])
-            time.sleep(0.5)
+            time.sleep(1)
         lxc.stop(container)
         print('Error (lxc): maximum retry reached')
         return -1

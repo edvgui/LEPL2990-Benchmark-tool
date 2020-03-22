@@ -63,8 +63,8 @@ class HttpServer(Generic):
 
     def lxc(self):
         address = "127.0.0.1:3003"
-        device = "my-device"
         container, creation_duration = lxc.launch("alpine-http-server", ["-e"], [])
+        device = "device-" + container
         config_duration = lxc.config_proxy_add(container, device, address)
         result = server_get("http://" + address)
         lxc.config_proxy_rm(container, device)

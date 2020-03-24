@@ -2,6 +2,14 @@ import subprocess
 import time
 import os
 
+from src.exceptions.api_exceptions import ApiException
+
+
+class RuncApiException(ApiException):
+
+    def __init__(self, message, trace):
+        super().__init__("runc", message, trace)
+
 
 directory = os.path.dirname(os.path.abspath(__file__))
 runc_folder = os.path.join(directory, '../../resources/runc')
@@ -19,8 +27,11 @@ def create(image, log=False):
     path = os.path.join(commands, 'create')
     args = [path, image]
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
+    if output.returncode != 0:
+        raise RuncApiException("Error while trying to create container from image " + image,
+                               output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return output.returncode, output.stdout.decode('utf-8').strip(), toc - tic
@@ -36,8 +47,11 @@ def run(container, log=False):
     path = os.path.join(pool, container)
     args = ["runc", "run", "-b", path, container]
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
+    if output.returncode != 0:
+        raise RuncApiException("Error while trying to run container " + container,
+                               output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return output.returncode, output.stdout.decode('utf-8').strip(), toc - tic
@@ -53,8 +67,11 @@ def clean(container, log=False):
     path = os.path.join(commands, 'clean')
     args = [path, container]
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
+    if output.returncode != 0:
+        raise RuncApiException("Error while trying to clean container " + container,
+                               output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return output.returncode, output.stdout.decode('utf-8').strip(), toc - tic

@@ -1,6 +1,14 @@
 import subprocess
 import time
 
+from src.exceptions.api_exceptions import ApiException
+
+
+class LXCApiException(ApiException):
+
+    def __init__(self, message, trace):
+        super().__init__("LXC", message, trace)
+
 
 def init(image, log=False):
     """
@@ -11,8 +19,11 @@ def init(image, log=False):
     """
     args = ["lxc", "init", image]
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
+    if output.returncode != 0:
+        raise LXCApiException("Error while trying to initiate container from image " + image,
+                              output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return output.stdout.decode('utf-8').split(" ")[6].strip(), toc - tic
@@ -27,8 +38,11 @@ def start(container, log=False):
     """
     args = ["lxc", "start", container]
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
+    if output.returncode != 0:
+        raise LXCApiException("Error while trying to start container " + container,
+                              output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return toc - tic
@@ -45,8 +59,11 @@ def exec(container, command, log=False):
     args = ["lxc", "exec", container, "--"]
     args.extend(command)
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
+    if output.returncode != 0:
+        raise LXCApiException("Error while trying to execute command '{0}' in container {1}".format(command, container),
+                              output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return output.stdout.decode('utf-8'), toc - tic
@@ -63,8 +80,11 @@ def launch(image, options, log=False):
     args = ["lxc", "launch", image]
     args.extend(options)
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
+    if output.returncode != 0:
+        raise LXCApiException("Error while trying to launch container from image " + image,
+                              output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return output.stdout.decode('utf-8').split(" ")[6].strip(), toc - tic
@@ -79,8 +99,11 @@ def stop(container, log=False):
     """
     args = ["lxc", "stop", container]
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
+    if output.returncode != 0:
+        raise LXCApiException("Error while trying to stop container " + container,
+                              output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return toc - tic
@@ -95,8 +118,11 @@ def rm(container, log=False):
     """
     args = ["lxc", "rm", container]
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
+    if output.returncode != 0:
+        raise LXCApiException("Error while trying to remove container " + container,
+                              output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return toc - tic
@@ -114,8 +140,11 @@ def config_proxy_add(container, device, address, log=False):
     args = ["lxc", "config", "device", "add", container, device, "proxy", "listen=tcp:" + address,
             "connect=tcp:127.0.0.1:80"]
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
+    if output.returncode != 0:
+        raise LXCApiException("Error while trying to add proxy on container " + container,
+                              output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return toc - tic
@@ -131,8 +160,11 @@ def config_proxy_rm(container, device, log=False):
     """
     args = ["lxc", "config", "device", "remove", container, device]
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE)
+    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
+    if output.returncode != 0:
+        raise LXCApiException("Error while trying to remove proxy from container " + container,
+                              output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return toc - tic

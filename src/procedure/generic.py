@@ -50,16 +50,18 @@ class Generic(ABC):
 
     def execute(self, repetition=5, parallelize=False):
         results = {}
+        print("Executing {0}".format(self.name()))
 
         for function in self.__functions:
+            print("\t{0}".format(function))
             target = self.__functions[function]
 
             if parallelize:
                 with ThreadPoolExecutor(max_workers=repetition) as executor:
                     threads = [executor.submit(target) for i in range(0, repetition)]
-                    result = [future.result() for future in as_completed(threads)]
+                    result = list(filter(lambda i: i != -1, [future.result() for future in as_completed(threads)]))
             else:
-                result = [target() for i in range(0, repetition)]
+                result = list(filter(lambda i: i != -1, [target() for i in range(0, repetition)]))
 
             results[function] = result
 

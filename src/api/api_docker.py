@@ -1,7 +1,7 @@
 import subprocess
 import time
 
-from src.exceptions.api_exceptions import ApiException
+from src.exceptions.api_exception import ApiException
 
 
 class DockerApiException(ApiException):

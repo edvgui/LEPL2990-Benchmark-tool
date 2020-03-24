@@ -5,10 +5,15 @@ LOG_FILE="${DIR}/build.log"
 
 build() {
   local folder=$1
-  local name="alpine-${folder}"
+  
+  lxc image list | grep ${folder} &> /dev/null
+  if [ $(echo $?) -eq 0 ]; then
+    echo "INFO: ${folder}: Deleting previous build"
+    lxc image delete ${folder} >> ${LOG_FILE}
+  fi
 
-  echo "INFO: ${name}: Building"
-  "${DIR}/${folder}/build.sh"
+  echo "INFO: ${folder}: Building"
+  ${DIR}/${folder}/build.sh ${folder} &>> ${LOG_FILE}
 }
 
 echo "" > "${LOG_FILE}"

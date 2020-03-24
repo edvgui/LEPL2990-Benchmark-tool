@@ -5,22 +5,21 @@ LOG_FILE="${DIR}/build.log"
 
 build() {
   local folder=$1
-  local name="alpine-${folder}"
 
-  docker images | grep ${name} > /dev/null
+  docker images | grep ${folder} > /dev/null
   if [ $(echo $?) -eq 1 ]; then
-    echo "ERROR: ${name}: not found in docker images"
+    echo "ERROR: ${folder}: not found in docker images"
     return 1
   fi
 
-  podman images | grep ${name} > /dev/null
+  podman images | grep ${folder} > /dev/null
   if [ $(echo $?) -eq 0 ]; then
-    echo "INFO: ${name}: Deleting previous build"
-    podman rmi ${name} &>> "${LOG_FILE}"
+    echo "INFO: ${folder}: Deleting previous build"
+    podman rmi ${foldername} &>> "${LOG_FILE}"
   fi
 
-  echo "INFO: ${name}: Pulling"
-  podman pull "docker-daemon:${name}:latest" &>> "${LOG_FILE}"
+  echo "INFO: ${folder}: Pulling"
+  podman pull "docker-daemon:${folder}:latest" &>> "${LOG_FILE}"
 }
 
 echo "" > "${LOG_FILE}"

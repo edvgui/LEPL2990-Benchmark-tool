@@ -13,8 +13,7 @@ class RuncApiException(ApiException):
 
 directory = os.path.dirname(os.path.abspath(__file__))
 runc_folder = os.path.join(directory, '../../resources/runc')
-commands = os.path.join(runc_folder, 'commands')
-pool = os.path.join(runc_folder, 'pool')
+pool = '~/.runc'
 
 
 def create(image, log=False):
@@ -24,7 +23,7 @@ def create(image, log=False):
     :param log: Whether to display logs or not
     :return: The return code of the creation script, the output of the command, the command execution time
     """
-    path = os.path.join(commands, 'create')
+    path = os.path.join(runc_folder, 'create')
     args = [path, image]
     tic = time.time()
     output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -64,7 +63,7 @@ def clean(container, log=False):
     :param log: Whether to display some logs or not
     :return: The return code of the command, the execution output, the command execution time
     """
-    path = os.path.join(commands, 'clean')
+    path = os.path.join(runc_folder, 'clean')
     args = [path, container]
     tic = time.time()
     output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

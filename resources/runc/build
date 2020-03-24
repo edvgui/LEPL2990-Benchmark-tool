@@ -4,7 +4,7 @@ DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
 
 build() {
 	local image=$1
-	echo "INFO: Building ${image}"
+	echo "INFO: ${image}: Building"
 	
 	# Checking original image availability
 	docker images | grep ${image} > /dev/null
@@ -13,11 +13,11 @@ build() {
 		return 1
 	fi
 	
-	local rootfs=${DIR}/../images/${image}/rootfs/
-	local ro_rootfs=${DIR}/../images/${image}/ro-rootfs/
+	local rootfs=${DIR}/${image}/rootfs/
+	local ro_rootfs=${DIR}/${image}/ro-rootfs/
 	
 	# Cleaning previous build
-	echo "INFO: Removing previous build if any"
+	echo "INFO: ${image}: Removing previous build if any"
 	rm -rf ${rootfs} ${ro_rootfs}
 	mkdir ${rootfs} ${ro_rootfs}
 	
@@ -25,10 +25,10 @@ build() {
 	local base=$(docker run -d ${image}:latest)
 	docker export ${base} | tar -C ${ro_rootfs} -xv > /dev/null
 	if [ $(echo $?) -eq 1 ]; then
-		echo "ERROR: while exporting image from docker"
+		echo "ERROR: ${image}: While exporting image from docker"
 		return 1
   else
-    echo "INFO: Image succesfully imported from docker"
+    echo "INFO: ${image}: Image successfully imported from docker"
   fi
   docker rm ${base} > /dev/null
 	
@@ -49,7 +49,7 @@ for arg in "$@"
 do
   case ${arg} in
     -a| --all)
-      for folder in $(cd ${DIR}/../images && ls -d */ | cut -f1 -d'/')
+      for folder in $(cd ${DIR} && ls -d */ | cut -f1 -d'/')
       do
         build "${folder}"
       done

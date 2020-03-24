@@ -5,7 +5,7 @@ LOG_FILE="${DIR}/build.log"
 
 build() {
   local folder=$1
-  local name="alpine-${folder}"
+  local name="${folder}"
 
   docker images | grep ${name} > /dev/null
   if [ $(echo $?) -eq 0 ]; then
@@ -14,7 +14,7 @@ build() {
   fi
 
   echo "INFO: ${name}: Building"
-  docker build -t "${name}" -f "${DIR}/${folder}/Dockerfile" "${DIR}/../../" &>> "${LOG_FILE}"
+  docker build -t "${name}" -f "${DIR}/${folder}/Dockerfile" "${DIR}/../" &>> "${LOG_FILE}"
 }
 
 echo "" > "${LOG_FILE}"

@@ -30,10 +30,10 @@ def plot_mmm(results, title, ylabel):
 
 if __name__ == "__main__":
     interactive(True)
-    # plot_mmm(HelloWorld().execute(10, False), 'Hello World', 'Launching time (s)')
+    plot_mmm(HelloWorld().execute(10, False), 'Hello World', 'Launching time (s)')
     # plot_mmm(MondialRead().execute(10, False), 'Mondial read', 'Launching and execution time (s)')
     # plot_mmm(MondialWrite().execute(10, False), 'Mondial write', 'Launching and execution time (s)')
-    plot_mmm(Network().execute(5, False), 'Ping', 'Execution time (ms)')
+    # plot_mmm(Network().execute(5, False), 'Ping', 'Execution time (ms)')
     # plot_mmm(HttpServer().execute(5, False), 'Http server', 'Launching and setup time (s)')
     interactive(False)
     plt.show()

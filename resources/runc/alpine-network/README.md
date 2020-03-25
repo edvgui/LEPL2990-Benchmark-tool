@@ -1,9 +1,9 @@
-# Hello world
-Create a container that prints a simple Hello World message in the console then quit.
+# Ping
+Create a container that performs a few ping requests and prints the final result.
 
 #### Build
 We export our container from docker.  The container we export needs to be previously build with docker.  Build commands
-can be found [here](../../docker/alpine-hello-world/README.md).
+can be found [here](../../docker/alpine-network/README.md).
 ```shell script
 ./../build alpine-hello-world
 ```
@@ -14,7 +14,7 @@ can be found [here](../../docker/alpine-hello-world/README.md).
 export container=$(./../create alpine-hello-world)
 
 # Launching the container
-./../run --offline ${container}
+./../run ${container}
 
 # Cleaning the container
 ./../clean ${container}

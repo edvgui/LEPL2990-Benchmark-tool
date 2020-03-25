@@ -40,11 +40,11 @@ class MondialWrite(Generic):
         return launching_time + execution_time
 
     def runc(self):
-        status, container, creation_time = runc.create("alpine-mondial-write")
-        status, response, execution_time = runc.run(container)
+        container, creation_time = runc.create("alpine-mondial-write")
+        response, execution_time = runc.run(container, ["-o"])
         if 'Done' not in response:
             print("Error (runc): wrong response: " + response)
-        status, response, deletion_time = runc.clean(container)
+        runc.clean(container)
         return creation_time + execution_time
 
     def firecracker(self):

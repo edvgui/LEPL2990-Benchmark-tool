@@ -1,5 +1,5 @@
 # Http server
-Create a container that prints a simple Hello World message in the console then quit.
+Create a container that launches a lightweight http server.
 
 #### Build
 ```shell script

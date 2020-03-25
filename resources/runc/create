@@ -2,7 +2,7 @@
 
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
 LOG_FILE="${DIR}/build.log"
-POOL="~/.runc"
+POOL="${HOME}/.local/share/runc/pool"
 
 # Check if the image exists
 IMAGE=$1
@@ -14,7 +14,7 @@ for i in $(cd ${DIR} && ls -d */ | cut -f1 -d'/'); do
 done
 
 if [ ${VALID} -eq 1 ]; then
-	echo "The image ${IMAGE} doesn't exist"
+	>&2 echo "ERROR: ${IMAGE}: This image doesn't exist"
 	exit 1
 fi
 
@@ -31,7 +31,7 @@ cp ${DIR}/${IMAGE}/config.json ${FOLDER}/config.json
 bindfs -p 555 --no-allow-other ${DIR}/${IMAGE}/ro-rootfs ${FOLDER}/rootfs/mnt
 if [ $(echo $?) -eq 1 ]; then
 	rm -rf ${FOLDER}
-	echo "The container couldn't be created"
+	>&2 echo "ERROR: ${CONTAINER}: This container couldn't be created"
 	exit 1
 fi
 

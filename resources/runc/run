@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
+LOG_FILE="${DIR}/build.log"
+POOL="${HOME}/.local/share/runc/pool"
+
+DETACHED=""
+NETWORK=1
+PORT=""
+CONTAINER=""
+
+while (( "$#" )); do
+    case $1 in
+    -d| --detach)
+        DETACHED="-d"
+        ;;
+    -p| --port)
+        NETWORK=$(( 2*$NETWORK ))
+        shift
+        PORT=$1
+        ;;
+    -o| --offline)
+        NETWORK=0
+        ;;
+    *)
+        CONTAINER=$1
+        ;;
+    esac
+    shift
+done
+
+# Check if the container exists
+VALID=1
+for i in $(cd ${POOL} && ls -d */ | cut -f1 -d'/'); do
+	if [ "${CONTAINER}" == "${i}" ]; then
+		VALID=0
+	fi
+done
+
+if [ ${VALID} -eq 1 ]; then
+	>&2 echo "ERROR: ${CONTAINER}: This container doesn't exist"
+	exit 1
+fi
+
+# Build execution command
+RUN="runc run ${DETACHED} -b ${POOL}/${CONTAINER} ${CONTAINER}"
+
+# Run the container
+if [ ${NETWORK} -eq 0 ]; then
+    ${RUN}
+elif [ ${NETWORK} -eq 1 ]; then
+    rootlesskit --net=slirp4netns --disable-host-loopback --copy-up=/etc ${RUN}
+else
+    STATE=${POOL}/${CONTAINER}/state-dir
+    CTL="rootlessctl --socket=${STATE}/api.sock add-ports ${PORT} > /dev/null"
+    RUN="runc run -b ${POOL}/${CONTAINER} ${CONTAINER}"
+    if [ "${DETACHED}" == "-d" ]; then
+        rootlesskit --state-dir=${STATE} --net=slirp4netns --disable-host-loopback --copy-up=/etc --port-driver=builtin /bin/bash -c "${CTL} && ${RUN}" & disown
+    else
+        rootlesskit --state-dir=${STATE} --net=slirp4netns --disable-host-loopback --copy-up=/etc --port-driver=builtin /bin/bash -c "${CTL} && ${RUN}"
+    fi
+fi
+
+# Display container's name if launched detached
+if [ "${DETACHED}" == "-d" ]; then
+    echo ${CONTAINER}
+fi

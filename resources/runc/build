@@ -9,7 +9,7 @@ build() {
 	# Checking original image availability
 	docker images | grep ${image} > /dev/null
 	if [ $(echo $?) -eq 1 ]; then
-		echo "ERROR: ${image}: not found in docker images"
+		>&2 echo "ERROR: ${image}: not found in docker images"
 		return 1
 	fi
 	
@@ -25,24 +25,26 @@ build() {
 	local base=$(docker run -d ${image}:latest)
 	docker export ${base} | tar -C ${ro_rootfs} -xv > /dev/null
 	if [ $(echo $?) -eq 1 ]; then
-		echo "ERROR: ${image}: While exporting image from docker"
+		>&2 echo "ERROR: ${image}: While exporting image from docker"
 		return 1
   else
     echo "INFO: ${image}: Image successfully imported from docker"
   fi
+  docker stop ${base} > /dev/null
   docker rm ${base} > /dev/null
 	
 	# Moving editable folder in editable rootfs
-	for d in home media mnt opt root srv sys tmp; do
-	  mv ${ro_rootfs}${d} ${rootfs}${d}
-	done
+	while IFS= read -r line; do
+	    mv ${ro_rootfs}${line} ${rootfs}${line}
+	done < ${DIR}/${image}/wr.list
+	
 	rm -rf ${ro_rootfs}proc
 	mkdir ${rootfs}proc
 	
 	# Creating links to no yet mounted read-only folders
-	for d in bin dev etc lib run sbin usr var; do
-	  ln -s mnt/${d} ${rootfs}/${d}
-	done
+	while IFS= read -r line; do
+	  ln -s mnt/${line} ${rootfs}/${line}
+	done < ${DIR}/${image}/ro.list
 }
 
 for arg in "$@"

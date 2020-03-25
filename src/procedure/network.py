@@ -2,6 +2,7 @@ from src.procedure.generic import Generic
 import src.api.api_docker as docker
 import src.api.api_podman as podman
 import src.api.api_lxc as lxc
+import src.api.api_runc as runc
 import time
 
 
@@ -72,7 +73,20 @@ class Network(Generic):
         return -1
 
     def runc(self):
-        return 0
+        container, _ = runc.create("alpine-network")
+        try:
+            response, _ = runc.run(container, [])
+        except podman.PodmanApiException as e:
+            print(e)
+            return -1
+        else:
+            if '=' not in response:
+                print('Error (runc): wrong response: ' + response)
+                return -1
+            else:
+                return float(response.split(" ")[3].split("/")[1])
+        finally:
+            runc.clean(container)
 
     def firecracker(self):
         return 0

@@ -4,13 +4,13 @@ Create a container that contains a big database and performs a large amount of w
 #### Build
 ```shell script
 # From within this directory
-docker build -t centos-mondial-write -f Dockerfile ../../../
+docker build -t alpine-db-write -f Dockerfile ../../../
 
 # From anywhere else
-docker build -t centos-mondial-write -f path/to/mondial-read/Dockerfile path/to/mondial-read/../../..
+docker build -t alpine-db-write -f path/to/mondial-write/Dockerfile path/to/mondial-write/../../..
 ```
 
 #### Launch
 ```shell script
-docker run --rm centos mondial-write
+docker run --rm alpine-db-write
 ```

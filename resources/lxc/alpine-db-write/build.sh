@@ -11,7 +11,7 @@ lxc launch -e ${BASE} ${CONTAINER}
 lxc exec ${CONTAINER} -- apk update
 lxc exec ${CONTAINER} -- apk add sqlite
 lxc exec ${CONTAINER} -- mkdir /root/src
-lxc file push "${DIR}/../../common/sqlite/mondial-orig.db" ${CONTAINER}/root/mondial-orig.db
+lxc file push "${DIR}/../../common/sqlite/tpcc.db" ${CONTAINER}/root/tpcc.db
 lxc file push "${DIR}/../../common/sqlite/write.sqlite" ${CONTAINER}/root/write.sqlite
 lxc file push "${DIR}/../../common/sqlite/sqlite.sh" ${CONTAINER}/root/sqlite.sh
 lxc exec ${CONTAINER} -- chmod +x /root/sqlite.sh

@@ -4,8 +4,8 @@ from matplotlib import interactive
 from src.results_operations import results_max, results_mean, results_medians, results_min
 from src.procedure.hello_world import HelloWorld
 from src.procedure.http_server import HttpServer
-from src.procedure.mondial_read import MondialRead
-from src.procedure.mondial_write import MondialWrite
+from src.procedure.db_read import DatabaseRead
+from src.procedure.db_write import DatabaseWrite
 from src.procedure.network import Network
 
 
@@ -30,10 +30,10 @@ def plot_mmm(results, title, ylabel):
 
 if __name__ == "__main__":
     interactive(True)
-    plot_mmm(HelloWorld().execute(10, False), 'Hello World', 'Launching time (s)')
-    plot_mmm(MondialRead().execute(10, False), 'Mondial read', 'Launching and execution time (s)')
-    plot_mmm(MondialWrite().execute(10, False), 'Mondial write', 'Launching and execution time (s)')
-    plot_mmm(Network().execute(10, False), 'Ping', 'Execution time (ms)')
-    plot_mmm(HttpServer().execute(10, False), 'Http server', 'Launching and setup time (s)')
+    # plot_mmm(HelloWorld().execute(10, False), 'Hello World', 'Launching time (s)')
+    plot_mmm(DatabaseRead().execute(10, False), 'Database read', 'Launching and execution time (s)')
+    plot_mmm(DatabaseWrite().execute(10, False), 'Database write', 'Launching and execution time (s)')
+    # plot_mmm(Network().execute(10, False), 'Ping', 'Execution time (ms)')
+    # plot_mmm(HttpServer().execute(10, False), 'Http server', 'Launching and setup time (s)')
     interactive(False)
     plt.show()

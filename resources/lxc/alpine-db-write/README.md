@@ -8,6 +8,6 @@ Create a lxc container that contains a big database and performs a large amount 
 
 #### Launch
 ```shell script
-lxc launch -e alpine-mondial-write a
-lxc exec a -- ./write.sh
+lxc launch -e alpine-db-write a
+lxc exec a -- ./write.sh tpcc.db write.sqlite
 ```

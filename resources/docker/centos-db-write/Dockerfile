@@ -6,9 +6,9 @@ RUN yum -y update \
 RUN mv /usr/bin/sqlite3 /usr/bin/sqlite3.7
 COPY common/sqlite/sqlite3 usr/bin/sqlite3
 
-COPY common/sqlite/mondial-orig.db /home/mondial-orig.db
+COPY common/sqlite/tpcc.db /home/tpcc.db
 COPY common/sqlite/write.sqlite /run/write.sqlite
 COPY common/sqlite/sqlite.sh /run/run.sh
 RUN chmod +x /run/run.sh
 
-CMD /run/run.sh /home/mondial-orig.db /run/write.sqlite
+CMD /run/run.sh /home/tpcc.db /run/write.sqlite

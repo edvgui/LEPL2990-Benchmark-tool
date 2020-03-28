@@ -8,7 +8,7 @@
 		},
 		"args": [
 			"/run/run.sh",
-			"/home/mondial-orig.db",
+			"/home/tpcc.db",
 			"/run/write.sqlite"
 		],
 		"env": [

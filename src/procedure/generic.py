@@ -8,10 +8,10 @@ class Generic(ABC):
         super().__init__()
         self.__functions = {
             'docker_alpine': self.docker_alpine,
-            'docker_centos': self.docker_centos,
             'podman': self.podman,
             'lxc': self.lxc,
             'runc': self.runc,
+            'docker_centos': self.docker_centos,
             'firecracker': self.firecracker,
             'kata': self.kata
         }

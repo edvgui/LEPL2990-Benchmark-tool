@@ -3,6 +3,7 @@ import subprocess
 
 from src.procedure.generic import Generic
 import src.api.api_docker as docker
+import src.api.api_kata as kata
 import src.api.api_podman as podman
 import src.api.api_lxc as lxc
 import src.api.api_runc as runc
@@ -108,4 +109,8 @@ class HttpServer(Generic):
         return 0
 
     def kata(self):
-        return 0
+        address = "127.0.0.1:3000"
+        container, duration = kata.run("alpine-http-server", ["--rm", "-d", "-p", address + ":80"], [])
+        result = server_get("http://" + address)
+        kata.stop(container)
+        return result + duration if result != -1 else -1

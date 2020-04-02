@@ -1,5 +1,6 @@
 from src.procedure.generic import Generic
 import src.api.api_docker as docker
+import src.api.api_kata as kata
 import src.api.api_podman as podman
 import src.api.api_lxc as lxc
 import src.api.api_runc as runc
@@ -92,4 +93,14 @@ class Network(Generic):
         return 0
 
     def kata(self):
-        return 0
+        try:
+            response, _ = kata.run("alpine-network", ["--rm"], [])
+        except kata.KataApiException as e:
+            print(e)
+            return -1
+        else:
+            if '=' not in response:
+                print('Error (docker_alpine): wrong response: ' + response)
+                return -1
+            else:
+                return float(response.split(" ")[3].split("/")[1])

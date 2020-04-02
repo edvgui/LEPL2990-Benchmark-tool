@@ -1,5 +1,6 @@
 from src.procedure.generic import Generic
 import src.api.api_docker as docker
+import src.api.api_kata as kata
 import src.api.api_podman as podman
 import src.api.api_lxc as lxc
 import src.api.api_runc as runc
@@ -56,4 +57,8 @@ class DatabaseRead(Generic):
         return 0
 
     def kata(self):
-        return 0
+        response, duration = kata.run("alpine-db-read", ["--rm"], [])
+        if 'Done' not in response:
+            print('Error (kata): wrong response: ' + response)
+            return -1
+        return duration

@@ -10,14 +10,16 @@ class LXCApiException(ApiException):
         super().__init__("LXC", message, trace)
 
 
-def init(image, log=False):
+def init(image, flags, log=False):
     """
     Initialize a container from an image with the command 'lxc init'
     :param image: The name of the image to create the container from
+    :param flags: Some flags to pass for the creation
     :param log: Whether to display some logs or not
     :return: The id of the created container, the command execution time
     """
     args = ["lxc", "init", image]
+    args.extend(flags)
     tic = time.time()
     output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
@@ -26,7 +28,7 @@ def init(image, log=False):
                               output.stderr.decode('utf-8').strip())
     if log:
         print(output)
-    return output.stdout.decode('utf-8').split(" ")[6].strip(), toc - tic
+    return output.stdout.decode('utf-8').split(" ")[5].strip(), toc - tic
 
 
 def start(container, log=False):

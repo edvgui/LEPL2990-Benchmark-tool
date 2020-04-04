@@ -42,13 +42,14 @@ class DatabaseRead(Generic):
         return [creation, creation + execution]
 
     def lxc(self):
-        container, launching_time = lxc.launch("alpine-db-xl-read", ["-e"])
+        container, creation = lxc.init("alpine-db-xl-read", ["-e"])
+        start = lxc.start(container)
         response, execution_time = lxc.exec(container, ["./sqlite.sh", "tpcc.db", "read.sqlite"])
         if 'Done' not in response:
             print("Error (lxc): wrong response: " + response)
             return -1
         lxc.stop(container)
-        return [0, launching_time + execution_time]
+        return [creation, creation + start + execution_time]
 
     def runc(self):
         container, creation_time = runc.create("alpine-db-xl-read")

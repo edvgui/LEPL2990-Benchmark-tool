@@ -15,33 +15,37 @@ class HelloWorld(Generic):
         return 'Hello World'
 
     def response_len(self):
-        return 1
+        return 2
 
     def docker_alpine(self):
-        response, duration = docker.run("alpine-hello-world", ["--rm"], [])
+        container, creation = docker.create("alpine-hello-world", ["--rm"], [])
+        response, execution = docker.start(container)
         if 'Hello World' not in response:
             print('Error (docker_alpine): wrong response: ' + response)
-        return [duration]
+        return [creation, creation + execution]
 
     def docker_centos(self):
-        response, duration = docker.run("centos-hello-world", ["--rm"], [])
+        container, creation = docker.create("centos-hello-world", ["--rm"], [])
+        response, execution = docker.start(container)
         if 'Hello World' not in response:
             print('Error (docker_centos): wrong response: ' + response)
-        return [duration]
+        return [creation, creation + execution]
 
     def podman(self):
-        response, duration = podman.run("alpine-hello-world", ["--rm"], [])
+        container, creation = podman.create("alpine-hello-world", ["--rm"], [])
+        response, execution = podman.start(container)
         if 'Hello World' not in response:
             print('Error (podman): wrong response: ' + response)
-        return [duration]
+        return [creation, creation + execution]
 
     def lxc(self):
-        container, launching_time = lxc.launch("alpine-hello-world", ["-e"])
+        container, creation = lxc.init("alpine-hello-world", ["-e"])
+        start = lxc.start(container)
         response, execution_time = lxc.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:
             print("Error (lxc): wrong response: " + response)
         lxc.stop(container)
-        return [launching_time + execution_time]
+        return [creation, creation + start + execution_time]
 
     def runc(self):
         container, creation_time = runc.create("alpine-hello-world")
@@ -49,13 +53,14 @@ class HelloWorld(Generic):
         if 'Hello World' not in response:
             print("Error (runc): wrong response: " + response)
         runc.clean(container)
-        return [creation_time + execution_time]
+        return [creation_time, creation_time + execution_time]
 
     def firecracker(self):
         return [0]
 
     def kata(self):
-        response, duration = kata.run("alpine-hello-world", ["--rm"], [])
+        container, creation = kata.create("alpine-hello-world", ["--rm"], [])
+        response, execution = kata.start(container)
         if 'Hello World' not in response:
             print('Error (kata): wrong response: ' + response)
-        return [duration]
+        return [creation, creation + execution]

@@ -74,15 +74,16 @@ class HttpServer(Generic):
 
     def lxc(self):
         address = "127.0.0.1:3003"
-        container, creation_duration = lxc.launch("alpine-http-server", ["-e"], [])
-        response, execution_duration = lxc.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
+        container, creation = lxc.init("alpine-http-server", ["-e"], [])
         device = "device-" + container
-        config_duration = lxc.config_proxy_add(container, device, address)
+        configuration = lxc.config_proxy_add(container, device, address)
+        start = lxc.start(container)
+        response, execution = lxc.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         result = server_get("http://" + address)
         lxc.config_proxy_rm(container, device)
         lxc.stop(container)
-        return [creation_duration + execution_duration, creation_duration + execution_duration + config_duration,
-                result + creation_duration + execution_duration + config_duration] if result != -1 else -1
+        return [creation + configuration, creation + configuration + start + execution,
+                creation + configuration + start + result] if result != -1 else -1
 
     def runc(self):
         address = "127.0.0.1:3004"

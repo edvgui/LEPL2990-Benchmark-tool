@@ -11,7 +11,6 @@ lxc launch -e ${BASE} ${CONTAINER}
 
 lxc exec ${CONTAINER} -- apk update
 lxc exec ${CONTAINER} -- apk add lighttpd
-lxc exec ${CONTAINER} -- rc-update add lighttpd default
 lxc file push "${DIR}/../../common/http-server/index.html" ${CONTAINER}/var/www/localhost/htdocs/index.html
 
 lxc snapshot ${CONTAINER} ${SNAPSHOT}

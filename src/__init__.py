@@ -1,48 +1,94 @@
-from random import random
-
 import matplotlib.pyplot as plt
 from matplotlib import interactive
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from src.results_operations import results_max, results_mean, results_medians, results_min
+from src.results_operations import results_means, plot_group
+from src.procedure.example import Example
 from src.procedure.hello_world import HelloWorld
 from src.procedure.http_server import HttpServer
 from src.procedure.db_read import DatabaseRead
 from src.procedure.db_write import DatabaseWrite
 from src.procedure.network import Network
+from src.procedure.warm_up import WarmUp
 
 
-def plot_mmm(results, title, ylabel):
-    means = results_mean(results, 0.25, 0.75)
+def plot(results, title):
+    """
+
+    :param results: { string: [ [ int ] ] }
+    :param title: string
+    :return: void
+    """
+    colors = ['#4D525A', '#8F9CB3', '#3E7DCC', '#92CAD1', '#79CCB3', '#D6D727', '#E9724D']
+    results_m = results_means(results)
 
     plt.figure()
-    left = [i for i in range(1, len(results) + 1)]
-    tick_label = [r for r in results]
-    height = [means[r] for r in results]
+    left, tick_label, height, color = [], [], [], []
+    count = 0
+    for r in results_m:
+        means = results_m[r]
+        means.reverse()
+        height.extend(means)
+
+        tick_label.append(r)
+        tick_label.extend(['' for _ in range(0, max(len(means) - 1, 0))])
+
+        count += 1
+        left.extend([count for _ in range(0, len(means))])
+
+        color.extend(colors[:len(means)])
 
     plt.grid(linestyle=':')
-    plt.bar(left, height, tick_label=tick_label, color=['#4D525A', '#8F9CB3', '#3E7DCC', '#92CAD1', '#79CCB3', '#D6D727', '#E9724D'], align='center')
-    plt.boxplot([results[r] for r in results], manage_ticks=False, showfliers=False)
+    plt.bar(left, height, tick_label=tick_label, color=color, align='center')
+    plt.boxplot([results[r][-1] for r in results], manage_ticks=False, showfliers=False)
     plt.xlabel('Solutions')
-    plt.ylabel(ylabel)
+    plt.ylabel('Time (s)')
     plt.title(title)
 
 
-test = {
-    'docker_alpine': [random() for _ in range(0, 10)],
-    'docker_centos': [random() for _ in range(0, 10)],
-    'podman': [random() for _ in range(0, 10)],
-    'lxc': [random() for _ in range(0, 10)],
-    'runc': [random() for _ in range(0, 10)],
-    'firecracker': [random() for _ in range(0, 10)],
-    'kata': [random() for _ in range(0, 10)]
-}
+def execute(function, response_len, repetition=5, parallelize=False):
+    results = [[] for _ in range(0, response_len)]
+    if parallelize:
+        with ThreadPoolExecutor(max_workers=repetition) as executor:
+            threads = [executor.submit(function) for i in range(0, repetition)]
+            result = list(filter(lambda i: i != -1, [future.result() for future in as_completed(threads)]))
+    else:
+        result = list(filter(lambda i: i != -1, [function() for i in range(0, repetition)]))
+
+    for res in result:
+        for i in range(0, response_len):
+            results[i].append(res[i])
+
+    return results
+
+
+def measure(solution, procedures):
+    """
+
+    :param solution: string
+    :param procedures: [ Generic() ]
+    :return: { string: [ [ int ] ] }
+    """
+    execute(WarmUp().functions[solution], WarmUp().response_len())
+    results = {}
+    for procedure in procedures:
+        results[procedure.name()] = execute(procedure.functions[solution], procedure.response_len(), 10, False)
+
+    return results
+
 
 if __name__ == "__main__":
     interactive(True)
-    plot_mmm(HelloWorld().execute(10, False), 'Hello World', 'Launching time (s)')
-    plot_mmm(DatabaseRead().execute(10, False), 'Database read', 'Launching and execution time (s)')
-    plot_mmm(DatabaseWrite().execute(10, False), 'Database write', 'Launching and execution time (s)')
-    plot_mmm(Network().execute(10, False), 'Ping', 'Execution time (ms)')
-    plot_mmm(HttpServer().execute(10, False), 'Http server', 'Launching and setup time (s)')
+    full = [HelloWorld(), DatabaseRead(), DatabaseWrite(), Network(), HttpServer()]
+    measurements = {
+        "Docker Alpine": measure("docker_alpine", full),
+        "Docker Centos": measure("docker_centos", full),
+        "Podman Alpine": measure("podman", full),
+        "LXC": measure("lxc", full),
+        "runc": measure("runc", full)
+    }
+    plot_groups = plot_group(measurements)
+    for p in plot_groups:
+        plot(plot_groups[p], p)
     interactive(False)
     plt.show()

@@ -14,51 +14,58 @@ class DatabaseWrite(Generic):
     def name(self):
         return 'Database write'
 
+    def response_len(self):
+        return 2
+
     def docker_alpine(self):
-        response, duration = docker.run("alpine-db-write", ["--rm"], [])
+        container, creation = docker.create("alpine-db-xl-write", ["--rm"], [])
+        response, execution = docker.start(container)
         if 'Done' not in response:
             print('Error (docker_alpine): wrong response: ' + response)
             return -1
-        return duration
+        return [creation, creation + execution]
 
     def docker_centos(self):
-        response, duration = docker.run("centos-db-write", ["--rm"], [])
+        container, creation = docker.create("centos-db-xl-write", ["--rm"], [])
+        response, execution = docker.start(container)
         if 'Done' not in response:
             print('Error (docker_centos): wrong response: ' + response)
             return -1
-        return duration
+        return [creation, creation + execution]
 
     def podman(self):
-        response, duration = podman.run("alpine-db-write", ["--rm"], [])
+        container, creation = podman.create("alpine-db-xl-write", ["--rm"], [])
+        response, execution = podman.start(container)
         if 'Done' not in response:
             print('Error (podman): wrong response: ' + response)
             return -1
-        return duration
+        return [creation, creation + execution]
 
     def lxc(self):
-        container, launching_time = lxc.launch("alpine-db-write", ["-e"])
+        container, launching_time = lxc.launch("alpine-db-xl-write", ["-e"])
         response, execution_time = lxc.exec(container, ["./sqlite.sh", "tpcc.db", "write.sqlite"])
         if 'Done' not in response:
             print("Error (lxc): wrong response: " + response)
             return -1
         lxc.stop(container)
-        return launching_time + execution_time
+        return [0, launching_time + execution_time]
 
     def runc(self):
-        container, creation_time = runc.create("alpine-db-write")
+        container, creation_time = runc.create("alpine-db-xl-write")
         response, execution_time = runc.run(container, ["-o"])
         if 'Done' not in response:
             print("Error (runc): wrong response: " + response)
             return -1
         runc.clean(container)
-        return creation_time + execution_time
+        return [creation_time, creation_time + execution_time]
 
     def firecracker(self):
         return 0
 
     def kata(self):
-        response, duration = kata.run("alpine-db-write", ["--rm"], [])
+        container, creation = kata.create("alpine-db-xl-write", ["--rm"], [])
+        response, execution = kata.start(container)
         if 'Done' not in response:
             print('Error (kata): wrong response: ' + response)
             return -1
-        return duration
+        return [creation, creation + execution]

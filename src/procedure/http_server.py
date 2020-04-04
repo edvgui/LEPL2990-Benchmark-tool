@@ -45,36 +45,44 @@ class HttpServer(Generic):
     def name(self):
         return 'Http server'
 
+    def response_len(self):
+        return 3
+
     def docker_alpine(self):
         address = "127.0.0.1:3000"
-        container, duration = docker.run("alpine-http-server", ["--rm", "-d", "-p", address + ":80"], [])
+        container, creation = docker.create("alpine-http-server", ["--rm", "-p", address + ":80"], [])
+        _, start = docker.start(container, attach=False)
         result = server_get("http://" + address)
         docker.stop(container)
-        return result + duration if result != -1 else -1
+        return [creation, creation + start, creation + start + result] if result != -1 else -1
 
     def docker_centos(self):
         address = "127.0.0.1:3001"
-        container, duration = docker.run("centos-http-server", ["--rm", "-d", "-p", address + ":80"], [])
+        container, creation = docker.create("centos-http-server", ["--rm", "-p", address + ":80"], [])
+        _, start = docker.start(container, attach=False)
         result = server_get("http://" + address)
         docker.stop(container)
-        return result + duration if result != -1 else -1
+        return [creation, creation + start, creation + start + result] if result != -1 else -1
 
     def podman(self):
         address = "127.0.0.1:3002"
-        container, duration = podman.run("alpine-http-server", ["--rm", "-d", "-p", address + ":80"], [])
+        container, creation = podman.create("alpine-http-server", ["--rm", "-p", address + ":80"], [])
+        _, start = podman.start(container, attach=False)
         result = server_get("http://" + address)
         podman.stop(container)
-        return result + duration if result != -1 else -1
+        return [creation, creation + start, creation + start + result] if result != -1 else -1
 
     def lxc(self):
         address = "127.0.0.1:3003"
         container, creation_duration = lxc.launch("alpine-http-server", ["-e"], [])
+        response, execution_duration = lxc.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         device = "device-" + container
         config_duration = lxc.config_proxy_add(container, device, address)
         result = server_get("http://" + address)
         lxc.config_proxy_rm(container, device)
         lxc.stop(container)
-        return result + creation_duration + config_duration if result != -1 else -1
+        return [creation_duration + execution_duration, creation_duration + execution_duration + config_duration,
+                result + creation_duration + execution_duration + config_duration] if result != -1 else -1
 
     def runc(self):
         address = "127.0.0.1:3004"
@@ -103,14 +111,15 @@ class HttpServer(Generic):
             print("error")
             return -1
 
-        return result + creation_duration
+        return [creation_duration, creation_duration, result + creation_duration]
 
     def firecracker(self):
-        return 0
+        return [0, 0, 0]
 
     def kata(self):
-        address = "127.0.0.1:3000"
-        container, duration = kata.run("alpine-http-server", ["--rm", "-d", "-p", address + ":80"], [])
+        address = "127.0.0.1:3006"
+        container, creation = kata.create("alpine-http-server", ["--rm", "-p", address + ":80"], [])
+        _, start = kata.start(container, attach=False)
         result = server_get("http://" + address)
         kata.stop(container)
-        return result + duration if result != -1 else -1
+        return [creation, creation + start, creation + start + result] if result != -1 else -1

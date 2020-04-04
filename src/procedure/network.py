@@ -15,6 +15,9 @@ class Network(Generic):
     def name(self):
         return 'Network'
 
+    def response_len(self):
+        return 1
+
     def docker_alpine(self):
         try:
             response, _ = docker.run("alpine-network", ["--rm"], [])
@@ -26,7 +29,7 @@ class Network(Generic):
                 print('Error (docker_alpine): wrong response: ' + response)
                 return -1
             else:
-                return float(response.split(" ")[3].split("/")[1])
+                return [float(response.split(" ")[3].split("/")[1]) / 1000]
 
     def docker_centos(self):
         try:
@@ -39,7 +42,7 @@ class Network(Generic):
                 print('Error (docker_alpine): wrong response: ' + response)
                 return -1
             else:
-                return float(response.split(" ")[3].split("/")[1])
+                return [float(response.split(" ")[3].split("/")[1]) / 1000]
 
     def podman(self):
         try:
@@ -52,7 +55,7 @@ class Network(Generic):
                 print('Error (podman): wrong response: ' + response)
                 return -1
             else:
-                return float(response.split(" ")[3].split("/")[1])
+                return [float(response.split(" ")[3].split("/")[1]) / 1000]
 
     def lxc(self):
         container, launching_time = lxc.launch("alpine-network", ["-e"])
@@ -67,7 +70,7 @@ class Network(Generic):
                     return -1
                 else:
                     lxc.stop(container)
-                    return float(response.split(" ")[3].split("/")[1])
+                    return [float(response.split(" ")[3].split("/")[1]) / 1000]
             time.sleep(1)
         lxc.stop(container)
         print('Error (lxc): maximum retry reached')
@@ -85,7 +88,7 @@ class Network(Generic):
                 print('Error (runc): wrong response: ' + response)
                 return -1
             else:
-                return float(response.split(" ")[3].split("/")[1])
+                return [float(response.split(" ")[3].split("/")[1]) / 1000]
         finally:
             runc.clean(container)
 
@@ -100,7 +103,7 @@ class Network(Generic):
             return -1
         else:
             if '=' not in response:
-                print('Error (docker_alpine): wrong response: ' + response)
+                print('Error (kata): wrong response: ' + response)
                 return -1
             else:
-                return float(response.split(" ")[3].split("/")[1])
+                return [float(response.split(" ")[3].split("/")[1]) / 1000]

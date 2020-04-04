@@ -14,23 +14,26 @@ class HelloWorld(Generic):
     def name(self):
         return 'Hello World'
 
+    def response_len(self):
+        return 1
+
     def docker_alpine(self):
         response, duration = docker.run("alpine-hello-world", ["--rm"], [])
         if 'Hello World' not in response:
             print('Error (docker_alpine): wrong response: ' + response)
-        return duration
+        return [duration]
 
     def docker_centos(self):
         response, duration = docker.run("centos-hello-world", ["--rm"], [])
         if 'Hello World' not in response:
             print('Error (docker_centos): wrong response: ' + response)
-        return duration
+        return [duration]
 
     def podman(self):
         response, duration = podman.run("alpine-hello-world", ["--rm"], [])
         if 'Hello World' not in response:
             print('Error (podman): wrong response: ' + response)
-        return duration
+        return [duration]
 
     def lxc(self):
         container, launching_time = lxc.launch("alpine-hello-world", ["-e"])
@@ -38,7 +41,7 @@ class HelloWorld(Generic):
         if 'Hello World' not in response:
             print("Error (lxc): wrong response: " + response)
         lxc.stop(container)
-        return launching_time + execution_time
+        return [launching_time + execution_time]
 
     def runc(self):
         container, creation_time = runc.create("alpine-hello-world")
@@ -46,13 +49,13 @@ class HelloWorld(Generic):
         if 'Hello World' not in response:
             print("Error (runc): wrong response: " + response)
         runc.clean(container)
-        return creation_time + execution_time
+        return [creation_time + execution_time]
 
     def firecracker(self):
-        return 0
+        return [0]
 
     def kata(self):
         response, duration = kata.run("alpine-hello-world", ["--rm"], [])
         if 'Hello World' not in response:
             print('Error (kata): wrong response: ' + response)
-        return duration
+        return [duration]

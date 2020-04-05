@@ -90,9 +90,10 @@ class HttpServer(Generic):
         container, creation_duration = runc.create("alpine-http-server")
 
         directory = os.path.dirname(os.path.abspath(__file__))
-        runc_folder = os.path.join(directory, '../../resources/runc')
+        runc_folder = os.path.join(directory, '../../../resources/runc')
         path = os.path.join(runc_folder, 'run')
 
+        execution_time = 0
         tic = time.time()
         proc = subprocess.Popen([path, "-p", address + ":80/tcp", "-d", container],
                                 stdout=subprocess.PIPE,
@@ -101,18 +102,13 @@ class HttpServer(Generic):
         result = -1
         for line in iter(proc.stdout.readline, b''):
             if line.decode('utf-8').strip() == container:
+                execution_time = time.time() - tic
                 result = server_get("http://" + address)
-                toc = time.time()
-                if result != -1:
-                    result = toc - tic
                 runc.stop(container)
                 runc.clean(container)
 
-        if result == -1:
-            print("error")
-            return -1
-
-        return [creation_duration, creation_duration, result + creation_duration]
+        return [creation_duration, creation_duration + execution_time,
+                creation_duration + execution_time + result] if result != -1 else -1
 
     def firecracker(self):
         return [0, 0, 0]

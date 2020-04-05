@@ -12,7 +12,7 @@ class RuncApiException(ApiException):
 
 
 directory = os.path.dirname(os.path.abspath(__file__))
-runc_folder = os.path.join(directory, '../../resources/runc')
+runc_folder = os.path.join(directory, '../../../resources/runc')
 
 
 def create(image, log=False):

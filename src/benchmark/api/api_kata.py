@@ -1,32 +1,32 @@
 import subprocess
 import time
 
-from src.exceptions.api_exception import ApiException
+from benchmark.exceptions.api_exception import ApiException
 
 
-class PodmanApiException(ApiException):
+class KataApiException(ApiException):
 
     def __init__(self, message, trace):
-        super().__init__("Podman", message, trace)
+        super().__init__("Kata", message, trace)
 
 
 def create(image, options, log=False):
     """
-    Create a container with the command 'podman create'
+    Create a container with the command 'docker create'
     :param image: The name of the image to build the container from
     :param options: Options to pass to the command
     :param log: Whether logs should be displayed or not
     :return: The id of the created container, the command execution time
     """
-    args = ["podman", "create"]
+    args = ["docker", "create", "--runtime=kata-runtime"]
     args.extend(options)
     args.append(image)
     tic = time.time()
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise PodmanApiException("Error while trying to create container from image " + image,
-                                 output.stderr.decode('utf-8').strip())
+        raise KataApiException("Error while trying to create container from image " + image,
+                               output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return output.stdout.decode('utf-8').strip(), toc - tic
@@ -34,13 +34,13 @@ def create(image, options, log=False):
 
 def start(container, attach=True, log=False):
     """
-    Start a container with the command 'podman start'
+    Start a container with the command 'docker start'
     :param container: The id of the previously created container to start
     :param attach: Whether to attach the execution or not
     :param log: Whether logs should be displayed or not
     :return: The output of the execution, the command execution time
     """
-    args = ["podman", "start"]
+    args = ["docker", "start"]
     if attach:
         args.append("-a")
     args.append(container)
@@ -48,8 +48,8 @@ def start(container, attach=True, log=False):
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise PodmanApiException("Error while trying to start container " + container,
-                                 output.stderr.decode('utf-8').strip())
+        raise KataApiException("Error while trying to start container " + container,
+                               output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return output.stdout.decode('utf-8').strip(), toc - tic
@@ -57,14 +57,14 @@ def start(container, attach=True, log=False):
 
 def run(image, options, command, log=False):
     """
-    Run a command in a new container with the command 'podman run'
+    Run a command in a new container with the command 'docker run'
     :param image: The name of the image to build the container from
-    :param options: The options to pass to 'podman run"
+    :param options: The options to pass to 'docker run"
     :param command: The command to execute in the container
     :param log: Whether to display some logs or not
     :return: The output of the execution, the command execution time
     """
-    args = ["podman", "run"]
+    args = ["docker", "run", "--runtime=kata-runtime"]
     args.extend(options)
     args.append(image)
     args.extend(command)
@@ -72,8 +72,8 @@ def run(image, options, command, log=False):
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise PodmanApiException("Error while trying to run container from image " + image,
-                                 output.stderr.decode('utf-8').strip())
+        raise KataApiException("Error while trying to run container from image " + image,
+                               output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return output.stdout.decode('utf-8').strip(), toc - tic
@@ -81,18 +81,18 @@ def run(image, options, command, log=False):
 
 def stop(container, log=False):
     """
-    Stop a running container with the command 'podman stop'
+    Stop a running container with the command 'docker stop'
     :param container: The id of the container to stop
     :param log: Whether to display some logs or not
     :return: The command execution time
     """
-    args = ["podman", "stop", container]
+    args = ["docker", "stop", container]
     tic = time.time()
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise PodmanApiException("Error while trying to stop container " + container,
-                                 output.stderr.decode('utf-8').strip())
+        raise KataApiException("Error while trying to stop container " + container,
+                               output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return toc - tic
@@ -100,19 +100,18 @@ def stop(container, log=False):
 
 def rm(container, log=False):
     """
-    Remove a stopped container with the command 'podman rm'
+    Remove a stopped container with the command 'docker rm'
     :param container: The id of the container to remove
     :param log: Whether to display some logs or not
     :return: The command execution time
     """
-    args = ["podman", "rm", container]
+    args = ["docker", "rm", container]
     tic = time.time()
-    output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output = subprocess.run(args, stdout=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise PodmanApiException("Error while trying to remove container " + container,
-                                 output.stderr.decode('utf-8').strip())
+        raise KataApiException("Error while trying to remove container " + container,
+                               output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return toc - tic
-

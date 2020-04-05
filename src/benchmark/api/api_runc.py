@@ -2,7 +2,7 @@ import subprocess
 import time
 import os
 
-from src.exceptions.api_exception import ApiException
+from benchmark.exceptions.api_exception import ApiException
 
 
 class RuncApiException(ApiException):

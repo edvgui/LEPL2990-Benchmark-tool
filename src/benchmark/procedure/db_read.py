@@ -1,24 +1,24 @@
-from src.procedure.generic import Generic
-import src.api.api_docker as docker
-import src.api.api_kata as kata
-import src.api.api_podman as podman
-import src.api.api_lxc as lxc
-import src.api.api_runc as runc
+from benchmark.procedure.generic import Generic
+import benchmark.api.api_docker as docker
+import benchmark.api.api_kata as kata
+import benchmark.api.api_podman as podman
+import benchmark.api.api_lxc as lxc
+import benchmark.api.api_runc as runc
 
 
-class DatabaseWrite(Generic):
+class DatabaseRead(Generic):
 
     def __init__(self):
         super().__init__()
 
     def name(self):
-        return 'Database write'
+        return 'Database read'
 
     def response_len(self):
         return 2
 
     def docker_alpine(self):
-        container, creation = docker.create("alpine-db-xl-write", ["--rm"], [])
+        container, creation = docker.create("alpine-db-xl-read", ["--rm"], [])
         response, execution = docker.start(container)
         if 'Done' not in response:
             print('Error (docker_alpine): wrong response: ' + response)
@@ -26,7 +26,7 @@ class DatabaseWrite(Generic):
         return [creation, creation + execution]
 
     def docker_centos(self):
-        container, creation = docker.create("centos-db-xl-write", ["--rm"], [])
+        container, creation = docker.create("centos-db-xl-read", ["--rm"], [])
         response, execution = docker.start(container)
         if 'Done' not in response:
             print('Error (docker_centos): wrong response: ' + response)
@@ -34,7 +34,7 @@ class DatabaseWrite(Generic):
         return [creation, creation + execution]
 
     def podman(self):
-        container, creation = podman.create("alpine-db-xl-write", ["--rm"], [])
+        container, creation = podman.create("alpine-db-xl-read", ["--rm"], [])
         response, execution = podman.start(container)
         if 'Done' not in response:
             print('Error (podman): wrong response: ' + response)
@@ -42,9 +42,9 @@ class DatabaseWrite(Generic):
         return [creation, creation + execution]
 
     def lxc(self):
-        container, creation = lxc.init("alpine-db-xl-write", ["-e"])
+        container, creation = lxc.init("alpine-db-xl-read", ["-e"])
         start = lxc.start(container)
-        response, execution_time = lxc.exec(container, ["./sqlite.sh", "tpcc.db", "write.sqlite"])
+        response, execution_time = lxc.exec(container, ["./sqlite.sh", "tpcc.db", "read.sqlite"])
         if 'Done' not in response:
             print("Error (lxc): wrong response: " + response)
             return -1
@@ -52,7 +52,7 @@ class DatabaseWrite(Generic):
         return [creation, creation + start + execution_time]
 
     def runc(self):
-        container, creation_time = runc.create("alpine-db-xl-write")
+        container, creation_time = runc.create("alpine-db-xl-read")
         response, execution_time = runc.run(container, ["-o"])
         if 'Done' not in response:
             print("Error (runc): wrong response: " + response)
@@ -64,7 +64,7 @@ class DatabaseWrite(Generic):
         return 0
 
     def kata(self):
-        container, creation = kata.create("alpine-db-xl-write", ["--rm"], [])
+        container, creation = kata.create("alpine-db-xl-read", ["--rm"], [])
         response, execution = kata.start(container)
         if 'Done' not in response:
             print('Error (kata): wrong response: ' + response)

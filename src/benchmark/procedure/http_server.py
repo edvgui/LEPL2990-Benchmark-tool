@@ -1,15 +1,15 @@
 import os
 import subprocess
-
-from src.procedure.generic import Generic
-import src.api.api_docker as docker
-import src.api.api_kata as kata
-import src.api.api_podman as podman
-import src.api.api_lxc as lxc
-import src.api.api_runc as runc
 import pycurl
 import time
 from io import BytesIO
+
+from benchmark.procedure.generic import Generic
+import benchmark.api.api_docker as docker
+import benchmark.api.api_kata as kata
+import benchmark.api.api_podman as podman
+import benchmark.api.api_lxc as lxc
+import benchmark.api.api_runc as runc
 
 
 def server_get(url, timeout=10):

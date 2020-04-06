@@ -24,6 +24,10 @@ class Generic(ABC):
         pass
 
     @abstractmethod
+    def response_legend(self):
+        pass
+
+    @abstractmethod
     def docker_alpine(self):
         pass
 

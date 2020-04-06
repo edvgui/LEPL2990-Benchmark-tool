@@ -14,6 +14,9 @@ class Example(Generic):
     def response_len(self):
         return 3
 
+    def response_legend(self):
+        return ["1", "2", "3"]
+
     def docker_alpine(self):
         results = []
         acc = 0

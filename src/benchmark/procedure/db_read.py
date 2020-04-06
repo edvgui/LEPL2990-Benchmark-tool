@@ -21,6 +21,9 @@ class DatabaseRead(Generic):
     def response_len(self):
         return 2
 
+    def response_legend(self):
+        return ["Create", "Start + Exec"]
+
     def docker_alpine(self):
         container, creation = docker.create("alpine-db-" + self.size + "-read", ["--rm"], [])
         response, execution = docker.start(container)

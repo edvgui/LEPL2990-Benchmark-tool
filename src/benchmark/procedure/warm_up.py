@@ -17,6 +17,9 @@ class WarmUp(Generic):
     def response_len(self):
         return 1
 
+    def response_legend(self):
+        return ["Run"]
+
     def docker_alpine(self):
         response, duration = docker.run("alpine-hello-world", ["--rm"], [])
         if 'Hello World' not in response:

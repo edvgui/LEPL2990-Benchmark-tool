@@ -48,6 +48,9 @@ class HttpServer(Generic):
     def response_len(self):
         return 3
 
+    def response_legend(self):
+        return ["Create", "Start + Exec", "1st response"]
+
     def docker_alpine(self):
         address = "127.0.0.1:3000"
         container, creation = docker.create("alpine-http-server", ["--rm", "-p", address + ":80"], [])

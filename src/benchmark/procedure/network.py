@@ -18,6 +18,9 @@ class Network(Generic):
     def response_len(self):
         return 1
 
+    def response_legend(self):
+        return ["Ping"]
+
     def docker_alpine(self):
         try:
             response, _ = docker.run("alpine-network", ["--rm"], [])

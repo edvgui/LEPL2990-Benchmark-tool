@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ping -c$1 1.1.1.1 > output
+ping -c1 1.1.1.1 > output
 if [ $(echo $?) -ne 0 ]; then
     cat output 1>&2
     return 1

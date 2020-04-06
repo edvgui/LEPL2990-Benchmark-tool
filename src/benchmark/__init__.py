@@ -35,45 +35,55 @@ def execute(function, response_len, repetition=5, parallelize=False):
     return results
 
 
-def measure(solution, procedures):
-    """
-
-    :param solution: string
-    :param procedures: [ Generic() ]
-    :return: { string: [ [ int ] ] }
-    """
-    execute(WarmUp().functions[solution], WarmUp().response_len())
-    results = {}
+def measure(solution, procedures, warm_up=True):
+    if warm_up:
+        execute(WarmUp().functions[solution], WarmUp().response_len())
+    measurements = {}
     for procedure in procedures:
         print("\t - " + procedure.name())
-        results[procedure.name()] = execute(procedure.functions[solution], procedure.response_len(), 10, False)
+        measurements[procedure.name()] = {
+            "name": procedure.name(),
+            "legend": procedure.response_legend(),
+            "data": execute(procedure.functions[solution], procedure.response_len(), 10, False)
+        }
 
-    return results
+    return measurements
 
 
 if __name__ == "__main__":
     folder = '../../measurements'
 
-    full = [HelloWorld(), DatabaseRead(), DatabaseWrite(), Network(), HttpServer()]
+    full = [HelloWorld(), Network(), HttpServer()]
+    db_read = [DatabaseRead(x) for x in ['xs', 'sm', 'md', 'lg', 'xl']]
+    db_write = [DatabaseWrite(x) for x in ['xs', 'sm', 'md', 'lg', 'xl']]
+    db = []
+    db.extend(db_read)
+    db.extend(db_write)
+    full.extend(db)
 
     todo = {
-        "Docker Alpine": {
+        "docker-alpine": {
+            "name": "Docker Alpine",
             "solution": "docker_alpine",
             "procedures": full
         },
-        "Docker Centos": {
+        "docker-centos": {
+            "name": "Docker Centos",
             "solution": "docker_centos",
             "procedures": full
         },
-        "Podman Alpine": {
+        "podman-alpine": {
+            "name": "Podman Alpine",
             "solution": "podman",
             "procedures": full
         },
-        "LXC": {
+        "lxc-alpine": {
+            "name": "LXC Alpine",
             "solution": "lxc",
             "procedures": full
         },
-        "runc": {
+        "runc-alpine": {
+            "name": "runc Alpine",
             "solution": "runc",
             "procedures": full
         },
@@ -82,15 +92,18 @@ if __name__ == "__main__":
     for tag in todo:
         print("INFO: measuring " + tag)
         task = todo[tag]
-        measurement = measure(task["solution"], task["procedures"])
+        solution = {
+            "name": task["name"],
+            "measurements": measure(task["solution"], task["procedures"])
+        }
         try:
             with open(os.path.join(folder, tag + '.json'), 'r') as f:
                 prev = json.load(f)
-                for r in measurement:
-                    prev[r] = measurement[r]
+                for r in solution["measurements"]:
+                    prev["measurements"][r] = solution["measurements"][r]
                 f.close()
         except FileNotFoundError:
-            prev = measurement
+            prev = solution
         with open(os.path.join(folder, tag + '.json'), 'w+') as f:
             json.dump(prev, f)
             f.close()

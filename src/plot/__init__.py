@@ -2,15 +2,15 @@ import matplotlib.pyplot as plt
 import os
 import json
 
-from plot.results_operations import results_means, plot_group
+from plot.results_operations import benchmark_means, group_benchmarks, io_means, group_ios
 
 
-def plot_phases(measurement):
+def plot_benchmark(measurement):
     colors = ['#4D525A', '#8F9CB3', '#3E7DCC', '#92CAD1', '#79CCB3', '#D6D727', '#E9724D']
     solutions = sorted(measurement["solutions"], key=lambda i: i["name"], reverse=True)
-    solutions_m = results_means(solutions)
+    solutions_m = benchmark_means(solutions)
 
-    plt.figure(figsize=(10, 4))
+    plt.figure(figsize=(10, len(solutions) / 2))
     left, tick_label, height, color = [], [], [], []
     count = 0
     for solution_m in solutions_m:
@@ -26,9 +26,10 @@ def plot_phases(measurement):
 
         color.extend(colors[:len(means)])
 
+    color.reverse()
+
     # Legend
     labels = measurement["legend"]
-    labels.reverse()
     handles = [plt.Rectangle((0, 0), 1, 1, color=colors[i]) for i in range(0, len(labels))]
     plt.legend(handles, labels)
 
@@ -37,11 +38,24 @@ def plot_phases(measurement):
     plt.boxplot([solution["data"][-1] for solution in solutions], manage_ticks=False, showfliers=False, vert=False)
     plt.xlabel('Time (s)')
     plt.title(measurement["name"])
-    plt.savefig(os.path.join(plots_folder, measurement["name"] + ".png"))
+    plt.savefig(os.path.join(plots_folder, "Benchmark - " + measurement["name"] + ".png"))
 
 
-def plot_progression():
-    pass
+def plot_io(plots, phase, name):
+    plots_m = io_means(plots, phase)
+
+    plt.figure(figsize=(10, 4))
+    for plot_m in plots_m:
+        plt.plot(plot_m["x"], plot_m["y"], label=plot_m["name"], marker='.')
+
+    plt.grid(linestyle=':')
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.ylabel('Time (s)')
+    plt.xlabel('Database file size (MB)')
+    plt.title('I/O Tests  - ' + name)
+    plt.legend()
+    plt.savefig(os.path.join(plots_folder, "IO Tests - " + name + ".png"))
 
 
 if __name__ == "__main__":
@@ -50,7 +64,7 @@ if __name__ == "__main__":
 
     solutions = {}
 
-    files = list(filter(lambda x: os.path.isfile(os.path.join(measurements_folder, x)), os.listdir(measurements_folder)))
+    files = [f for f in os.listdir(measurements_folder) if os.path.isfile(os.path.join(measurements_folder, f))]
     for file in files:
         with open(os.path.join(measurements_folder, file), 'r') as f:
             tags = file.split('.json')
@@ -58,16 +72,34 @@ if __name__ == "__main__":
                 solutions[tags[0]] = json.load(f)
             f.close()
 
-    plot_groups = plot_group(solutions)
+    def plot_benchmarks(plots):
+        for p in plots:
+            plot_benchmark(plots[p])
 
-    def plot_if_tag(tag):
-        if tag in plot_groups:
-            plot_phases(plot_groups[tag])
+    # Benchmarks
+    benchmark_s = ["docker-alpine", "docker-centos", "podman-alpine", "lxc-alpine", "runc-alpine"]
+    benchmark_solutions = {key: value for (key, value) in solutions.items() if key in benchmark_s}
+    plot_benchmarks(group_benchmarks(benchmark_solutions, ["Hello World", "Http server", "Database read xl",
+                                                           "Database write xl", "Network"]))
 
-    plot_if_tag("Hello World")
-    plot_if_tag("Http server")
-    plot_if_tag("Network")
-    plot_if_tag("Database read xl")
-    plot_if_tag("Database write xl")
+    # I/O tests
+    io_s = ["docker-alpine", "docker-centos", "podman-alpine", "lxc-alpine", "runc-alpine"]
+    io_solutions = {key: value for (key, value) in solutions.items() if key in io_s}
+
+    # Read tests total
+    plot_io(group_ios(io_solutions, ["Database read xs", "Database read sm", "Database read md", "Database read lg",
+                                     "Database read xl"]), -1, 'Read execution')
+
+    # Write tests total
+    plot_io(group_ios(io_solutions, ["Database write xs", "Database write sm", "Database write md", "Database write lg",
+                                     "Database write xl"]), -1, 'Write execution')
+
+    # Read tests creation
+    plot_io(group_ios(io_solutions, ["Database read xs", "Database read sm", "Database read md", "Database read lg",
+                                     "Database read xl"]), 0, 'Read creation')
+
+    # Write tests creation
+    plot_io(group_ios(io_solutions, ["Database write xs", "Database write sm", "Database write md", "Database write lg",
+                                     "Database write xl"]), 0, 'Write creation')
 
     plt.show()

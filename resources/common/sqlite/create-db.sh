@@ -10,12 +10,6 @@ if [ $(echo $?) -ne 0 ]; then
   DEP=$((DEP + 1))
 fi
 
-sqlite3 -version > /dev/null
-if [ $(echo $?) -ne 0 ]; then
-  >&2 echo "ERROR: sqlite3 is missing"
-  DEP=$((DEP + 1))
-fi
-
 wget --version > /dev/null
 if [ $(echo $?) -ne 0 ]; then
   >&2 echo "ERROR: wget is missing"
@@ -52,11 +46,11 @@ rm -f ${DIR}/tpcc-xl.db \
     ${DIR}/tpcc-xs.db
     
 ${DIR}/mysql2sqlite-master/mysql2sqlite ${DIR}/tpcc.sql > ${TMP_FILE}
-cat ${TMP_FILE} | sqlite3 ${DIR}/tpcc-xl.db
-cat ${TMP_FILE} | grep -v -E "INSERT INTO \`C_Customer\`" | grep -v -E "INSERT INTO \`C_District\`" | grep -v -E "INSERT INTO \`C_History\`" | grep -v -E "INSERT INTO \`C_New_Order\`" | grep -v -E "INSERT INTO \`C_Order_Line\`" | grep -v -E "INSERT INTO \`C_Stock\`" | grep -v -E "INSERT INTO \`C_Warehouse\`" | sqlite3 ${DIR}/tpcc-lg.db
-cat ${TMP_FILE} | grep -v -E "INSERT INTO \`C_Customer\`" | grep -v -E "INSERT INTO \`C_District\`" | grep -v -E "INSERT INTO \`C_History\`" | grep -v -E "INSERT INTO \`C_Item\`" | grep -v -E "INSERT INTO \`C_New_Order\`" | grep -v -E "INSERT INTO \`C_Order_Line\`" | grep -v -E "INSERT INTO \`C_Stock\`" | grep -v -E "INSERT INTO \`C_Warehouse\`" | sqlite3 ${DIR}/tpcc-md.db
-cat ${TMP_FILE} | grep -v -E "INSERT INTO \`C_Customer\`" | grep -v -E "INSERT INTO \`C_District\`" | grep -v -E "INSERT INTO \`C_History\`" | grep -v -E "INSERT INTO \`C_Item\`" | grep -v -E "INSERT INTO \`C_Order\`" | grep -v -E "INSERT INTO \`C_Order_Line\`" | grep -v -E "INSERT INTO \`C_Stock\`" | grep -v -E "INSERT INTO \`C_Warehouse\`" | sqlite3 ${DIR}/tpcc-sm.db
-cat ${TMP_FILE} | grep -v -E "INSERT INTO \`C_Customer\`" | grep -v -E "INSERT INTO \`C_District\`" | grep -v -E "INSERT INTO \`C_History\`" | grep -v -E "INSERT INTO \`C_Item\`" | grep -v -E "INSERT INTO \`C_New_Order\`" | grep -v -E "INSERT INTO \`C_Order\`" | grep -v -E "INSERT INTO \`C_Order_Line\`" | grep -v -E "INSERT INTO \`C_Stock\`" | sqlite3 ${DIR}/tpcc-xs.db
+cat ${TMP_FILE} | ${DIR}/sqlite3 ${DIR}/tpcc-xl.db
+cat ${TMP_FILE} | grep -v -E "INSERT INTO \`C_Customer\`" | grep -v -E "INSERT INTO \`C_District\`" | grep -v -E "INSERT INTO \`C_History\`" | grep -v -E "INSERT INTO \`C_New_Order\`" | grep -v -E "INSERT INTO \`C_Order_Line\`" | grep -v -E "INSERT INTO \`C_Stock\`" | grep -v -E "INSERT INTO \`C_Warehouse\`" | ${DIR}/sqlite3 ${DIR}/tpcc-lg.db
+cat ${TMP_FILE} | grep -v -E "INSERT INTO \`C_Customer\`" | grep -v -E "INSERT INTO \`C_District\`" | grep -v -E "INSERT INTO \`C_History\`" | grep -v -E "INSERT INTO \`C_Item\`" | grep -v -E "INSERT INTO \`C_New_Order\`" | grep -v -E "INSERT INTO \`C_Order_Line\`" | grep -v -E "INSERT INTO \`C_Stock\`" | grep -v -E "INSERT INTO \`C_Warehouse\`" | ${DIR}/sqlite3 ${DIR}/tpcc-md.db
+cat ${TMP_FILE} | grep -v -E "INSERT INTO \`C_Customer\`" | grep -v -E "INSERT INTO \`C_District\`" | grep -v -E "INSERT INTO \`C_History\`" | grep -v -E "INSERT INTO \`C_Item\`" | grep -v -E "INSERT INTO \`C_Order\`" | grep -v -E "INSERT INTO \`C_Order_Line\`" | grep -v -E "INSERT INTO \`C_Stock\`" | grep -v -E "INSERT INTO \`C_Warehouse\`" | ${DIR}/sqlite3 ${DIR}/tpcc-sm.db
+cat ${TMP_FILE} | grep -v -E "INSERT INTO \`C_Customer\`" | grep -v -E "INSERT INTO \`C_District\`" | grep -v -E "INSERT INTO \`C_History\`" | grep -v -E "INSERT INTO \`C_Item\`" | grep -v -E "INSERT INTO \`C_New_Order\`" | grep -v -E "INSERT INTO \`C_Order\`" | grep -v -E "INSERT INTO \`C_Order_Line\`" | grep -v -E "INSERT INTO \`C_Stock\`" | ${DIR}/sqlite3 ${DIR}/tpcc-xs.db
 
 
 # Removing dump and utils

@@ -33,6 +33,14 @@ solutions = {
         "name": "runc Alpine",
         "solution": "runc",
     },
+    "kata-alpine": {
+        "name": "Kata Alpine",
+        "solution": "kata"
+    },
+    "firecracker-alpine": {
+        "name": "Firecracker Alpine",
+        "solution": "firecracker"
+    }
 }
 
 

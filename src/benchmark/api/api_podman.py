@@ -1,7 +1,7 @@
 import subprocess
 import time
 
-from benchmark.exceptions.api_exception import ApiException
+from exceptions.api_exception import ApiException
 
 
 class PodmanApiException(ApiException):

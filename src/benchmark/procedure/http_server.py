@@ -4,12 +4,12 @@ import pycurl
 import time
 from io import BytesIO
 
-from benchmark.procedure.generic import Generic
-import benchmark.api.api_docker as docker
-import benchmark.api.api_kata as kata
-import benchmark.api.api_podman as podman
-import benchmark.api.api_lxc as lxc
-import benchmark.api.api_runc as runc
+from procedure.generic import Generic
+import api.api_docker as docker
+import api.api_kata as kata
+import api.api_podman as podman
+import api.api_lxc as lxc
+import api.api_runc as runc
 
 
 def server_get(url, timeout=10):

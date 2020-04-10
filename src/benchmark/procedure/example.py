@@ -1,6 +1,6 @@
 from random import random
 
-from benchmark.procedure.generic import Generic
+from procedure.generic import Generic
 
 
 class Example(Generic):

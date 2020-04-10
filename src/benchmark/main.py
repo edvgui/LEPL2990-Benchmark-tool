@@ -112,7 +112,7 @@ def usage():
 
 
 def main(argv):
-    output = "/".join(argv[0].split("/")[0:-1]) + '/../../measurements'
+    output = os.path.join("/".join(argv[0].split("/")[0:-1]), '../../measurements')
     warm_up = True
     hello_world = True
     http_server = True

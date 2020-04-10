@@ -1,5 +1,6 @@
 from procedure.generic import Generic
 import api.api_docker as docker
+import api.api_firecracker as firecracker
 import api.api_kata as kata
 import api.api_podman as podman
 import api.api_lxc as lxc
@@ -59,10 +60,16 @@ class HelloWorld(Generic):
         return [creation_time, creation_time + execution_time]
 
     def firecracker(self):
-        return [0]
+        container, creation = firecracker.create("alpine-hello-world", ["--rm"])
+        start = firecracker.start(container)
+        response, execution = firecracker.exec(container, ["/bin/echo", "Hello World"])
+        if 'Hello World' not in response:
+            print("Error (firecracker): wrong response: " + response)
+        firecracker.stop(container)
+        return [creation, creation + start + execution]
 
     def kata(self):
-        container, creation = kata.create("alpine-hello-world", ["--rm"], [])
+        container, creation = kata.create("alpine-hello-world", ["--rm"])
         response, execution = kata.start(container)
         if 'Hello World' not in response:
             print('Error (kata): wrong response: ' + response)

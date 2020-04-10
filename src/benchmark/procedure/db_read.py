@@ -1,5 +1,6 @@
 from procedure.generic import Generic
 import api.api_docker as docker
+import api.api_firecracker as firecracker
 import api.api_kata as kata
 import api.api_podman as podman
 import api.api_lxc as lxc
@@ -68,10 +69,16 @@ class DatabaseRead(Generic):
         return [creation_time, creation_time + execution_time]
 
     def firecracker(self):
-        return 0
+        container, creation = firecracker.create("alpine-db-" + self.size + "-read", ["--rm"])
+        start = firecracker.start(container)
+        response, execution = firecracker.exec(container, ["/run/run.sh", "/run/tpcc.db", "/run/read.sqlite"])
+        if 'Done' not in response:
+            print("Error (firecracker): wrong response: " + response)
+        firecracker.stop(container)
+        return [creation, creation + start + execution]
 
     def kata(self):
-        container, creation = kata.create("alpine-db-" + self.size + "-read", ["--rm"], [])
+        container, creation = kata.create("alpine-db-" + self.size + "-read", ["--rm"])
         response, execution = kata.start(container)
         if 'Done' not in response:
             print('Error (kata): wrong response: ' + response)

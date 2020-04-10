@@ -1,5 +1,6 @@
 from procedure.generic import Generic
 import api.api_docker as docker
+import api.api_firecracker as firecracker
 import api.api_kata as kata
 import api.api_podman as podman
 import api.api_lxc as lxc
@@ -96,11 +97,22 @@ class Network(Generic):
             runc.clean(container)
 
     def firecracker(self):
-        return 0
+        container, _ = firecracker.launch("alpine-network", ["--rm"])
+        try:
+            response, _ = firecracker.exec(container, ["/run/run.sh"])
+        except firecracker.FirecrackerApiException as e:
+            print(e)
+            return -1
+        else:
+            if '=' not in response:
+                print('Error (firecracker): wrong response: ' + response)
+                return -1
+            else:
+                return [float(response.split(" ")[3].split("/")[1]) / 1000]
 
     def kata(self):
         try:
-            response, _ = kata.run("alpine-network", ["--rm"], [])
+            response, _ = kata.run("alpine-network", ["--rm"])
         except kata.KataApiException as e:
             print(e)
             return -1

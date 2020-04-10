@@ -6,6 +6,7 @@ from io import BytesIO
 
 from procedure.generic import Generic
 import api.api_docker as docker
+import api.api_firecracker as firecracker
 import api.api_kata as kata
 import api.api_podman as podman
 import api.api_lxc as lxc
@@ -114,11 +115,18 @@ class HttpServer(Generic):
                 creation_duration + execution_time + result] if result != -1 else -1
 
     def firecracker(self):
-        return [0, 0, 0]
+        address = "127.0.0.1:3005"
+        container, creation = firecracker.create("alpine-http-server", ["--rm", "-p", address + ":80"])
+        start = firecracker.start(container)
+        _, execution = firecracker.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
+        result = server_get("http://" + address)
+        firecracker.stop(container)
+        return [creation, creation + start + execution,
+                creation + start + execution + result] if result != -1 else -1
 
     def kata(self):
         address = "127.0.0.1:3006"
-        container, creation = kata.create("alpine-http-server", ["--rm", "-p", address + ":80"], [])
+        container, creation = kata.create("alpine-http-server", ["--rm", "-p", address + ":80"])
         _, start = kata.start(container, attach=False)
         result = server_get("http://" + address)
         kata.stop(container)

@@ -4,6 +4,9 @@ import time
 from exceptions.api_exception import ApiException
 
 
+RUNTIME = "kata-runtime"
+
+
 class KataApiException(ApiException):
 
     def __init__(self, message, trace):
@@ -18,7 +21,7 @@ def create(image, options, log=False):
     :param log: Whether logs should be displayed or not
     :return: The id of the created container, the command execution time
     """
-    args = ["docker", "create", "--runtime=kata-runtime"]
+    args = ["docker", "create", "--runtime", RUNTIME]
     args.extend(options)
     args.append(image)
     tic = time.time()
@@ -64,7 +67,7 @@ def run(image, options, command, log=False):
     :param log: Whether to display some logs or not
     :return: The output of the execution, the command execution time
     """
-    args = ["docker", "run", "--runtime=kata-runtime"]
+    args = ["docker", "run", "--runtime", RUNTIME]
     args.extend(options)
     args.append(image)
     args.extend(command)

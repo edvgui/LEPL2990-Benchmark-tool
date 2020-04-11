@@ -12,7 +12,7 @@ class Generic(ABC):
             'runc': self.runc,
             'docker_centos': self.docker_centos,
             'firecracker': self.firecracker,
-            'kata': self.kata
+            'qemu': self.qemu
         }
 
     @abstractmethod
@@ -52,5 +52,5 @@ class Generic(ABC):
         pass
 
     @abstractmethod
-    def kata(self):
+    def qemu(self):
         pass

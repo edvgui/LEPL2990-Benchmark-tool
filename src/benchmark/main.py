@@ -33,9 +33,9 @@ solutions = {
         "name": "runc Alpine",
         "solution": "runc",
     },
-    "kata-alpine": {
-        "name": "Kata Alpine",
-        "solution": "kata"
+    "qemu-alpine": {
+        "name": "Qemu Alpine",
+        "solution": "qemu"
     },
     "firecracker-alpine": {
         "name": "Firecracker Alpine",

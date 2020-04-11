@@ -7,7 +7,7 @@ from io import BytesIO
 from procedure.generic import Generic
 import api.api_docker as docker
 import api.api_firecracker as firecracker
-import api.api_kata as kata
+import api.api_qemu as qemu
 import api.api_podman as podman
 import api.api_lxc as lxc
 import api.api_runc as runc
@@ -124,10 +124,10 @@ class HttpServer(Generic):
         return [creation, creation + start + execution,
                 creation + start + execution + result] if result != -1 else -1
 
-    def kata(self):
+    def qemu(self):
         address = "127.0.0.1:3006"
-        container, creation = kata.create("alpine-http-server", ["--rm", "-p", address + ":80"])
-        _, start = kata.start(container, attach=False)
+        container, creation = qemu.create("alpine-http-server", ["--rm", "-p", address + ":80"])
+        _, start = qemu.start(container, attach=False)
         result = server_get("http://" + address)
-        kata.stop(container)
+        qemu.stop(container)
         return [creation, creation + start, creation + start + result] if result != -1 else -1

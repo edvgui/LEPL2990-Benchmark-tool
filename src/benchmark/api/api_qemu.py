@@ -7,10 +7,10 @@ from exceptions.api_exception import ApiException
 RUNTIME = "kata-runtime"
 
 
-class KataApiException(ApiException):
+class QemuApiException(ApiException):
 
     def __init__(self, message, trace):
-        super().__init__("Kata", message, trace)
+        super().__init__("Qemu", message, trace)
 
 
 def create(image, options, log=False):
@@ -28,7 +28,7 @@ def create(image, options, log=False):
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise KataApiException("Error while trying to create container from image " + image,
+        raise QemuApiException("Error while trying to create container from image " + image,
                                output.stderr.decode('utf-8').strip())
     if log:
         print(output)
@@ -51,7 +51,7 @@ def start(container, attach=True, log=False):
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise KataApiException("Error while trying to start container " + container,
+        raise QemuApiException("Error while trying to start container " + container,
                                output.stderr.decode('utf-8').strip())
     if log:
         print(output)
@@ -75,7 +75,7 @@ def run(image, options, command, log=False):
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise KataApiException("Error while trying to run container from image " + image,
+        raise QemuApiException("Error while trying to run container from image " + image,
                                output.stderr.decode('utf-8').strip())
     if log:
         print(output)
@@ -94,7 +94,7 @@ def stop(container, log=False):
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise KataApiException("Error while trying to stop container " + container,
+        raise QemuApiException("Error while trying to stop container " + container,
                                output.stderr.decode('utf-8').strip())
     if log:
         print(output)
@@ -113,7 +113,7 @@ def rm(container, log=False):
     output = subprocess.run(args, stdout=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise KataApiException("Error while trying to remove container " + container,
+        raise QemuApiException("Error while trying to remove container " + container,
                                output.stderr.decode('utf-8').strip())
     if log:
         print(output)

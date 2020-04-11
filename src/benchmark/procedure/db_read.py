@@ -1,7 +1,7 @@
 from procedure.generic import Generic
 import api.api_docker as docker
 import api.api_firecracker as firecracker
-import api.api_kata as kata
+import api.api_qemu as qemu
 import api.api_podman as podman
 import api.api_lxc as lxc
 import api.api_runc as runc
@@ -77,10 +77,10 @@ class DatabaseRead(Generic):
         firecracker.stop(container)
         return [creation, creation + start + execution]
 
-    def kata(self):
-        container, creation = kata.create("alpine-db-" + self.size + "-read", ["--rm"])
-        response, execution = kata.start(container)
+    def qemu(self):
+        container, creation = qemu.create("alpine-db-" + self.size + "-read", ["--rm"])
+        response, execution = qemu.start(container)
         if 'Done' not in response:
-            print('Error (kata): wrong response: ' + response)
+            print('Error (qemu): wrong response: ' + response)
             return -1
         return [creation, creation + execution]

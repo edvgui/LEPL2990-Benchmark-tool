@@ -1,7 +1,7 @@
 from procedure.generic import Generic
 import api.api_docker as docker
 import api.api_firecracker as firecracker
-import api.api_kata as kata
+import api.api_qemu as qemu
 import api.api_podman as podman
 import api.api_lxc as lxc
 import api.api_runc as runc
@@ -63,8 +63,8 @@ class WarmUp(Generic):
         firecracker.stop(container)
         return [launching_time + execution_time]
 
-    def kata(self):
-        response, duration = kata.run("alpine-hello-world", ["--rm"], [])
+    def qemu(self):
+        response, duration = qemu.run("alpine-hello-world", ["--rm"], [])
         if 'Hello World' not in response:
-            print('Error (kata): wrong response: ' + response)
+            print('Error (qemu): wrong response: ' + response)
         return [duration]

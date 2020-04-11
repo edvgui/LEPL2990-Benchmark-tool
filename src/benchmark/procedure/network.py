@@ -1,7 +1,7 @@
 from procedure.generic import Generic
 import api.api_docker as docker
 import api.api_firecracker as firecracker
-import api.api_kata as kata
+import api.api_qemu as qemu
 import api.api_podman as podman
 import api.api_lxc as lxc
 import api.api_runc as runc
@@ -112,15 +112,15 @@ class Network(Generic):
         finally:
             firecracker.stop(container)
 
-    def kata(self):
+    def qemu(self):
         try:
-            response, _ = kata.run("alpine-network", ["--rm"], [])
-        except kata.KataApiException as e:
+            response, _ = qemu.run("alpine-network", ["--rm"], [])
+        except qemu.QemuApiException as e:
             print(e)
             return -1
         else:
             if '=' not in response:
-                print('Error (kata): wrong response: ' + response)
+                print('Error (qemu): wrong response: ' + response)
                 return -1
             else:
                 return [float(response.split(" ")[3].split("/")[1]) / 1000]

@@ -16,5 +16,5 @@ sudo apt-get install -y \
   sqlite3 \
   unzip
 cd resources/common/sqlite || exit
-chmox +x create-db.sh
+chmod +x create-db.sh
 ./create-db.sh

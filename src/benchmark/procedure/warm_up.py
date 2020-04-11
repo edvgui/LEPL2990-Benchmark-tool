@@ -1,5 +1,6 @@
 from procedure.generic import Generic
 import api.api_docker as docker
+import api.api_firecracker as firecracker
 import api.api_kata as kata
 import api.api_podman as podman
 import api.api_lxc as lxc
@@ -55,7 +56,12 @@ class WarmUp(Generic):
         return [creation_time + execution_time]
 
     def firecracker(self):
-        return [0]
+        container, launching_time = firecracker.launch("alpine-hello-world", ["--rm"])
+        response, execution_time = firecracker.exec(container, ["/bin/echo", "Hello World"])
+        if 'Hello World' not in response:
+            print("Error (firecracker): wrong response: " + response)
+        firecracker.stop(container)
+        return [launching_time + execution_time]
 
     def kata(self):
         response, duration = kata.run("alpine-hello-world", ["--rm"], [])

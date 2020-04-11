@@ -18,7 +18,7 @@ def create(image, options, log=False):
     :param log: Whether logs should be displayed or not
     :return: The id of the created container, the command execution time
     """
-    args = ["docker", "create", "--runtime=kata-fc"]
+    args = ["docker", "create", "-ti", "--runtime=kata-fc"]
     args.extend(options)
     args.append(image)
     args.append("sh")
@@ -85,7 +85,7 @@ def launch(image, options, log=False):
     :param log: Whether to display some logs or not
     :return: The output of the execution, the command execution time
     """
-    args = ["docker", "run", "--runtime=kata-fc"]
+    args = ["docker", "run", "-tid", "--runtime=kata-fc"]
     args.extend(options)
     args.append(image)
     args.extend("sh")

@@ -112,7 +112,7 @@ class Network(Generic):
 
     def kata(self):
         try:
-            response, _ = kata.run("alpine-network", ["--rm"])
+            response, _ = kata.run("alpine-network", ["--rm"], [])
         except kata.KataApiException as e:
             print(e)
             return -1

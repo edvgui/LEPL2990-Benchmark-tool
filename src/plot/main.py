@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import os
 import json
 
-from plot.results_operations import benchmark_means, group_benchmarks, io_means, group_ios
+from results_operations import benchmark_means, group_benchmarks, io_means, group_ios
 
 
 def plot_benchmark(measurement):
@@ -76,14 +76,15 @@ if __name__ == "__main__":
         for p in plots:
             plot_benchmark(plots[p])
 
-    # Benchmarks
+    # Benchmarks containers
     benchmark_s = ["docker-alpine", "docker-centos", "podman-alpine", "lxc-alpine", "runc-alpine"]
     benchmark_solutions = {key: value for (key, value) in solutions.items() if key in benchmark_s}
     plot_benchmarks(group_benchmarks(benchmark_solutions, ["Hello World", "Http server", "Database read xl",
                                                            "Database write xl", "Network"]))
 
-    # I/O tests
-    io_s = ["docker-alpine", "docker-centos", "podman-alpine", "lxc-alpine", "runc-alpine"]
+    # I/O tests containers
+    io_s = ["docker-alpine", "docker-centos", "podman-alpine", "lxc-alpine", "runc-alpine",
+            "kata-alpine-devicemapper", "firecracker-alpine-devicemapper"]
     io_solutions = {key: value for (key, value) in solutions.items() if key in io_s}
 
     # Read tests total
@@ -101,5 +102,32 @@ if __name__ == "__main__":
     # Write tests creation
     plot_io(group_ios(io_solutions, ["Database write xs", "Database write sm", "Database write md", "Database write lg",
                                      "Database write xl"]), 0, 'Write creation')
+
+    # Benchmarks vms
+    benchmark_s = ["kata-alpine-devicemapper", "firecracker-alpine-devicemapper"]
+    benchmark_solutions = {key: value for (key, value) in solutions.items() if key in benchmark_s}
+    plot_benchmarks(group_benchmarks(benchmark_solutions, ["Hello World", "Http server", "Database read xl",
+                                                           "Database write xl", "Network"]))
+
+    # I/O tests containers
+    io_s = ["kata-alpine-devicemapper", "firecracker-alpine-devicemapper"]
+    io_solutions = {key: value for (key, value) in solutions.items() if key in io_s}
+
+    # Read tests total
+    plot_io(group_ios(io_solutions, ["Database read xs", "Database read sm", "Database read md", "Database read lg",
+                                     "Database read xl"]), -1, 'Read execution')
+
+    # Write tests total
+    plot_io(group_ios(io_solutions, ["Database write xs", "Database write sm", "Database write md", "Database write lg",
+                                     "Database write xl"]), -1, 'Write execution')
+
+    # Read tests creation
+    plot_io(group_ios(io_solutions, ["Database read xs", "Database read sm", "Database read md", "Database read lg",
+                                     "Database read xl"]), 0, 'Read creation')
+
+    # Write tests creation
+    plot_io(group_ios(io_solutions, ["Database write xs", "Database write sm", "Database write md", "Database write lg",
+                                     "Database write xl"]), 0, 'Write creation')
+
 
     plt.show()

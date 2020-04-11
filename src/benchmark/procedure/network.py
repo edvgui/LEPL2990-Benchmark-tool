@@ -109,6 +109,8 @@ class Network(Generic):
                 return -1
             else:
                 return [float(response.split(" ")[3].split("/")[1]) / 1000]
+        finally:
+            firecracker.stop(container)
 
     def kata(self):
         try:

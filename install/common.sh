@@ -7,11 +7,7 @@ sudo apt-get install -y \
   libcurl4-openssl-dev \
   libssl-dev
 
-cd /opt || exit
-sudo git clone https://github.com/geverartsdev/LEPL2990-Benchmark-tool.git
-sudo chmod -R 777 LEPL2990-Benchmark-tool
-
-cd LEPL2990-Benchmark-tool || exit
+cd /opt/LEPL2990-Benchmark-tool || exit
 sudo python3 setup.py install
 
 # Generate databases

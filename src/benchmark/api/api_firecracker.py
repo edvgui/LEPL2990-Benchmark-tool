@@ -88,7 +88,7 @@ def launch(image, options, log=False):
     args = ["docker", "run", "-tid", "--runtime=kata-fc"]
     args.extend(options)
     args.append(image)
-    args.extend("sh")
+    args.append("sh")
     tic = time.time()
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()

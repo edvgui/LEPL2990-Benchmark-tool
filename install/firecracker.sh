@@ -12,7 +12,7 @@ curl -sL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 arch=$(dpkg --print-architecture)
 sudo -E add-apt-repository "deb [arch=${arch}] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 sudo -E apt-get update
-sudo -E apt-get -y install docker-ce
+sudo -E apt-get -y install docker-ce=18.06.3~ce~3-0~ubuntu
 
 cd /tmp || exit
 wget https://github.com/kata-containers/runtime/releases/download/1.5.0/kata-static-1.5.0-x86_64.tar.xz

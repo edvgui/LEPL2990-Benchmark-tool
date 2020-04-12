@@ -2,7 +2,9 @@
 
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
 LOG_FILE="${DIR}/build.log"
-POOL="${HOME}/.local/share/runc/pool"
+
+cd $DIR || exit
+source runc.config
 
 CONTAINER=$1
 

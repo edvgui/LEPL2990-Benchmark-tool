@@ -1,9 +1,20 @@
+def good_mean(values):
+    v = sorted(values)[:-min(3, len(values))]
+    return sum(v) / max(len(v), 1)
+
+
+def good_median(values):
+    v = sorted(values)
+    return v[int(len(v) / 2)] if len(v) % 2 == 1 else (v[int(len(v) / 2)] + v[int(len(v) / 2) + 1]) / 2
+
+
 def benchmark_means(solutions):
     means = []
+
     for solution in solutions:
         means.append({
             "name": solution["name"],
-            "means": [sum(l)/max(len(l), 1) for l in solution["data"]]
+            "means": [good_median(l) for l in solution["data"]]
         })
 
     return means
@@ -49,7 +60,7 @@ def io_means(plots, phase=-1):
         means.append({
             "name": plot["name"],
             "x": plot["x"],
-            "y": [sum(l[phase]) / max(len(l[phase]), 1) for l in plot["y"]]
+            "y": [good_median(l[phase]) for l in plot["y"]]
         })
 
     return means

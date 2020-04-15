@@ -80,6 +80,14 @@ def plot_ios(io_s, tag):
 
     # Read tests creation
     plot_io(group_ios(io_solutions, ["Database read xs", "Database read sm", "Database read md", "Database read lg",
+                                     "Database read xl"]), 1, 'Read start up', tag)
+
+    # Write tests creation
+    plot_io(group_ios(io_solutions, ["Database write xs", "Database write sm", "Database write md",
+                                     "Database write lg", "Database write xl"]), 1, 'Write start up', tag)
+
+    # Read tests creation
+    plot_io(group_ios(io_solutions, ["Database read xs", "Database read sm", "Database read md", "Database read lg",
                                      "Database read xl"]), 0, 'Read creation', tag)
 
     # Write tests creation
@@ -102,13 +110,22 @@ if __name__ == "__main__":
             f.close()
 
     # # #
+    # Test
+    tag = 'Test'
+    s = ["docker-alpine", "docker-centos", "podman-alpine", "lxc-alpine"]
+    t = ["Hello World", "Http server", "Database read xl", "Database write xl"]
+    benchmark_solutions = {key: value for (key, value) in solutions.items() if key in s}
+    plot_benchmarks(group_benchmarks(benchmark_solutions, t), tag)
+    plot_ios(s, tag)
+
+    # # #
     # Docker alpine
     tag = 'Docker alpine'
     s = ["docker-alpine-overlay2", "docker-alpine-aufs", "docker-alpine-vfs", "docker-alpine-devicemapper",
          "docker-alpine-btrfs", "docker-alpine-zfs"]
     t = ["Hello World", "Http server", "Database read xl", "Database write xl"]
     benchmark_solutions = {key: value for (key, value) in solutions.items() if key in s}
-    plot_benchmarks(group_benchmarks(benchmark_solutions, t), tag)
+    #plot_benchmarks(group_benchmarks(benchmark_solutions, t), tag)
     #plot_ios(s, tag)
 
     # # #

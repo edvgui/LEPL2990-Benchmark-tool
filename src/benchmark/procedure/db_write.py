@@ -20,34 +20,37 @@ class DatabaseWrite(Generic):
         return 'Database write ' + self.size
 
     def response_len(self):
-        return 2
+        return 3
 
     def response_legend(self):
-        return ["Create", "Start + Exec"]
+        return ["Create", "Start", "Exec"]
 
     def docker_alpine(self):
-        container, creation = docker.create("alpine-db-" + self.size + "-write", ["--rm"], [])
-        response, execution = docker.start(container)
+        container, creation = docker.create("alpine-db-" + self.size + "-write", ["--rm"])
+        _, start = docker.start(container)
+        response, execution = docker.exec(container, ["/run/run.sh", "/home/tpcc.db", "/run/write.sqlite"])
         if 'Done' not in response:
-            print('Error (docker_alpine): wrong response: ' + response)
-            return -1
-        return [creation, creation + execution]
+            print("Error (docker_alpine): wrong response: " + response)
+        docker.kill(container)
+        return [creation, creation + start, creation + start + execution]
 
     def docker_centos(self):
-        container, creation = docker.create("centos-db-" + self.size + "-write", ["--rm"], [])
-        response, execution = docker.start(container)
+        container, creation = docker.create("centos-db-" + self.size + "-write", ["--rm"])
+        _, start = docker.start(container)
+        response, execution = docker.exec(container, ["/run/run.sh", "/home/tpcc.db", "/run/write.sqlite"])
         if 'Done' not in response:
-            print('Error (docker_centos): wrong response: ' + response)
-            return -1
-        return [creation, creation + execution]
+            print("Error (docker_centos): wrong response: " + response)
+        docker.kill(container)
+        return [creation, creation + start, creation + start + execution]
 
     def podman(self):
-        container, creation = podman.create("alpine-db-" + self.size + "-write", ["--rm"], [])
-        response, execution = podman.start(container)
+        container, creation = podman.create("alpine-db-" + self.size + "-write", ["--rm"])
+        _, start = podman.start(container)
+        response, execution = podman.exec(container, ["/run/run.sh", "/home/tpcc.db", "/run/write.sqlite"])
         if 'Done' not in response:
-            print('Error (podman): wrong response: ' + response)
-            return -1
-        return [creation, creation + execution]
+            print("Error (podman): wrong response: " + response)
+        podman.kill(container)
+        return [creation, creation + start, creation + start + execution]
 
     def lxc(self):
         container, creation = lxc.init("alpine-db-" + self.size + "-write", ["-e"])
@@ -57,7 +60,7 @@ class DatabaseWrite(Generic):
             print("Error (lxc): wrong response: " + response)
             return -1
         lxc.stop(container)
-        return [creation, creation + start + execution_time]
+        return [creation, creation + start, creation + start + execution_time]
 
     def runc(self):
         container, creation_time = runc.create("alpine-db-" + self.size + "-write")
@@ -66,7 +69,7 @@ class DatabaseWrite(Generic):
             print("Error (runc): wrong response: " + response)
             return -1
         runc.clean(container)
-        return [creation_time, creation_time + execution_time]
+        return [creation_time, creation_time + execution_time, creation_time + execution_time]
 
     def firecracker(self):
         container, creation = firecracker.create("alpine-db-" + self.size + "-write", ["--rm"])
@@ -74,13 +77,14 @@ class DatabaseWrite(Generic):
         response, execution = firecracker.exec(container, ["/run/run.sh", "/home/tpcc.db", "/run/write.sqlite"])
         if 'Done' not in response:
             print("Error (firecracker): wrong response: " + response)
-        firecracker.stop(container)
-        return [creation, creation + start + execution]
+        firecracker.kill(container)
+        return [creation, creation + start, creation + start + execution]
 
     def qemu(self):
         container, creation = qemu.create("alpine-db-" + self.size + "-write", ["--rm"])
-        response, execution = qemu.start(container)
+        _, start = qemu.start(container)
+        response, execution = qemu.exec(container, ["/run/run.sh", "/home/tpcc.db", "/run/write.sqlite"])
         if 'Done' not in response:
-            print('Error (qemu): wrong response: ' + response)
-            return -1
-        return [creation, creation + execution]
+            print("Error (qemu): wrong response: " + response)
+        qemu.kill(container)
+        return [creation, creation + start, creation + start + execution]

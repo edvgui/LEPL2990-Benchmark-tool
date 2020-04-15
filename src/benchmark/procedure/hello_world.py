@@ -16,31 +16,37 @@ class HelloWorld(Generic):
         return 'Hello World'
 
     def response_len(self):
-        return 2
+        return 3
 
     def response_legend(self):
-        return ["Create", "Start + Exec"]
+        return ["Create", "Start", "Exec"]
 
     def docker_alpine(self):
         container, creation = docker.create("alpine-hello-world", ["--rm"], [])
-        response, execution = docker.start(container)
+        _, start = docker.start(container)
+        response, execution = docker.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:
             print('Error (docker_alpine): wrong response: ' + response)
-        return [creation, creation + execution]
+        docker.kill(container)
+        return [creation, creation + start, creation + start + execution]
 
     def docker_centos(self):
         container, creation = docker.create("centos-hello-world", ["--rm"], [])
-        response, execution = docker.start(container)
+        _, start = docker.start(container)
+        response, execution = docker.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:
             print('Error (docker_centos): wrong response: ' + response)
-        return [creation, creation + execution]
+        docker.kill(container)
+        return [creation, creation + start, creation + start + execution]
 
     def podman(self):
         container, creation = podman.create("alpine-hello-world", ["--rm"], [])
-        response, execution = podman.start(container)
+        _, start = podman.start(container)
+        response, execution = podman.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:
-            print('Error (podman): wrong response: ' + response)
-        return [creation, creation + execution]
+            print('Error (podman_alpine): wrong response: ' + response)
+        podman.kill(container)
+        return [creation, creation + start, creation + start + execution]
 
     def lxc(self):
         container, creation = lxc.init("alpine-hello-world", ["-e"])
@@ -49,7 +55,7 @@ class HelloWorld(Generic):
         if 'Hello World' not in response:
             print("Error (lxc): wrong response: " + response)
         lxc.stop(container)
-        return [creation, creation + start + execution_time]
+        return [creation, creation + start, creation + start + execution_time]
 
     def runc(self):
         container, creation_time = runc.create("alpine-hello-world")
@@ -57,20 +63,22 @@ class HelloWorld(Generic):
         if 'Hello World' not in response:
             print("Error (runc): wrong response: " + response)
         runc.clean(container)
-        return [creation_time, creation_time + execution_time]
+        return [creation_time, creation_time + execution_time, creation_time + execution_time]
 
     def firecracker(self):
         container, creation = firecracker.create("alpine-hello-world", ["--rm"])
-        start = firecracker.start(container)
+        _, start = firecracker.start(container)
         response, execution = firecracker.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:
             print("Error (firecracker): wrong response: " + response)
-        firecracker.stop(container)
-        return [creation, creation + start + execution]
+        firecracker.kill(container)
+        return [creation, creation + start, creation + start + execution]
 
     def qemu(self):
-        container, creation = qemu.create("alpine-hello-world", ["--rm"])
-        response, execution = qemu.start(container)
+        container, creation = qemu.create("alpine-hello-world", ["--rm"], [])
+        _, start = qemu.start(container)
+        response, execution = qemu.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:
             print('Error (qemu): wrong response: ' + response)
-        return [creation, creation + execution]
+        qemu.kill(container)
+        return [creation, creation + start, creation + start + execution]

@@ -21,7 +21,7 @@ def create(image, options, log=False):
     :param log: Whether logs should be displayed or not
     :return: The id of the created container, the command execution time
     """
-    args = ["docker", "create", "--runtime", RUNTIME]
+    args = ["docker", "create", "-ti", "--runtime", RUNTIME]
     args.extend(options)
     args.append(image)
     tic = time.time()
@@ -35,7 +35,7 @@ def create(image, options, log=False):
     return output.stdout.decode('utf-8').strip(), toc - tic
 
 
-def start(container, attach=True, log=False):
+def start(container, attach=False, log=False):
     """
     Start a container with the command 'docker start'
     :param container: The id of the previously created container to start
@@ -52,6 +52,31 @@ def start(container, attach=True, log=False):
     toc = time.time()
     if output.returncode != 0:
         raise QemuApiException("Error while trying to start container " + container,
+                               output.stderr.decode('utf-8').strip())
+    if log:
+        print(output)
+    return output.stdout.decode('utf-8').strip(), toc - tic
+
+
+def exec(container, command, attach=True, log=False):
+    """
+    Execute a command in a running container with the command 'docker exec'
+    :param container: The id of the previously created container to start
+    :param command: The command to execute in the container
+    :param attach: Whether to attach the execution or not
+    :param log: Whether logs should be displayed or not
+    :return: The output of the execution, the command execution time
+    """
+    args = ["docker", "exec"]
+    if not attach:
+        args.append("-d")
+    args.append(container)
+    args.extend(command)
+    tic = time.time()
+    output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    toc = time.time()
+    if output.returncode != 0:
+        raise QemuApiException("Error while trying to execute command in container " + container,
                                output.stderr.decode('utf-8').strip())
     if log:
         print(output)
@@ -82,7 +107,7 @@ def run(image, options, command, log=False):
     return output.stdout.decode('utf-8').strip(), toc - tic
 
 
-def stop(container, log=False):
+def kill(container, log=False):
     """
     Stop a running container with the command 'docker stop'
     :param container: The id of the container to stop

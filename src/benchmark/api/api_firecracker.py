@@ -33,14 +33,18 @@ def create(image, options, log=False):
     return output.stdout.decode('utf-8').strip(), toc - tic
 
 
-def start(container, log=False):
+def start(container, attach=False, log=False):
     """
     Start a container with the command 'docker start'
     :param container: The id of the previously created container to start
+    :param attach: Whether to attach the execution or not
     :param log: Whether logs should be displayed or not
     :return: The output of the execution, the command execution time
     """
-    args = ["docker", "start", container]
+    args = ["docker", "start"]
+    if attach:
+        args.append("-a")
+    args.append(container)
     tic = time.time()
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
@@ -49,7 +53,7 @@ def start(container, log=False):
                                       output.stderr.decode('utf-8').strip())
     if log:
         print(output)
-    return toc - tic
+    return output.stdout.decode('utf-8').strip(), toc - tic
 
 
 def exec(container, command, attach=True, log=False):
@@ -100,7 +104,7 @@ def launch(image, options, log=False):
     return output.stdout.decode('utf-8').strip(), toc - tic
 
 
-def stop(container, log=False):
+def kill(container, log=False):
     """
     Stop a running container with the command 'docker stop'
     :param container: The id of the container to stop

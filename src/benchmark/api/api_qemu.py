@@ -24,6 +24,7 @@ def create(image, options, log=False):
     args = ["docker", "create", "-ti", "--runtime", RUNTIME]
     args.extend(options)
     args.append(image)
+    args.append("sh")
     tic = time.time()
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()

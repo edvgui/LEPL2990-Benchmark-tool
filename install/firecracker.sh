@@ -53,7 +53,7 @@ printf '
     }
   },
   "storage-driver": "devicemapper",
-  "storare-opts": [
+  "storage-opts": [
     "dm.thinpooldev=/dev/mapper/docker-thinpool",
     "dm.use_deferred_removal=true",
     "dm.use_deferred_deletion=true"

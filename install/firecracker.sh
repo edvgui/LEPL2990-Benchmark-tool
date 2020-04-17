@@ -18,6 +18,29 @@ cd /tmp || exit
 wget https://github.com/kata-containers/runtime/releases/download/1.5.0/kata-static-1.5.0-x86_64.tar.xz
 sudo tar -xvf kata-static-1.5.0-x86_64.tar.xz -C /
 
+sudo apt-get install -y thin-provisioning-tools
+
+# For azure vm with additional disk
+sudo umount /mnt
+sudo pvcreate /dev/disk/cloud/azure_resource-part1
+sudo vgcreate docker /dev/sdb1
+sudo lvcreate --wipesignatures y -n thinpool docker -l 95%VG
+sudo lvcreate --wipesignatures y -n thinpoolmeta docker -l 1%VG
+sudo lvconvert -y \
+  --zero n \
+  -c 512K \
+  --thinpool docker/thinpool \
+  --poolmetadata docker/thinpoolmeta
+
+print '
+activation {
+  thin_pool_autoextend_threshold=80
+  thin_pool_autoextend_percent=20
+}
+' | sudo tee /etc/lvm/profile/docker-thinpool.profile
+sudo lvchange --metadataprofile docker-thinpool docker/thinpool
+sudo lvchange --monitor y docker/thinpool
+
 sudo mkdir -p /etc/docker
 printf '
 {
@@ -29,8 +52,14 @@ printf '
       "path": "/opt/kata/bin/kata-qemu"
     }
   },
-  "storage-driver": "devicemapper"
+  "storage-driver": "devicemapper",
+  "storare-opts": [
+    "dm.thinpooldev=/dev/mapper/docker-thinpool",
+    "dm.use_deferred_removal=true",
+    "dm.use_deferred_deletion=true"
+  ]
 }
 ' | sudo tee /etc/docker/daemon.json
 sudo systemctl daemon-reload
 sudo systemctl restart docker
+sudo modprobe vhost_vsock

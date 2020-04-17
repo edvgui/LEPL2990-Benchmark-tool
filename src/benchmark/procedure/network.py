@@ -97,10 +97,9 @@ class Network(Generic):
             runc.clean(container)
 
     def firecracker(self):
-        container, _ = firecracker.launch("alpine-network", ["--rm"])
         try:
-            response, _ = firecracker.exec(container, ["/run/run.sh"])
-        except firecracker.FirecrackerApiException as e:
+            response, _ = firecracker.run("alpine-network", ["--rm"], [])
+        except podman.PodmanApiException as e:
             print(e)
             return -1
         else:
@@ -109,8 +108,6 @@ class Network(Generic):
                 return -1
             else:
                 return [float(response.split(" ")[3].split("/")[1]) / 1000]
-        finally:
-            firecracker.stop(container)
 
     def qemu(self):
         try:

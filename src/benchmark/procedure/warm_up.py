@@ -56,12 +56,10 @@ class WarmUp(Generic):
         return [creation_time + execution_time]
 
     def firecracker(self):
-        container, launching_time = firecracker.launch("alpine-hello-world", ["--rm"])
-        response, execution_time = firecracker.exec(container, ["/bin/echo", "Hello World"])
+        response, duration = firecracker.run("alpine-hello-world", ["--rm"], [])
         if 'Hello World' not in response:
-            print("Error (firecracker): wrong response: " + response)
-        firecracker.stop(container)
-        return [launching_time + execution_time]
+            print('Error (firecracker): wrong response: ' + response)
+        return [duration]
 
     def qemu(self):
         response, duration = qemu.run("alpine-hello-world", ["--rm"], [])

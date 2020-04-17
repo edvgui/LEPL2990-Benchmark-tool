@@ -112,8 +112,8 @@ if __name__ == "__main__":
     # # #
     # Test
     tag = 'Test'
-    s = ["docker-alpine", "docker-centos", "podman-alpine", "lxc-alpine"]
-    t = ["Hello World", "Http server", "Database read xl", "Database write xl"]
+    s = ["firecracker-alpine-devicemapper", "qemu-alpine-devicemapper"]
+    t = ["Hello World", "Http server", "Database read xl", "Database write xl", "Network"]
     benchmark_solutions = {key: value for (key, value) in solutions.items() if key in s}
     plot_benchmarks(group_benchmarks(benchmark_solutions, t), tag)
     plot_ios(s, tag)

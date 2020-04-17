@@ -81,18 +81,19 @@ def exec(container, command, attach=True, log=False):
     return output.stdout.decode('utf-8').strip(), toc - tic
 
 
-def launch(image, options, log=False):
+def run(image, options, command, log=False):
     """
     Run a command in a new container with the command 'docker run'
     :param image: The name of the image to build the container from
     :param options: The options to pass to 'docker run"
+    :param command: The command to execute in the container
     :param log: Whether to display some logs or not
     :return: The output of the execution, the command execution time
     """
-    args = ["docker", "run", "-tid", "--runtime=kata-fc"]
+    args = ["docker", "run", "--runtime=kata-fc"]
     args.extend(options)
     args.append(image)
-    args.append("sh")
+    args.extend(command)
     tic = time.time()
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()

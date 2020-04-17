@@ -73,7 +73,7 @@ class DatabaseWrite(Generic):
 
     def firecracker(self):
         container, creation = firecracker.create("alpine-db-" + self.size + "-write", ["--rm"])
-        start = firecracker.start(container)
+        _, start = firecracker.start(container)
         response, execution = firecracker.exec(container, ["/run/run.sh", "/home/tpcc.db", "/run/write.sqlite"])
         if 'Done' not in response:
             print("Error (firecracker): wrong response: " + response)

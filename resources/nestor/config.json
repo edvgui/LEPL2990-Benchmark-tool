@@ -1,0 +1,17 @@
+{
+    "storage": {
+        "images": "/home/guillaume/.local/share/nestor/storage/images",
+        "pool": "/home/guillaume/.local/share/nestor/storage/pool"
+    },
+    "container-daemon": {
+        "socket": "/run/user/1000/nestor/socket",
+        "pid": "/run/user/1000/nestor/pid"
+    },
+    "default-runtime": "runc",
+    "runtimes": {
+        "runc": {
+            "path": "/usr/bin/runc",
+            "root": "/run/user/1000/nestor/runc"
+        }
+    }
+}

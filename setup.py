@@ -40,7 +40,8 @@ setup(
     python_requires='>=3.5',
     install_requires=[
         'matplotlib',
-        'pycurl'
+        'pycurl',
+        'docker'
     ],
     entry_points={
         'console_scripts': [

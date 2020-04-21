@@ -4,9 +4,10 @@ import os
 import sys
 import socket
 import getopt
+from json import JSONDecodeError
 from multiprocessing import Queue
 
-from container import Container, ContainerRuntimeException
+from container import Container, ContainerException
 
 
 def loop(sock, container, callback):
@@ -15,13 +16,14 @@ def loop(sock, container, callback):
         conn, _ = sock.accept()
         fd = conn.fileno()
         incoming = open(fd, 'r')
-        request = json.loads(incoming.readline())
-        response = {
-            "status": "success",
-            "value": None
-        }
-
+        request_string = incoming.readline()
         try:
+            request = json.loads(request_string)
+            response = {
+                "status": "success",
+                "value": None
+            }
+
             command = request["command"]
             args = request["args"]
             if command == 'create':
@@ -74,13 +76,19 @@ def loop(sock, container, callback):
                     "cmd": container.cmd,
                     "state": str(container.state)
                 }
-        except KeyError as err:
+        except JSONDecodeError:
             response = {
                 "status": "error",
                 "error": "Bad request",
-                "message": err.args
+                "message": "Bad json input: %s" % request_string
             }
-        except ContainerRuntimeException as e:
+        except KeyError as e:
+            response = {
+                "status": "error",
+                "error": "Bad request",
+                "message": e.args
+            }
+        except ContainerException as e:
             response = {
                 "status": "error",
                 "error": "Container daemon error",
@@ -180,10 +188,10 @@ def main(argv, q):
             pid_dir = arg
 
     if not os.path.isdir(socket_dir):
-        os.mkdir(socket_dir)
+        os.makedirs(socket_dir, exist_ok=True)
 
     if not os.path.isdir(pid_dir):
-        os.mkdir(pid_dir)
+        os.makedirs(pid_dir, exist_ok=True)
 
     container = Container(socket_dir, pool)
     socket_path = os.path.join(socket_dir, container.get_id() + '.sock')
@@ -203,6 +211,4 @@ def main(argv, q):
 
 
 if __name__ == "__main__":
-    queue = Queue()
-    main(sys.argv, queue)
-    print(queue.get())
+    main(sys.argv, Queue())

@@ -111,7 +111,6 @@ def main(argv):
 
     r = open(fd, 'r')
     response_string = r.readline()
-    print(response_string)
     response = json.loads(response_string)
     sock.close()
     if response["status"] == "success":

@@ -34,19 +34,20 @@ def check_docker(image):
 
 def export_docker(image, dst):
     client = docker.from_env()
+    base = client.containers.create(image)
     with open(dst, 'wb+', buffering=0) as f:
-        exp = client.images.get(image).save()
+        exp = base.export()
         for b in exp:
             f.write(b)
         f.close()
+    base.remove()
     return client.api.inspect_image(image)["Config"]["Cmd"][2]
 
 
 def extract_rootfs(src, rootfs):
     with open(src, 'rb') as f:
         with tarfile.open(mode="r|", fileobj=f) as tar:
-            for tarinfo in tar:
-                tar.extract(tarinfo, rootfs)
+            tar.extractall(rootfs)
             tar.close()
         f.close()
 

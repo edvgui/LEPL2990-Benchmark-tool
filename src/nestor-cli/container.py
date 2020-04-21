@@ -4,7 +4,6 @@ import os
 import shutil
 import socket
 import subprocess
-import sys
 import random
 from subprocess import Popen, PIPE
 from enum import Enum
@@ -22,12 +21,33 @@ class State(Enum):
         return self.value
 
 
-class ContainerRuntimeException(Exception):
+class ContainerException(Exception):
 
-    def __init__(self, runtime, command, message):
-        self.runtime = runtime
+    def __init__(self, command, message):
         self.command = command
         self.message = message
+
+    def __str__(self):
+        return "ContainerException: while executing {0}\n{1}".format(self.command, self.message)
+
+
+class ContainerLifeCycleException(ContainerException):
+
+    def __init__(self, expected, actual, command, message):
+        super().__init__(command, message)
+        self.expected = expected
+        self.actual = actual
+
+    def __str__(self):
+        return "ContainerLifeCycleException: while executing {0}, expecting {1}, got {2}\n{3}".format(
+            self.command, self.expected, self.actual, self.message)
+
+
+class ContainerRuntimeException(ContainerException):
+
+    def __init__(self, runtime, command, message):
+        super().__init__(command, message)
+        self.runtime = runtime
 
     def __str__(self):
         return "ContainerRuntimeException [{0}]: while executing {1} \n{2}".format(self.runtime, self.command, self.message)
@@ -54,8 +74,7 @@ class Container:
 
     def __setup(self, image, runtime, name=None, network=False, port=None, auto_remove=False, terminal=False, cmd=None):
         if self.state != State.NEW:
-            # TODO
-            pass
+            raise ContainerLifeCycleException(State.NEW, self.state, "setup", "Container has already been setup")
 
         self.image = image
         self.network = network
@@ -103,8 +122,8 @@ class Container:
         self.__setup(image, runtime, name, network, port, auto_remove, terminal, cmd)
 
         if self.state != State.READY:
-            # TODO
-            pass
+            raise ContainerLifeCycleException(State.READY, self.state, "create", "Container has to be ready to be "
+                                                                                 "created")
 
         if terminal:
             console_socket = os.path.join('/', 'tmp', self.get_id() + "-tty.sock")
@@ -129,8 +148,8 @@ class Container:
 
     def start(self, attach=False):
         if self.state != State.CREATED:
-            # TODO
-            pass
+            raise ContainerLifeCycleException(State.CREATED, self.state, "start", "Container has to be created to be "
+                                                                                  "started")
 
         start_container = "{0} --root {1} start {2}".format(self.runtime["path"], self.runtime["root"], self.get_id())
         return_code, out = shell_command(self.shell, start_container, "ESC-" + self.get_id() + "-CSE")
@@ -142,18 +161,20 @@ class Container:
 
     def exec(self, cmd, detach=False, terminal=False):
         if self.state != State.RUNNING:
-            # TODO
-            pass
+            raise ContainerLifeCycleException(State.RUNNING, self.state, "exec", "You can only execute a command in a "
+                                                                                 "running container")
 
     def kill(self):
         if self.state != State.RUNNING:
-            # TODO
-            pass
+            raise ContainerLifeCycleException(State.RUNNING, self.state, "kill", "You can only kill a container that is"
+                                                                                 " running")
 
         kill_container = "{0} --root {1} kill -a {2}".format(self.runtime["path"], self.runtime["root"], self.get_id())
         return_code, out = shell_command(self.shell, kill_container, "ESC-" + self.get_id() + "-CSE")
         if return_code != "0":
             raise ContainerRuntimeException(self.runtime, kill_container, "Error while killing container: %s" % out)
+
+        self.state = State.STOPPED
 
         if self.auto_remove:
             return self.rm()
@@ -162,8 +183,7 @@ class Container:
 
     def rm(self):
         if self.state != State.STOPPED:
-            # TODO
-            pass
+            raise ContainerLifeCycleException(State.STOPPED, self.state, "rm", "You can only delete a stopped container")
 
         delete_container = "{0} --root {1} delete {2}".format(self.runtime["path"], self.runtime["root"], self.get_id())
         return_code, out = shell_command(self.shell, delete_container, "ESC-" + self.get_id() + "-CSE")
@@ -184,8 +204,7 @@ class Container:
         self.__setup(image, runtime, name, network, port, auto_remove, terminal, cmd)
 
         if self.state != State.READY:
-            # TODO
-            pass
+            raise ContainerLifeCycleException(State.READY, self.state, "create", "Container has to be ready to be run")
 
         self.state = State.RUNNING
         return self.get_id()
@@ -238,16 +257,14 @@ def mount_ro_rootfs(image_path, container_path):
     args = ["bindfs", "-p", "555", "--no-allow-other", src, dst]
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if output.returncode != 0:
-        print("ERROR: Couldn't bind mount read-only filesystem: %s" % output.stderr.decode('utf-8'))
-        sys.exit(1)
+        raise ContainerException(args, "ERROR: Couldn't bind mount read-only filesystem: %s" % output.stderr.decode('utf-8'))
 
 
 def unmount_ro_rootfs(container_path):
     args = ["fusermount", "-u", os.path.join(container_path, 'rootfs', 'mnt')]
     output = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if output.returncode != 0:
-        print("ERROR: Couldn't unmount read-only filesystem: %s" % output.stderr.decode('utf-8'))
-        sys.exit(1)
+        raise ContainerException(args, "ERROR: Couldn't unmount read-only filesystem: %s" % output.stderr.decode('utf-8'))
 
 
 def setup_config(container_path, cmd, network, terminal):

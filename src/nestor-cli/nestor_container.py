@@ -7,12 +7,11 @@ import getopt
 from json import JSONDecodeError
 from multiprocessing import Queue
 
-from container import Container, ContainerException
+from container import Container, ContainerException, State
 
 
 def loop(sock, container, callback):
-    done = False
-    while not done:
+    while not container.state == State.DONE:
         conn, _ = sock.accept()
         fd = conn.fileno()
         incoming = open(fd, 'r')
@@ -47,7 +46,6 @@ def loop(sock, container, callback):
                 response["value"] = container.kill()
             elif command == 'rm':
                 response["value"] = container.rm()
-                done = True
             elif command == 'run':
                 response["value"] = container.run(
                     image=args["image"],

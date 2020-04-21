@@ -16,6 +16,7 @@ class State(Enum):
     CREATED = "created"
     RUNNING = "running"
     STOPPED = "stopped"
+    DONE = "done"
 
     def __str__(self):
         return self.value
@@ -197,6 +198,8 @@ class Container:
 
         unmount_ro_rootfs(self.path)
         delete_rootfs(self.path)
+
+        self.state = State.DONE
 
         return self.get_id()
 

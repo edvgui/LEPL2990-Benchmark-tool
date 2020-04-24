@@ -1,6 +1,7 @@
 FROM alpine:latest
 
-COPY common/sqlite/sqlite3 /usr/bin/sqlite3
+RUN apk add sqlite
+
 COPY common/sqlite/tpcc-lg.db /run/tpcc.db
 COPY common/sqlite/read.sqlite /run/read.sqlite
 COPY common/sqlite/sqlite.sh /run/run.sh

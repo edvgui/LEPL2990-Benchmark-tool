@@ -1,8 +1,6 @@
 FROM centos:7
 
-RUN yum -y update \
-	&& yum -y install epel-release \
-	&& yum -y update \
+RUN yum -y install epel-release \
 	&& yum -y install lighttpd \
 	&& rm -rf /var/cash/apk/* \
 	&& echo "Hello World" > /var/www/lighttpd/index.html \

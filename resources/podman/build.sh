@@ -19,7 +19,7 @@ build() {
   fi
 
   echo "INFO: ${folder}: Pulling"
-  podman pull "docker-daemon:${folder}:latest" &>> "${LOG_FILE}"
+  podman pull "docker-daemon:edvgui/${folder}:latest" &>> "${LOG_FILE}"
 }
 
 echo "" > "${LOG_FILE}"

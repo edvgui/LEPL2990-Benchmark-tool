@@ -22,19 +22,19 @@ class WarmUp(Generic):
         return ["Run"]
 
     def docker_alpine(self):
-        response, duration = docker.run("alpine-hello-world", ["--rm"], [])
+        response, duration = docker.run("edvgui/alpine-hello-world", ["--rm"], [])
         if 'Hello World' not in response:
             print('Error (docker_alpine): wrong response: ' + response)
         return [duration]
 
     def docker_centos(self):
-        response, duration = docker.run("centos-hello-world", ["--rm"], [])
+        response, duration = docker.run("edvgui/centos-hello-world", ["--rm"], [])
         if 'Hello World' not in response:
             print('Error (docker_centos): wrong response: ' + response)
         return [duration]
 
     def podman(self):
-        response, duration = podman.run("alpine-hello-world", ["--rm"], [])
+        response, duration = podman.run("edvgui/alpine-hello-world", ["--rm"], [])
         if 'Hello World' not in response:
             print('Error (podman): wrong response: ' + response)
         return [duration]
@@ -56,13 +56,13 @@ class WarmUp(Generic):
         return [creation_time + execution_time]
 
     def firecracker(self):
-        response, duration = firecracker.run("alpine-hello-world", ["--rm"], [])
+        response, duration = firecracker.run("edvgui/alpine-hello-world", ["--rm"], [])
         if 'Hello World' not in response:
             print('Error (firecracker): wrong response: ' + response)
         return [duration]
 
     def qemu(self):
-        response, duration = qemu.run("alpine-hello-world", ["--rm"], [])
+        response, duration = qemu.run("edvgui/alpine-hello-world", ["--rm"], [])
         if 'Hello World' not in response:
             print('Error (qemu): wrong response: ' + response)
         return [duration]

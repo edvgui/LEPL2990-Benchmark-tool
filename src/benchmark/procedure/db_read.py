@@ -26,7 +26,7 @@ class DatabaseRead(Generic):
         return ["Create", "Start", "Exec"]
 
     def docker_alpine(self):
-        container, creation = docker.create("alpine-db-" + self.size + "-read", ["--rm"])
+        container, creation = docker.create("edvgui/alpine-db-" + self.size + "-read", ["--rm"])
         _, start = docker.start(container)
         response, execution = docker.exec(container, ["/run/run.sh", "/run/tpcc.db", "/run/read.sqlite"])
         if 'Done' not in response:
@@ -35,7 +35,7 @@ class DatabaseRead(Generic):
         return [creation, creation + start, creation + start + execution]
 
     def docker_centos(self):
-        container, creation = docker.create("centos-db-" + self.size + "-read", ["--rm"])
+        container, creation = docker.create("edvgui/centos-db-" + self.size + "-read", ["--rm"])
         _, start = docker.start(container)
         response, execution = docker.exec(container, ["/run/run.sh", "/run/tpcc.db", "/run/read.sqlite"])
         if 'Done' not in response:
@@ -44,7 +44,7 @@ class DatabaseRead(Generic):
         return [creation, creation + start, creation + start + execution]
 
     def podman(self):
-        container, creation = podman.create("alpine-db-" + self.size + "-read", ["--rm"])
+        container, creation = podman.create("edvgui/alpine-db-" + self.size + "-read", ["--rm"])
         _, start = podman.start(container)
         response, execution = podman.exec(container, ["/run/run.sh", "/run/tpcc.db", "/run/read.sqlite"])
         if 'Done' not in response:
@@ -72,7 +72,7 @@ class DatabaseRead(Generic):
         return [creation_time, creation_time + execution_time, creation_time + execution_time]
 
     def firecracker(self):
-        container, creation = firecracker.create("alpine-db-" + self.size + "-read", ["--rm"])
+        container, creation = firecracker.create("edvgui/alpine-db-" + self.size + "-read", ["--rm"])
         _, start = firecracker.start(container)
         response, execution = firecracker.exec(container, ["/run/run.sh", "/run/tpcc.db", "/run/read.sqlite"])
         if 'Done' not in response:
@@ -81,7 +81,7 @@ class DatabaseRead(Generic):
         return [creation, creation + start, creation + start + execution]
 
     def qemu(self):
-        container, creation = qemu.create("alpine-db-" + self.size + "-read", ["--rm"])
+        container, creation = qemu.create("edvgui/alpine-db-" + self.size + "-read", ["--rm"])
         _, start = qemu.start(container)
         response, execution = qemu.exec(container, ["/run/run.sh", "/run/tpcc.db", "/run/read.sqlite"])
         if 'Done' not in response:

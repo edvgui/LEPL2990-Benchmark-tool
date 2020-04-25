@@ -14,7 +14,7 @@ build() {
   fi
 
   echo "INFO: ${name}: Building"
-  docker build -t "${name}" -f "${DIR}/${folder}/Dockerfile" "${DIR}/../" &>> "${LOG_FILE}"
+  docker build -t "edvgui/${name}" -f "${DIR}/${folder}/Dockerfile" "${DIR}/../" &>> "${LOG_FILE}"
 }
 
 echo "" > "${LOG_FILE}"

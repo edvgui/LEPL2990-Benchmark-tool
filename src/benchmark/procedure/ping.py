@@ -8,7 +8,7 @@ import api.api_runc as runc
 import time
 
 
-class Network(Generic):
+class Ping(Generic):
 
     def __init__(self):
         super().__init__()
@@ -24,7 +24,7 @@ class Network(Generic):
 
     def docker_alpine(self):
         try:
-            response, _ = docker.run("alpine-network", ["--rm"], [])
+            response, _ = docker.run("edvgui/alpine-network", ["--rm"], [])
         except docker.DockerApiException as e:
             print(e)
             return -1
@@ -37,7 +37,7 @@ class Network(Generic):
 
     def docker_centos(self):
         try:
-            response, _ = docker.run("centos-network", ["--rm"], [])
+            response, _ = docker.run("edvgui/centos-network", ["--rm"], [])
         except docker.DockerApiException as e:
             print(e)
             return -1
@@ -50,7 +50,7 @@ class Network(Generic):
 
     def podman(self):
         try:
-            response, _ = podman.run("alpine-network", ["--rm"], [])
+            response, _ = podman.run("edvgui/alpine-network", ["--rm"], [])
         except podman.PodmanApiException as e:
             print(e)
             return -1
@@ -98,8 +98,8 @@ class Network(Generic):
 
     def firecracker(self):
         try:
-            response, _ = firecracker.run("alpine-network", ["--rm"], [])
-        except podman.PodmanApiException as e:
+            response, _ = firecracker.run("edvgui/alpine-network", ["--rm"], [])
+        except firecracker.FirecrackerApiException as e:
             print(e)
             return -1
         else:
@@ -111,7 +111,7 @@ class Network(Generic):
 
     def qemu(self):
         try:
-            response, _ = qemu.run("alpine-network", ["--rm"], [])
+            response, _ = qemu.run("edvgui/alpine-network", ["--rm"], [])
         except qemu.QemuApiException as e:
             print(e)
             return -1

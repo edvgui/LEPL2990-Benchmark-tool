@@ -8,7 +8,7 @@ from procedure.hello_world import HelloWorld
 from procedure.http_server import HttpServer
 from procedure.db_read import DatabaseRead
 from procedure.db_write import DatabaseWrite
-from procedure.network import Network
+from procedure.ping import Ping
 from procedure.warm_up import WarmUp
 
 
@@ -103,7 +103,7 @@ def usage():
           "      --no-http-server     Skip http server tests\n" \
           "      --no-database-read   Skip database read tests\n" \
           "      --no-database-write  Skip database write tests\n" \
-          "      --no-network         Skip network tests\n" \
+          "      --no-ping            Skip network tests\n" \
           "\n" \
           "Solutions:\n  "
     usage_msg += "\n  ".join(solutions.keys())
@@ -118,12 +118,12 @@ def main(argv):
     http_server = True
     database_read = True
     database_write = True
-    network = True
+    ping = True
 
     try:
         opts, args = getopt.getopt(argv[1:], "ho:", ["help", "output=", "no-warm-up", "no-hello-world",
                                                      "no-http-server", "no-database-read", "no-database-write",
-                                                     "no-network"])
+                                                     "no-ping"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -144,8 +144,8 @@ def main(argv):
             database_read = False
         elif opt == "--no-database-write":
             database_write = False
-        elif opt == "--no-network":
-            network = False
+        elif opt == "--no-ping":
+            ping = False
 
     procedures = []
     if hello_world:
@@ -156,8 +156,8 @@ def main(argv):
         procedures.extend([DatabaseRead(x) for x in ['xs', 'sm', 'md', 'lg', 'xl']])
     if database_write:
         procedures.extend([DatabaseWrite(x) for x in ['xs', 'sm', 'md', 'lg', 'xl']])
-    if network:
-        procedures.append(Network())
+    if ping:
+        procedures.append(Ping())
 
     if len(args) == 0:
         usage()

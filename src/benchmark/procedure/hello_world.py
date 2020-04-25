@@ -22,7 +22,7 @@ class HelloWorld(Generic):
         return ["Create", "Start", "Exec"]
 
     def docker_alpine(self):
-        container, creation = docker.create("alpine-hello-world", ["--rm"], [])
+        container, creation = docker.create("edvgui/alpine-hello-world", ["--rm"], [])
         _, start = docker.start(container)
         response, execution = docker.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:
@@ -31,7 +31,7 @@ class HelloWorld(Generic):
         return [creation, creation + start, creation + start + execution]
 
     def docker_centos(self):
-        container, creation = docker.create("centos-hello-world", ["--rm"], [])
+        container, creation = docker.create("edvgui/centos-hello-world", ["--rm"], [])
         _, start = docker.start(container)
         response, execution = docker.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:
@@ -40,7 +40,7 @@ class HelloWorld(Generic):
         return [creation, creation + start, creation + start + execution]
 
     def podman(self):
-        container, creation = podman.create("alpine-hello-world", ["--rm"], [])
+        container, creation = podman.create("edvgui/alpine-hello-world", ["--rm"], [])
         _, start = podman.start(container)
         response, execution = podman.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:
@@ -66,7 +66,7 @@ class HelloWorld(Generic):
         return [creation_time, creation_time + execution_time, creation_time + execution_time]
 
     def firecracker(self):
-        container, creation = firecracker.create("alpine-hello-world", ["--rm"])
+        container, creation = firecracker.create("edvgui/alpine-hello-world", ["--rm"])
         _, start = firecracker.start(container)
         response, execution = firecracker.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:
@@ -75,7 +75,7 @@ class HelloWorld(Generic):
         return [creation, creation + start, creation + start + execution]
 
     def qemu(self):
-        container, creation = qemu.create("alpine-hello-world", ["--rm"], [])
+        container, creation = qemu.create("edvgui/alpine-hello-world", ["--rm"], [])
         _, start = qemu.start(container)
         response, execution = qemu.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:

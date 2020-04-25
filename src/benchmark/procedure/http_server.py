@@ -54,7 +54,7 @@ class HttpServer(Generic):
 
     def docker_alpine(self):
         address = "127.0.0.1:3000"
-        container, creation = docker.create("alpine-http-server", ["--rm", "-p", address + ":80"])
+        container, creation = docker.create("edvgui/alpine-http-server", ["--rm", "-p", address + ":80"])
         _, start = docker.start(container)
         _, execution = docker.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         result = server_get("http://" + address)
@@ -64,7 +64,7 @@ class HttpServer(Generic):
 
     def docker_centos(self):
         address = "127.0.0.1:3001"
-        container, creation = docker.create("centos-http-server", ["--rm", "-p", address + ":80"])
+        container, creation = docker.create("edvgui/centos-http-server", ["--rm", "-p", address + ":80"])
         _, start = docker.start(container)
         _, execution = docker.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         result = server_get("http://" + address)
@@ -74,7 +74,7 @@ class HttpServer(Generic):
 
     def podman(self):
         address = "127.0.0.1:3002"
-        container, creation = podman.create("alpine-http-server", ["--rm", "-p", address + ":80"])
+        container, creation = podman.create("edvgui/alpine-http-server", ["--rm", "-p", address + ":80"])
         _, start = podman.start(container)
         _, execution = podman.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         result = server_get("http://" + address)
@@ -122,7 +122,7 @@ class HttpServer(Generic):
 
     def firecracker(self):
         address = "127.0.0.1:3005"
-        container, creation = firecracker.create("alpine-http-server", ["--rm", "-p", address + ":80"])
+        container, creation = firecracker.create("edvgui/alpine-http-server", ["--rm", "-p", address + ":80"])
         _, start = firecracker.start(container)
         _, execution = firecracker.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         result = server_get("http://" + address)
@@ -132,7 +132,7 @@ class HttpServer(Generic):
 
     def qemu(self):
         address = "127.0.0.1:3006"
-        container, creation = qemu.create("alpine-http-server", ["--rm", "-p", address + ":80"])
+        container, creation = qemu.create("edvgui/alpine-http-server", ["--rm", "-p", address + ":80"])
         _, start = qemu.start(container)
         _, execution = qemu.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         result = server_get("http://" + address)

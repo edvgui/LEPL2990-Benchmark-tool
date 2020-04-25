@@ -22,7 +22,7 @@ build() {
 	mkdir ${rootfs} ${ro_rootfs}
 	
 	# Export from docker
-	local base=$(docker run -d ${image}:latest /bin/echo "Hello World")
+	local base=$(docker run -d edvgui/${image}:latest /bin/echo "Hello World")
 	docker export ${base} | tar -C ${ro_rootfs} -xv > /dev/null
 	if [ $(echo $?) -eq 1 ]; then
 		>&2 echo "ERROR: ${image}: While exporting image from docker"

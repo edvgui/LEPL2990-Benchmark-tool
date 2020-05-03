@@ -1,0 +1,11 @@
+---
+- hosts: Benny
+  serial: 1
+    
+  roles:
+  
+    - role: install-docker
+      vars:
+        docker_version: 'latest'
+      become: yes
+      become_method: sudo

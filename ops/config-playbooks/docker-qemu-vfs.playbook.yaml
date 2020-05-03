@@ -1,0 +1,20 @@
+---
+- hosts: Benny
+  serial: 1
+    
+  roles:
+
+    - role: install-kata
+      become: yes
+      become_method: sudo
+
+    - role: install-docker
+      vars:
+        docker_version: 'latest'
+        default_runtime: kata-runtime
+        runtimes:
+          kata-runtime:
+            path: /usr/bin/kata-runtime
+        storage_driver: vfs
+      become: yes
+      become_method: sudo

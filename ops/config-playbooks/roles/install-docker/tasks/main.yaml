@@ -1,0 +1,75 @@
+---
+
+- name: Install required dependencies
+  apt:
+    name: '{{ item }}'
+    state: latest
+    update_cache: yes
+  loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common' ]
+
+- name: Add Docker GPG apt key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Check os release
+  command: /usr/bin/lsb_release -cs
+  register: os_release
+
+- name: Add Docker repository
+  apt_repository:
+    repo: 'deb https://download.docker.com/linux/ubuntu {{ os_release.stdout }} stable'
+    filename: download_docker_com
+    state: present
+
+- name: Get packages facts
+  package_facts:
+    manager: auto
+
+- name: Uninstall conflicting version of docker-ce
+  apt:
+    name: docker-ce
+    state: absent
+  when:
+    - '"docker-ce" in ansible_facts.packages'
+    - docker_version not in ansible_facts.packages["docker-ce"][0].version
+    - docker_version != 'latest'
+
+- name: Install specific version of docker-ce
+  apt:
+    name: docker-ce='{{ docker_version }}'
+    state: present
+    update_cache: yes
+  when: docker_version != 'latest'
+
+- name: Install latest docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: yes
+  when: docker_version == 'latest'
+
+- name: Apply configuration
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    mode: '0644'
+  notify:
+    - restart docker
+
+- name: Create benchmark group
+  group:
+    name: '{{ benchmark_group }}'
+    state: present
+
+- name: Create benchmark user
+  user:
+    name: '{{ benchmark_user }}'
+    state: present
+    group: '{{ benchmark_group }}'
+
+- name: Add benchmark user to docker group
+  user:
+    name: '{{ benchmark_user }}'
+    groups: docker
+    append: yes

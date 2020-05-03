@@ -1,0 +1,12 @@
+benchmark_user: benny
+benchmark_group: benny
+
+docker_version: latest
+
+data_root: /var/lib/docker
+
+default_runtime: runc
+runtimes:
+
+storage_driver: overlay2
+storage_opts: []

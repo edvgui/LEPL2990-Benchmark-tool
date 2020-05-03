@@ -1,0 +1,28 @@
+---
+
+- name: Install required dependency
+  apt:
+    name: curl
+    state: latest
+    update_cache: yes
+
+- name: Check ubuntu version id
+  command: /usr/bin/lsb_release -rs
+  register: version_id
+
+- name: Add Podman Release apt key
+  apt_key:
+    url: 'https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ version_id.stdout }}/Release.key'
+    state: present
+
+- name: Add Podman repository
+  apt_repository:
+    repo: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ version_id.stdout }} /'
+    filename: download_opensuse_org_libcontainers
+    state: present
+
+- name: Install podman
+  apt:
+    name: podman
+    state: latest
+    update_cache: yes

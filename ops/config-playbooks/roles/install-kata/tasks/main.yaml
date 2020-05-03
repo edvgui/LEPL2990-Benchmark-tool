@@ -1,0 +1,51 @@
+---
+
+- name: Installing Kata container installation dependency
+  apt:
+    name: curl
+    state: latest
+    update_cache: yes
+
+- name: Check ubuntu version id
+  command: /usr/bin/lsb_release -rs
+  register: version_id
+
+- name: Check system arch
+  command: /usr/bin/arch
+  register: arch
+
+- name: Add Kata-container Release apt key
+  apt_key:
+    url: 'http://download.opensuse.org/repositories/home:/katacontainers:/releases:/{{ arch.stdout }}:/master/xUbuntu_{{ version_id.stdout }}/Release.key'
+    state: present
+
+- name: Add Kata-container repository
+  apt_repository:
+    repo: 'deb http://download.opensuse.org/repositories/home:/katacontainers:/releases:/{{ arch.stdout }}:/master/xUbuntu_{{ version_id.stdout }}/ /'
+    filename: download_opensuse_org_katacontainers
+    state: present
+
+- name: Installing kata-container components
+  apt:
+    name: '{{ item }}'
+    state: latest
+    update-cache: yes
+  loop: [ 'kata-runtime', 'kata-proxy', 'kata-shim' ]
+
+- name: Install kata-fc
+  block:
+
+    - name: Installing kata-fc installation dependencies
+      apt:
+        name: '{{ item }}'
+        state: latest
+        update_cache: yes
+      loop: [ 'unzip', 'tar' ]
+
+    - name: Installing kata-fc
+      unarchive:
+        src: https://github.com/kata-containers/runtime/releases/download/1.5.0/kata-static-1.5.0-x86_64.tar.xz
+        dest: /
+        remote_src: yes
+
+  when: firecracker

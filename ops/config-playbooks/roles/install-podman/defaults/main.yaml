@@ -1,6 +1,8 @@
 benchmark_user: 'benny'
 benchmark_group: 'benny'
 
+default_runtime: runc
+
 # Available storage driver values are
 # overlay, btrfs, aufs, zfs, vfs, devicemapper
 storage_driver: overlay

@@ -32,7 +32,15 @@
     path: '/home/{{ benchmark_user }}/.config/containers/'
     state: directory
 
-- name: Apply configuration
+- name: Apply libpod configuration
+  template:
+    src: libpod.conf.j2
+    dest: '/home/{{ benchmark_user }}/.config/containers/libpod.conf'
+    owner: '{{ benchmark_user }}'
+    group: '{{ benchmark_group }}'
+    mode: '0644'
+
+- name: Apply storage configuration
   template:
     src: storage.conf.j2
     dest: '/home/{{ benchmark_user }}/.config/containers/storage.conf'

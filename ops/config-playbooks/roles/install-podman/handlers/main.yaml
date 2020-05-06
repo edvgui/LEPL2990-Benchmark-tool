@@ -1,0 +1,6 @@
+---
+
+- name: clean up storage
+  file:
+    path: '{{ storage_path }}'
+    state: absent

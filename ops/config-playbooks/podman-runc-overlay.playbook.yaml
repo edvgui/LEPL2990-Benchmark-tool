@@ -1,0 +1,9 @@
+---
+- hosts: Benny
+  serial: 1
+    
+  roles:
+  
+    - role: install-podman
+      become: yes
+      become_method: sudo

@@ -26,3 +26,18 @@
     name: podman
     state: latest
     update_cache: yes
+
+- name: Ensure path exists
+  file:
+    path: '/home/{{ benchmark_user }}/.config/containers/'
+    state: directory
+
+- name: Apply configuration
+  template:
+    src: storage.conf.j2
+    dest: '/home/{{ benchmark_user }}/.config/containers/storage.conf'
+    owner: '{{ benchmark_user }}'
+    group: '{{ benchmark_group }}'
+    mode: '0644'
+  notify:
+    - clean up storage

@@ -1,2 +1,11 @@
 benchmark_user: 'benny'
 benchmark_group: 'benny'
+
+# Available storage driver values are
+# overlay, btrfs, aufs, zfs, vfs, devicemapper
+storage_driver: overlay
+
+# This is only required when using devicemapper
+storage_device: /dev/sdx
+
+storage_path: /home/benny/.local/share/containers/storage

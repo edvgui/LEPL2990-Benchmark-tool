@@ -1,0 +1,12 @@
+---
+- hosts: Benny
+  serial: 1
+    
+  roles:
+  
+    - role: install-lxd
+      vars:
+        storage_driver: dir
+        storage_path: /tmp/pool1
+      become: yes
+      become_method: sudo

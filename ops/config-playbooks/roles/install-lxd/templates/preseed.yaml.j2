@@ -1,0 +1,18 @@
+storage_pools:
+- name: pool1
+  driver: {{ storage_driver }}
+  config:
+    source: {{ storage_path }}
+
+networks:
+- name: lxdbr0
+  type: bridge
+  config:
+    ipv4.address: auto
+    ipv6.address: none
+
+profiles:
+- name: default
+  config:
+    limits.memory: 1GB
+    limits.cpu: 1

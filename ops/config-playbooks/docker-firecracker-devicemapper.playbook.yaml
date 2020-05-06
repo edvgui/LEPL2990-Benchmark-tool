@@ -1,0 +1,20 @@
+---
+- hosts: Benny
+  serial: 1
+    
+  roles:
+
+    - role: install-kata-fc
+      become: yes
+      become_method: sudo
+
+    - role: install-docker
+      vars:
+        docker_version: 18.06.3~ce~3-0~ubuntu-bionic
+        default_runtime: kata-fc
+        runtimes:
+          kata-fc:
+            path: /opt/kata/bin/kata-fc
+        storage_driver: devicemapper
+      become: yes
+      become_method: sudo

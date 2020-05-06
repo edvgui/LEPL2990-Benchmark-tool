@@ -1,0 +1,14 @@
+---
+
+- name: Installing kata-fc installation dependencies
+  apt:
+    name: '{{ item }}'
+    state: latest
+    update_cache: yes
+  loop: [ 'unzip', 'tar' ]
+
+- name: Installing kata-fc
+  unarchive:
+    src: https://github.com/kata-containers/runtime/releases/download/1.5.0/kata-static-1.5.0-x86_64.tar.xz
+    dest: /
+    remote_src: yes

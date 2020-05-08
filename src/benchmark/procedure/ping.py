@@ -1,10 +1,8 @@
 from procedure.generic import Generic
 import api.api_docker as docker
-import api.api_firecracker as firecracker
-import api.api_qemu as qemu
 import api.api_podman as podman
 import api.api_lxc as lxc
-import api.api_runc as runc
+import api.api_custom as custom
 import time
 
 
@@ -22,9 +20,12 @@ class Ping(Generic):
     def response_legend(self):
         return ["Ping"]
 
-    def docker_alpine(self):
+    def docker(self, image, runtime):
+        options = ["--rm"]
+        if runtime is not None:
+            options.extend(["--runtime", runtime])
         try:
-            response, _ = docker.run("edvgui/alpine-network", ["--rm"], [])
+            response, _ = docker.run("edvgui/%s-network" % image, options=options, command=[])
         except docker.DockerApiException as e:
             print(e)
             return -1
@@ -35,22 +36,12 @@ class Ping(Generic):
             else:
                 return [float(response.split(" ")[3].split("/")[1]) / 1000]
 
-    def docker_centos(self):
+    def podman(self, image, runtime):
+        options = ["--rm"]
+        if runtime is not None:
+            options.extend(["--runtime", runtime])
         try:
-            response, _ = docker.run("edvgui/centos-network", ["--rm"], [])
-        except docker.DockerApiException as e:
-            print(e)
-            return -1
-        else:
-            if '=' not in response:
-                print('Error (docker_alpine): wrong response: ' + response)
-                return -1
-            else:
-                return [float(response.split(" ")[3].split("/")[1]) / 1000]
-
-    def podman(self):
-        try:
-            response, _ = podman.run("edvgui/alpine-network", ["--rm"], [])
+            response, _ = podman.run("edvgui/%s-network" % image, options=options, command=[])
         except podman.PodmanApiException as e:
             print(e)
             return -1
@@ -61,8 +52,8 @@ class Ping(Generic):
             else:
                 return [float(response.split(" ")[3].split("/")[1]) / 1000]
 
-    def lxc(self):
-        container, launching_time = lxc.launch("alpine-network", ["-e"])
+    def lxc(self, image, runtime):
+        container, launching_time = lxc.launch("%s-network" % image, ["-e"])
         for i in range(0, 10):
             try:
                 response, _ = lxc.exec(container, ["./ping.sh", "10"])
@@ -80,44 +71,19 @@ class Ping(Generic):
         print('Error (lxc): maximum retry reached')
         return -1
 
-    def runc(self):
-        container, _ = runc.create("alpine-network")
+    def custom(self, image, runtime):
+        # TODO handle runtime
+        container, _ = custom.create("%s-network" % image)
         try:
-            response, _ = runc.run(container, [])
-        except podman.PodmanApiException as e:
+            response, _ = custom.run(container, [])
+        except custom.CustomApiException as e:
             print(e)
             return -1
         else:
             if '=' not in response:
-                print('Error (runc): wrong response: ' + response)
+                print('Error (custom): wrong response: ' + response)
                 return -1
             else:
                 return [float(response.split(" ")[3].split("/")[1]) / 1000]
         finally:
-            runc.clean(container)
-
-    def firecracker(self):
-        try:
-            response, _ = firecracker.run("edvgui/alpine-network", ["--rm"], [])
-        except firecracker.FirecrackerApiException as e:
-            print(e)
-            return -1
-        else:
-            if '=' not in response:
-                print('Error (firecracker): wrong response: ' + response)
-                return -1
-            else:
-                return [float(response.split(" ")[3].split("/")[1]) / 1000]
-
-    def qemu(self):
-        try:
-            response, _ = qemu.run("edvgui/alpine-network", ["--rm"], [])
-        except qemu.QemuApiException as e:
-            print(e)
-            return -1
-        else:
-            if '=' not in response:
-                print('Error (qemu): wrong response: ' + response)
-                return -1
-            else:
-                return [float(response.split(" ")[3].split("/")[1]) / 1000]
+            custom.clean(container)

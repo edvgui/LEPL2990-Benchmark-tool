@@ -17,7 +17,7 @@ class Example(Generic):
     def response_legend(self):
         return ["1", "2", "3"]
 
-    def docker_alpine(self):
+    def docker(self, image, runtime):
         results = []
         acc = 0
         for _ in range(0, self.response_len()):
@@ -25,7 +25,7 @@ class Example(Generic):
             results.append(acc)
         return results
 
-    def docker_centos(self):
+    def podman(self, image, runtime):
         results = []
         acc = 0
         for _ in range(0, self.response_len()):
@@ -33,7 +33,7 @@ class Example(Generic):
             results.append(acc)
         return results
 
-    def podman(self):
+    def lxc(self, image, runtime):
         results = []
         acc = 0
         for _ in range(0, self.response_len()):
@@ -41,31 +41,7 @@ class Example(Generic):
             results.append(acc)
         return results
 
-    def lxc(self):
-        results = []
-        acc = 0
-        for _ in range(0, self.response_len()):
-            acc += random()
-            results.append(acc)
-        return results
-
-    def runc(self):
-        results = []
-        acc = 0
-        for _ in range(0, self.response_len()):
-            acc += random()
-            results.append(acc)
-        return results
-
-    def firecracker(self):
-        results = []
-        acc = 0
-        for _ in range(0, self.response_len()):
-            acc += random()
-            results.append(acc)
-        return results
-
-    def kata(self):
+    def custom(self, image, runtime):
         results = []
         acc = 0
         for _ in range(0, self.response_len()):

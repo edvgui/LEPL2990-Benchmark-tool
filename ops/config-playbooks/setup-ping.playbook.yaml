@@ -1,0 +1,28 @@
+---
+- hosts: Benny
+  serial: 1
+  vars:
+  
+    benchmark_user: 'benny'
+    benchmark_group: 'benny'
+    
+  tasks:
+      
+    - name: Setup ping group range
+
+      - name: Set ping group range
+        lineinfile:
+          path: /proc/sys/net/ipv4/ping_group_range
+          line: 0 2000000
+          create: yes
+
+      - name: Set ping group range permanently
+        lineinfile:
+          path: /etc/sysctl.d/10-ipv4-ping.conf
+          line: net.ipv4.ping_group_range=0 2000000
+          create: yes
+
+      become: yes
+      become_user: root
+      become_method: sudo
+      

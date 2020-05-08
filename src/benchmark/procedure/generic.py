@@ -6,13 +6,10 @@ class Generic(ABC):
     def __init__(self):
         super().__init__()
         self.functions = {
-            'docker_alpine': self.docker_alpine,
-            'docker_centos': self.docker_centos,
+            'docker': self.docker,
             'podman': self.podman,
             'lxc': self.lxc,
-            'runc': self.runc,
-            'firecracker': self.firecracker,
-            'qemu': self.qemu
+            'custom': self.custom
         }
 
     @abstractmethod
@@ -28,29 +25,17 @@ class Generic(ABC):
         pass
 
     @abstractmethod
-    def docker_alpine(self):
+    def docker(self, image, runtime):
         pass
 
     @abstractmethod
-    def docker_centos(self):
+    def podman(self, image, runtime):
         pass
 
     @abstractmethod
-    def podman(self):
+    def lxc(self, image, runtime):
         pass
 
     @abstractmethod
-    def lxc(self):
-        pass
-
-    @abstractmethod
-    def runc(self):
-        pass
-
-    @abstractmethod
-    def firecracker(self):
-        pass
-
-    @abstractmethod
-    def qemu(self):
+    def custom(self, image, runtime):
         pass

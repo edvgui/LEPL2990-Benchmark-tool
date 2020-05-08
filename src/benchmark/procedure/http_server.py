@@ -6,11 +6,9 @@ from io import BytesIO
 
 from procedure.generic import Generic
 import api.api_docker as docker
-import api.api_firecracker as firecracker
-import api.api_qemu as qemu
 import api.api_podman as podman
 import api.api_lxc as lxc
-import api.api_runc as runc
+import api.api_custom as runc
 
 
 def server_get(url, timeout=10):
@@ -52,9 +50,12 @@ class HttpServer(Generic):
     def response_legend(self):
         return ["Create", "Start", "Exec", "1st response"]
 
-    def docker_alpine(self):
+    def docker(self, image, runtime):
         address = "127.0.0.1:3000"
-        container, creation = docker.create("edvgui/alpine-http-server", ["--rm", "-p", address + ":80"])
+        options = ["--rm", "-p", address + ":80"]
+        if runtime is not None:
+            options.extend(["--runtime", runtime])
+        container, creation = docker.create("edvgui/%s-http-server" % image, options=options)
         _, start = docker.start(container)
         _, execution = docker.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         result = server_get("http://" + address)
@@ -62,19 +63,12 @@ class HttpServer(Generic):
         return [creation, creation + start, creation + start + execution,
                 creation + start + execution + result] if result != -1 else -1
 
-    def docker_centos(self):
-        address = "127.0.0.1:3001"
-        container, creation = docker.create("edvgui/centos-http-server", ["--rm", "-p", address + ":80"])
-        _, start = docker.start(container)
-        _, execution = docker.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
-        result = server_get("http://" + address)
-        docker.kill(container)
-        return [creation, creation + start, creation + start + execution,
-                creation + start + execution + result] if result != -1 else -1
-
-    def podman(self):
+    def podman(self, image, runtime):
         address = "127.0.0.1:3002"
-        container, creation = podman.create("edvgui/alpine-http-server", ["--rm", "-p", address + ":80"])
+        options = ["--rm", "-p", address + ":80"]
+        if runtime is not None:
+            options.extend(["--runtime", runtime])
+        container, creation = podman.create("edvgui/%s-http-server" % image, options=options)
         _, start = podman.start(container)
         _, execution = podman.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         result = server_get("http://" + address)
@@ -82,9 +76,9 @@ class HttpServer(Generic):
         return [creation, creation + start, creation + start + execution,
                 creation + start + execution + result] if result != -1 else -1
 
-    def lxc(self):
+    def lxc(self, image, runtime):
         address = "127.0.0.1:3003"
-        container, creation = lxc.init("alpine-http-server", ["-e"], [])
+        container, creation = lxc.init("%s-http-server" % image, ["-e"], [])
         device = "device-" + container
         configuration = lxc.config_proxy_add(container, device, address)
         start = lxc.start(container)
@@ -95,9 +89,10 @@ class HttpServer(Generic):
         return [creation + configuration, creation + configuration + start, creation + configuration + start + execution,
                 creation + configuration + start + execution + result] if result != -1 else -1
 
-    def runc(self):
+    def custom(self, image, runtime):
         address = "127.0.0.1:3004"
-        container, creation_duration = runc.create("alpine-http-server")
+        # TODO handle runtime
+        container, creation_duration = runc.create("%s-http-server" % image)
 
         directory = os.path.dirname(os.path.abspath(__file__))
         runc_folder = os.path.join(directory, '../../../resources/runc')
@@ -119,23 +114,3 @@ class HttpServer(Generic):
 
         return [creation_duration, creation_duration + execution_time, creation_duration + execution_time,
                 creation_duration + execution_time + result] if result != -1 else -1
-
-    def firecracker(self):
-        address = "127.0.0.1:3005"
-        container, creation = firecracker.create("edvgui/alpine-http-server", ["--rm", "-p", address + ":80"])
-        _, start = firecracker.start(container)
-        _, execution = firecracker.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
-        result = server_get("http://" + address)
-        firecracker.kill(container)
-        return [creation, creation + start, creation + start + execution,
-                creation + start + execution + result] if result != -1 else -1
-
-    def qemu(self):
-        address = "127.0.0.1:3006"
-        container, creation = qemu.create("edvgui/alpine-http-server", ["--rm", "-p", address + ":80"])
-        _, start = qemu.start(container)
-        _, execution = qemu.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
-        result = server_get("http://" + address)
-        qemu.kill(container)
-        return [creation, creation + start, creation + start + execution,
-                creation + start + execution + result] if result != -1 else -1

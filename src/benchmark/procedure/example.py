@@ -41,7 +41,7 @@ class Example(Generic):
             results.append(acc)
         return results
 
-    def custom(self, image, runtime):
+    def contingious(self, image, runtime):
         results = []
         acc = 0
         for _ in range(0, self.response_len()):

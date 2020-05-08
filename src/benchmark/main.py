@@ -79,8 +79,8 @@ container_managers = {
         },
         "runtimes": {}
     },
-    "custom": {
-        "name": "Custom",
+    "contingious": {
+        "name": "ContINGIous",
         "default-image": "alpine",
         "images": {
             "alpine": {

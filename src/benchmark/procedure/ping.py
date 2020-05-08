@@ -2,7 +2,7 @@ from procedure.generic import Generic
 import api.api_docker as docker
 import api.api_podman as podman
 import api.api_lxc as lxc
-import api.api_custom as custom
+import api.api_contingious as contingious
 import time
 
 
@@ -71,12 +71,12 @@ class Ping(Generic):
         print('Error (lxc): maximum retry reached')
         return -1
 
-    def custom(self, image, runtime):
+    def contingious(self, image, runtime):
         # TODO handle runtime
-        container, _ = custom.create("%s-network" % image)
+        container, _ = contingious.create("%s-network" % image)
         try:
-            response, _ = custom.run(container, [])
-        except custom.CustomApiException as e:
+            response, _ = contingious.run(container, [])
+        except contingious.ContINGIousApiException as e:
             print(e)
             return -1
         else:
@@ -86,4 +86,4 @@ class Ping(Generic):
             else:
                 return [float(response.split(" ")[3].split("/")[1]) / 1000]
         finally:
-            custom.clean(container)
+            contingious.clean(container)

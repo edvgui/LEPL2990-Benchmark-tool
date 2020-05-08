@@ -8,7 +8,7 @@ from procedure.generic import Generic
 import api.api_docker as docker
 import api.api_podman as podman
 import api.api_lxc as lxc
-import api.api_custom as runc
+import api.api_contingious as contingious
 
 
 def server_get(url, timeout=10):
@@ -89,10 +89,10 @@ class HttpServer(Generic):
         return [creation + configuration, creation + configuration + start, creation + configuration + start + execution,
                 creation + configuration + start + execution + result] if result != -1 else -1
 
-    def custom(self, image, runtime):
+    def contingious(self, image, runtime):
         address = "127.0.0.1:3004"
         # TODO handle runtime
-        container, creation_duration = runc.create("%s-http-server" % image)
+        container, creation_duration = contingious.create("%s-http-server" % image)
 
         directory = os.path.dirname(os.path.abspath(__file__))
         runc_folder = os.path.join(directory, '../../../resources/runc')
@@ -109,8 +109,8 @@ class HttpServer(Generic):
             if line.decode('utf-8').strip() == container:
                 execution_time = time.time() - tic
                 result = server_get("http://" + address)
-                runc.stop(container)
-                runc.clean(container)
+                contingious.stop(container)
+                contingious.clean(container)
 
         return [creation_duration, creation_duration + execution_time, creation_duration + execution_time,
                 creation_duration + execution_time + result] if result != -1 else -1

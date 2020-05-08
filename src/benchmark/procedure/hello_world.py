@@ -2,7 +2,7 @@ from procedure.generic import Generic
 import api.api_docker as docker
 import api.api_podman as podman
 import api.api_lxc as lxc
-import api.api_custom as custom
+import api.api_contingious as contingious
 
 
 class HelloWorld(Generic):
@@ -52,11 +52,11 @@ class HelloWorld(Generic):
         lxc.stop(container)
         return [creation, creation + start, creation + start + execution_time]
 
-    def custom(self, image, runtime):
+    def contingious(self, image, runtime):
         # TODO handle runtime
-        container, creation_time = custom.create("%s-hello-world" % image)
-        response, execution_time = custom.run(container, ["-o"])
+        container, creation_time = contingious.create("%s-hello-world" % image)
+        response, execution_time = contingious.run(container, ["-o"])
         if 'Hello World' not in response:
             print("Error (runc): wrong response: " + response)
-        custom.clean(container)
+        contingious.clean(container)
         return [creation_time, creation_time + execution_time, creation_time + execution_time]

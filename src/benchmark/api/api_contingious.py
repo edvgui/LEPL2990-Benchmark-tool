@@ -5,7 +5,7 @@ import os
 from exceptions.api_exception import ApiException
 
 
-class CustomApiException(ApiException):
+class ContINGIousApiException(ApiException):
 
     def __init__(self, message, trace):
         super().__init__("Custom", message, trace)
@@ -28,8 +28,8 @@ def create(image, log=False):
     output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise CustomApiException("Error while trying to create container from image " + image,
-                                 output.stderr.decode('utf-8').strip())
+        raise ContINGIousApiException("Error while trying to create container from image " + image,
+                                      output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return output.stdout.decode('utf-8').strip(), toc - tic
@@ -51,8 +51,8 @@ def run(container, options, log=False):
     output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise CustomApiException("Error while trying to run container " + container,
-                                 output.stderr.decode('utf-8').strip())
+        raise ContINGIousApiException("Error while trying to run container " + container,
+                                      output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return output.stdout.decode('utf-8').strip(), toc - tic
@@ -73,8 +73,8 @@ def stop(container, log=False):
     if log:
         print(output)
     if output.returncode != 0:
-        raise CustomApiException("Error while trying to stop container " + container,
-                                 output.stderr.decode('utf-8').strip())
+        raise ContINGIousApiException("Error while trying to stop container " + container,
+                                      output.stderr.decode('utf-8').strip())
     return toc - tic
 
 
@@ -91,8 +91,8 @@ def clean(container, log=False):
     output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()
     if output.returncode != 0:
-        raise CustomApiException("Error while trying to clean container " + container,
-                                 output.stderr.decode('utf-8').strip())
+        raise ContINGIousApiException("Error while trying to clean container " + container,
+                                      output.stderr.decode('utf-8').strip())
     if log:
         print(output)
     return toc - tic

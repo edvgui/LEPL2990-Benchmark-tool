@@ -9,7 +9,7 @@ class Generic(ABC):
             'docker': self.docker,
             'podman': self.podman,
             'lxc': self.lxc,
-            'custom': self.custom
+            'contingious': self.contingious
         }
 
     @abstractmethod
@@ -37,5 +37,5 @@ class Generic(ABC):
         pass
 
     @abstractmethod
-    def custom(self, image, runtime):
+    def contingious(self, image, runtime):
         pass

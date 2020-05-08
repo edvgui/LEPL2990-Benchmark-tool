@@ -49,3 +49,8 @@
     mode: '0644'
   notify:
     - clean up storage
+
+- name: Configure ping group range
+  sysctl:
+    name: net.ipv4.ping_group_range
+    value: '0 2000000'

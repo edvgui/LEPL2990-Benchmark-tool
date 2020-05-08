@@ -3,10 +3,12 @@
   serial: 1
     
   roles:
+
+    - role: install-runc
+      become: yes
   
     - role: install-docker
       vars:
         docker_version: 'latest'
         storage_driver: vfs
       become: yes
-      become_method: sudo

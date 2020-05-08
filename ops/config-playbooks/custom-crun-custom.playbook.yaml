@@ -1,0 +1,11 @@
+---
+- hosts: Benny
+  serial: 1
+    
+  roles:
+  
+    - role: install-crun
+      become: yes
+
+    - role: install-custom
+      become: yes

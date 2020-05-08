@@ -1,0 +1,28 @@
+---
+
+- name: Install required dependencies
+  apt:
+    name: '{{ item }}'
+    state: latest
+    update_cache: yes
+  loop: [ 'unzip', 'tar', 'uidmap' ]
+
+- name: Install slirp4netns v1.0.1 from github
+  get_url:
+    url: https://github.com/rootless-containers/slirp4netns/releases/download/v1.0.1/slirp4netns-x86_64
+    dest: /usr/bin/slirp4netns
+    checksum: sha256:b5ccc37f95d776563a958a3fc90979d7db234e84c893386e6aecf638513e2fde
+    mode: '0755'
+    owner: 'root'
+    group: 'root'
+
+- name: Install rootlesskit v0.9.4 from github
+  unarchive:
+    src: https://github.com/rootless-containers/rootlesskit/releases/download/v0.9.4/rootlesskit-x86_64.tar.gz
+    dest: /usr/bin
+    remote_src: yes
+
+- name: Configure ping group range
+  sysctl:
+    name: net.ipv4.ping_group_range
+    value: '0 2000000'

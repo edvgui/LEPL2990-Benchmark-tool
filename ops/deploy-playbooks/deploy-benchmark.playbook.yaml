@@ -1,0 +1,59 @@
+---
+- hosts: Benny
+  serial: 1
+  vars:
+
+    benchmark_repo_url: git@github.com:geverartsdev/LEPL2990-Benchmark-tool.git
+    benchmark_path: /opt/container-benchmark
+
+    benchmark_user: 'benny'
+    benchmark_group: 'benny'
+
+  tasks:
+
+    - name: Install dependencies
+      apt:
+        name: '{{ item }}'
+        state: present
+        update-cache: yes
+      loop: [ 'python3-pip', 'python3-dev', 'libcurl4-openssl-dev', 'libssl-dev']
+      become: yes
+
+    - name: Create benchmark directory
+      file:
+        path: '{{ benchmark_path }}'
+        state: directory
+        mode: '0777'
+        recurse: yes
+      become: yes
+
+    - name: Retrieve latest benchmark source from repo
+      git:
+        repo: '{{ benchmark_repo_url }}'
+        version: master
+        dest: '{{ benchmark_path }}'
+        accept_hostkey: yes
+        force: yes
+      become: no  # Can not become any other user as I am using a private key from my controller
+
+    - name: Reduce benchmark directory access
+      file:
+        path: '{{ benchmark_path }}'
+        state: directory
+        mode: '0644'
+      become: yes
+
+    - name: Overwrite benchmark directory owner
+      file:
+        path: '{{ benchmark_path }}'
+        state: directory
+        owner: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
+        recurse: yes
+      become: yes
+
+    - name: Install pip dependencies
+      pip:
+        name: pycurl
+        executable: pip3
+      become: yes

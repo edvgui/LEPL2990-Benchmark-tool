@@ -18,7 +18,7 @@ def create(image, options, log=False):
     :param log: Whether logs should be displayed or not
     :return: The id of the created container, the command execution time
     """
-    args = ["docker", "create", "-ti"]
+    args = ["docker", "create", "-ti", "--cpus=1.0", "--memory=1g"]
     args.extend(options)
     args.append(image)
     args.append("sh")
@@ -90,7 +90,7 @@ def run(image, options, command, log=False):
     :param log: Whether to display some logs or not
     :return: The output of the execution, the command execution time
     """
-    args = ["docker", "run"]
+    args = ["docker", "run", "--cpus=1.0", "--memory=1g"]
     args.extend(options)
     args.append(image)
     args.extend(command)

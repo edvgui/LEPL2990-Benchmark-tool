@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import getopt
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -8,6 +10,8 @@ from procedure.hello_world import HelloWorld
 from procedure.http_server import HttpServer
 from procedure.db_read import DatabaseRead
 from procedure.db_write import DatabaseWrite
+from procedure.io_read import IORead
+from procedure.io_write import IOWrite
 from procedure.ping import Ping
 from procedure.warm_up import WarmUp
 
@@ -59,10 +63,6 @@ container_managers = {
             }
         },
         "runtimes": {
-            "runc": {
-                "name": "runc",
-                "path": "/usr/bin/runc"
-            },
             "crun": {
                 "name": "crun",
                 "path": "/usr/bin/crun"
@@ -144,7 +144,7 @@ def measure(procedures, container_manager, base_image, runtime=None, warm_up=Tru
         measurements[procedure.name()] = {
             "name": procedure.name(),
             "legend": procedure.response_legend(),
-            "data": execute(lambda: procedure.functions[container_manager](base_image, runtime), procedure.response_len(), 10, False)
+            "data": execute(lambda: procedure.functions[container_manager](base_image, runtime), procedure.response_len(), 20, False)
         }
 
     return measurements
@@ -163,6 +163,8 @@ def usage():
                 "      --http-server        Execute http server tests\n" \
                 "      --database-read      Execute database read tests\n" \
                 "      --database-write     Execute database write tests\n" \
+                "      --io-read            Execute io read tests\n" \
+                "      --io-write           Execute io write tests\n" \
                 "      --ping               Execute network tests\n" \
                 "\n" \
                 "Args:\n" \
@@ -191,12 +193,14 @@ def main(argv):
     http_server = False
     database_read = False
     database_write = False
+    io_read = False
+    io_write = False
     ping = False
 
     try:
         opts, args = getopt.getopt(argv[1:], "ho:", ["help", "output=", "full", "warm-up", "hello-world",
-                                                     "http-server", "database-read", "database-write",
-                                                     "ping"])
+                                                     "http-server", "database-read", "database-write", "io-read",
+                                                     "io-write", "ping"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -217,6 +221,10 @@ def main(argv):
             database_read = True
         elif opt == "--database-write":
             database_write = True
+        elif opt == "--io-read":
+            io_read = True
+        elif opt == "--io-write":
+            io_write = True
         elif opt == "--ping":
             ping = True
         elif opt == "--full":
@@ -225,6 +233,8 @@ def main(argv):
             http_server = True
             database_read = True
             database_write = True
+            io_read = True
+            io_write = True
             ping = True
 
     procedures = []
@@ -236,6 +246,10 @@ def main(argv):
         procedures.extend([DatabaseRead(x) for x in ['xs', 'sm', 'md', 'lg', 'xl']])
     if database_write:
         procedures.extend([DatabaseWrite(x) for x in ['xs', 'sm', 'md', 'lg', 'xl']])
+    if io_read:
+        procedures.extend([IORead(x) for x in ['xs', 'sm', 'md', 'lg', 'xl']])
+    if io_write:
+        procedures.extend([IOWrite(x) for x in ['xs', 'sm', 'md', 'lg', 'xl']])
     if ping:
         procedures.append(Ping())
 
@@ -296,7 +310,7 @@ def main(argv):
             prev = results
         try:
             with open(output_file, 'w+') as f:
-                json.dump(prev, f)
+                json.dump(prev, f, indent=4)
                 f.close()
                 print("INFO: Results written to " + output_file)
         except FileNotFoundError as e:

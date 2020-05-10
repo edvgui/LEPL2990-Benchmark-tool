@@ -3,7 +3,7 @@ import os
 import json
 from matplotlib import rcParams
 
-from results_operations import benchmark_means, group_benchmarks, io_means, group_ios
+from results_operations import benchmark_means, group_benchmarks, io_means, group_ios, group_dbs
 
 
 rcParams.update({'figure.autolayout': True})
@@ -45,7 +45,7 @@ def plot_benchmark(measurement, tag):
     plt.savefig(os.path.join(plots_folder, "Benchmark - " + tag + " - " + measurement["name"] + ".png"))
 
 
-def plot_io(plots, phase, name, tag):
+def plot_db(plots, phase, name, tag):
     plots_m = io_means(plots, phase)
 
     plt.figure(figsize=(10, 4), dpi=150)
@@ -59,6 +59,23 @@ def plot_io(plots, phase, name, tag):
     plt.xlabel('Database file size (MB)')
     plt.title('I/O Tests  - ' + name + ' (' + tag + ')')
     plt.legend()
+    plt.savefig(os.path.join(plots_folder, "Database Tests - " + tag + " - " + name + ".png"))
+
+
+def plot_io(plots, phase, name, tag):
+    plots_m = io_means(plots, phase)
+
+    plt.figure(figsize=(10, 4), dpi=150)
+    for plot_m in plots_m:
+        plt.plot(plot_m["x"], plot_m["y"], label=plot_m["name"], marker='.')
+
+    plt.grid(linestyle=':')
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.ylabel('Time (s)')
+    plt.xlabel('Number of files')
+    plt.title('I/O Tests  - ' + name + ' (' + tag + ')')
+    plt.legend()
     plt.savefig(os.path.join(plots_folder, "IO Tests - " + tag + " - " + name + ".png"))
 
 
@@ -67,32 +84,60 @@ def plot_benchmarks(plots, tag):
         plot_benchmark(plots[p], tag)
 
 
+def plot_dbs(io_s, tag):
+    io_solutions = {key: value for (key, value) in solutions.items() if key in io_s}
+
+    # Read tests total
+    plot_db(group_dbs(io_solutions, ["Database read xs", "Database read sm", "Database read md", "Database read lg",
+                                     "Database read xl"]), -1, 'Read execution', tag)
+
+    # Write tests total
+    plot_db(group_dbs(io_solutions, ["Database write xs", "Database write sm", "Database write md",
+                                     "Database write lg", "Database write xl"]), -1, 'Write execution', tag)
+
+    # Read tests creation
+    plot_db(group_dbs(io_solutions, ["Database read xs", "Database read sm", "Database read md", "Database read lg",
+                                     "Database read xl"]), 1, 'Read start up', tag)
+
+    # Write tests creation
+    plot_db(group_dbs(io_solutions, ["Database write xs", "Database write sm", "Database write md",
+                                     "Database write lg", "Database write xl"]), 1, 'Write start up', tag)
+
+    # Read tests creation
+    plot_db(group_dbs(io_solutions, ["Database read xs", "Database read sm", "Database read md", "Database read lg",
+                                     "Database read xl"]), 0, 'Read creation', tag)
+
+    # Write tests creation
+    plot_db(group_dbs(io_solutions, ["Database write xs", "Database write sm", "Database write md",
+                                     "Database write lg", "Database write xl"]), 0, 'Write creation', tag)
+
+
 def plot_ios(io_s, tag):
     io_solutions = {key: value for (key, value) in solutions.items() if key in io_s}
 
     # Read tests total
-    plot_io(group_ios(io_solutions, ["Database read xs", "Database read sm", "Database read md", "Database read lg",
-                                     "Database read xl"]), -1, 'Read execution', tag)
+    plot_io(group_ios(io_solutions, ["IO read xs", "IO read sm", "IO read md", "IO read lg",
+                                     "IO read xl"]), -1, 'Read execution', tag)
 
     # Write tests total
-    plot_io(group_ios(io_solutions, ["Database write xs", "Database write sm", "Database write md",
-                                     "Database write lg", "Database write xl"]), -1, 'Write execution', tag)
+    plot_io(group_ios(io_solutions, ["IO write xs", "IO write sm", "IO write md",
+                                     "IO write lg", "IO write xl"]), -1, 'Write execution', tag)
 
     # Read tests creation
-    plot_io(group_ios(io_solutions, ["Database read xs", "Database read sm", "Database read md", "Database read lg",
-                                     "Database read xl"]), 1, 'Read start up', tag)
+    plot_io(group_ios(io_solutions, ["IO read xs", "IO read sm", "IO read md", "IO read lg",
+                                     "IO read xl"]), 1, 'Read start up', tag)
 
     # Write tests creation
-    plot_io(group_ios(io_solutions, ["Database write xs", "Database write sm", "Database write md",
-                                     "Database write lg", "Database write xl"]), 1, 'Write start up', tag)
+    plot_io(group_ios(io_solutions, ["IO write xs", "IO write sm", "IO write md",
+                                     "IO write lg", "IO write xl"]), 1, 'Write start up', tag)
 
     # Read tests creation
-    plot_io(group_ios(io_solutions, ["Database read xs", "Database read sm", "Database read md", "Database read lg",
-                                     "Database read xl"]), 0, 'Read creation', tag)
+    plot_io(group_ios(io_solutions, ["IO read xs", "IO read sm", "IO read md", "IO read lg",
+                                     "IO read xl"]), 0, 'Read creation', tag)
 
     # Write tests creation
-    plot_io(group_ios(io_solutions, ["Database write xs", "Database write sm", "Database write md",
-                                     "Database write lg", "Database write xl"]), 0, 'Write creation', tag)
+    plot_io(group_ios(io_solutions, ["IO write xs", "IO write sm", "IO write md",
+                                     "IO write lg", "IO write xl"]), 0, 'Write creation', tag)
 
 
 if __name__ == "__main__":
@@ -112,10 +157,10 @@ if __name__ == "__main__":
     # # #
     # Test
     tag = 'Test'
-    s = ["firecracker-alpine-devicemapper", "qemu-alpine-devicemapper"]
-    t = ["Hello World", "Http server", "Database read xl", "Database write xl", "Network"]
+    s = ["docker-alpine-None-None", "lxc-alpine-None-None"]
+    t = ["Hello World"]
     benchmark_solutions = {key: value for (key, value) in solutions.items() if key in s}
-    plot_benchmarks(group_benchmarks(benchmark_solutions, t), tag)
+    # plot_benchmarks(group_benchmarks(benchmark_solutions, t), tag)
     plot_ios(s, tag)
 
     # # #

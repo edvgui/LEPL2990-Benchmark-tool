@@ -66,7 +66,7 @@ def io_means(plots, phase=-1):
     return means
 
 
-def group_ios(solutions, ios=None):
+def group_dbs(solutions, ios=None):
     if ios is None:
         return {}
 
@@ -78,6 +78,24 @@ def group_ios(solutions, ios=None):
         plots[s_name] = {
             "name": s_name,
             "x": [0.151552, 0.536576, 2.645016, 11.931648, 111.558656],  # TODO change with database file size
+            "y": [s_measurements[io]["data"] if io in s_measurements else [[]] for io in ios]
+        }
+
+    return plots
+
+
+def group_ios(solutions, ios=None):
+    if ios is None:
+        return {}
+
+    plots = {}
+    for s in solutions:
+        solution = solutions[s]
+        s_name = solution["name"]
+        s_measurements = solution["measurements"]
+        plots[s_name] = {
+            "name": s_name,
+            "x": [10, 100, 1000, 10000, 100000],
             "y": [s_measurements[io]["data"] if io in s_measurements else [[]] for io in ios]
         }
 

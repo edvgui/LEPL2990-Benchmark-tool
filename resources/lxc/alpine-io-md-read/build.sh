@@ -8,8 +8,10 @@ SNAPSHOT="export"
 
 lxc launch -e ${BASE} ${CONTAINER}
 
-lxc file push "${DIR}/../../common/network/ping.sh" ${CONTAINER}/root/ping.sh
-lxc exec ${CONTAINER} -- chmod +x /root/ping.sh
+lxc file push "${DIR}/../../common/io/md.tar" ${CONTAINER}/root/md.tar
+lxc exec ${CONTAINER} -- tar -xf md.tar
+lxc file push "${DIR}/../../common/io/read.sh" ${CONTAINER}/root/read.sh
+lxc exec ${CONTAINER} -- chmod +x /root/read.sh
 
 lxc snapshot ${CONTAINER} ${SNAPSHOT}
 lxc publish ${CONTAINER}/${SNAPSHOT} --alias $1

@@ -14,17 +14,6 @@
 - name: Initialising lxd
   shell: cat /tmp/lxd-preseed.yaml | lxd init --preseed
 
-- name: Create benchmark group
-  group:
-    name: '{{ benchmark_group }}'
-    state: present
-
-- name: Create benchmark user
-  user:
-    name: '{{ benchmark_user }}'
-    state: present
-    group: '{{ benchmark_group }}'
-
 - name: Add benchmark user to lxd group
   user:
     name: '{{ benchmark_user }}'

@@ -1,0 +1,19 @@
+---
+
+- name: Create benchmark group
+  group:
+    name: '{{ benchmark_group }}'
+    state: present
+
+- name: Create benchmark user
+  user:
+    name: '{{ benchmark_user }}'
+    state: present
+    group: '{{ benchmark_group }}'
+
+- name: Create benchmark home directory
+  file:
+    path: '/home/{{ benchmark_user }}'
+    owner: '{{ benchmark_user }}'
+    group: '{{ benchmark_group }}'
+    state: directory

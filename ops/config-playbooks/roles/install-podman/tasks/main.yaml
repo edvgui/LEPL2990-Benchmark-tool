@@ -2,7 +2,7 @@
 
 - name: Install required dependency
   apt:
-    name: curl
+    name: gpg
     state: latest
     update_cache: yes
 
@@ -10,12 +10,12 @@
   command: /usr/bin/lsb_release -rs
   register: version_id
 
-- name: Add Podman Release apt key
+- name: Add libcontainers release apt key
   apt_key:
     url: 'https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ version_id.stdout }}/Release.key'
     state: present
 
-- name: Add Podman repository
+- name: Add libcontainers repository
   apt_repository:
     repo: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ version_id.stdout }} /'
     filename: download_opensuse_org_libcontainers
@@ -27,9 +27,11 @@
     state: latest
     update_cache: yes
 
-- name: Ensure path exists
+- name: Ensure configuration path exists
   file:
     path: '/home/{{ benchmark_user }}/.config/containers/'
+    owner: '{{ benchmark_user }}'
+    group: '{{ benchmark_user }}'
     state: directory
 
 - name: Apply libpod configuration
@@ -42,7 +44,7 @@
 
 - name: Apply storage configuration
   template:
-    src: storage.conf.j2
+    src: 'storage.conf.j2'
     dest: '/home/{{ benchmark_user }}/.config/containers/storage.conf'
     owner: '{{ benchmark_user }}'
     group: '{{ benchmark_group }}'
@@ -50,7 +52,63 @@
   notify:
     - clean up storage
 
+- name: Ensure user service exists
+  file:
+    path: '/etc/systemd/system/user@.service.d'
+    state: directory
+
+- name: Allow cpu and memory control for rootless containers
+  copy:
+    src: 'cgroups.conf'
+    dest: '/etc/systemd/system/user@.service.d/cgroups.conf'
+    mode: '0644'
+
+- name: Install slirp4netns v1.0.1 from github
+  get_url:
+    url: https://github.com/rootless-containers/slirp4netns/releases/download/v1.0.1/slirp4netns-x86_64
+    dest: /usr/bin/slirp4netns
+    checksum: sha256:b5ccc37f95d776563a958a3fc90979d7db234e84c893386e6aecf638513e2fde
+    mode: '0755'
+    owner: 'root'
+    group: 'root'
+
 - name: Configure ping group range
   sysctl:
     name: net.ipv4.ping_group_range
     value: '0 2000000'
+
+- name: Installing additionnal dependencies for overlay storage driver
+  block:
+
+  - name: Install required dependencies
+    apt:
+      name: '{{ item }}'
+      state: latest
+      update_cache: yes
+    loop: [ 'unzip', 'tar', 'buildah' ]
+
+  - name: Create /dev/fuse
+    command:
+      cmd: 'mknod -m 0666 /dev/fuse c 10 229'
+      creates: '/dev/fuse'
+
+  - name: Get fuse-overlayfs v1.0.0 source from github
+    unarchive:
+      src: https://github.com/containers/fuse-overlayfs/archive/v1.0.0.zip
+      dest: /opt
+      remote_src: yes
+
+  - name: Building fuse-overlayfs, this can take a while
+    command:
+      cmd: 'buildah bud -v $PWD:/build/fuse-overlayfs -t fuse-overlayfs -f ./Dockerfile.static.ubuntu .'
+      chdir: /opt/fuse-overlayfs-1.0.0
+      creates: fuse-overlayfs
+
+  - name: Installing fuse-overlayfs binary
+    copy:
+      src: /opt/fuse-overlayfs-1.0.0/fuse-overlayfs
+      dest: /usr/bin/fuse-overlayfs
+      mode: '0755'
+      remote_src: yes
+
+  when: storage_driver == "overlay"

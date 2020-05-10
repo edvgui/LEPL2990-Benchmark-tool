@@ -4,6 +4,9 @@
     
   roles:
 
+    - role: common
+      become: yes
+
     - role: install-kata-fc
       become: yes
       become_method: sudo

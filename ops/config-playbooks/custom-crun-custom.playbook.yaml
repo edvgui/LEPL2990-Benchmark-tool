@@ -3,6 +3,9 @@
   serial: 1
     
   roles:
+
+    - role: common
+      become: yes
   
     - role: install-crun
       become: yes

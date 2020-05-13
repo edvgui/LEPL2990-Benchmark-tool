@@ -83,7 +83,7 @@ class HttpServer(Generic):
         start = lxc.start(container)
         response, execution = lxc.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         result = server_get("http://" + address)
-        lxc.stop(container)
+        lxc.kill(container)
         return [creation, creation + start, creation + start + execution,
                 creation + start + execution + result] if result != -1 else -1
 

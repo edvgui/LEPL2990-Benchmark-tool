@@ -42,7 +42,7 @@ class WarmUp(Generic):
         response, execution_time = lxc.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:
             print("Error (lxc): wrong response: " + response)
-        lxc.stop(container)
+        lxc.kill(container)
         return [launching_time + execution_time]
 
     def contingious(self, image, runtime):

@@ -92,14 +92,14 @@ def launch(image, options, log=False):
     return output.stdout.decode('utf-8').split(" ")[6].strip(), toc - tic
 
 
-def stop(container, log=False):
+def kill(container, log=False):
     """
     Stop a running container with the command 'lxc stop'
     :param container: The id of the container to stop
     :param log: Whether to display some logs or not
     :return: The command execution time
     """
-    args = ["lxc", "stop", container]
+    args = ["lxc", "stop", "--force", container]
     tic = time.time()
     output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     toc = time.time()

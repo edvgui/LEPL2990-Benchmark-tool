@@ -65,10 +65,10 @@ class Ping(Generic):
                     print('Error (lxc): wrong response: ' + response)
                     return -1
                 else:
-                    lxc.stop(container)
+                    lxc.kill(container)
                     return [float(response.split(" ")[3].split("/")[1]) / 1000]
             time.sleep(1)
-        lxc.stop(container)
+        lxc.kill(container)
         print('Error (lxc): maximum retry reached')
         return -1
 

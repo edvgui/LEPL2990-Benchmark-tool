@@ -54,7 +54,7 @@ class IOWrite(Generic):
         if 'Done' not in response:
             print("Error (lxc): wrong response: " + response)
             return -1
-        lxc.stop(container)
+        lxc.kill(container)
         return [creation, creation + start, creation + start + execution_time]
 
     def contingious(self, image, runtime):

@@ -25,7 +25,7 @@ class Ping(Generic):
         if runtime is not None:
             options.extend(["--runtime", runtime])
         try:
-            response, _ = docker.run("edvgui/%s-network" % image, options=options, command=[])
+            response, _ = docker.run("edvgui/%s-ping" % image, options=options, command=[])
         except docker.DockerApiException as e:
             print(e)
             return -1
@@ -41,7 +41,7 @@ class Ping(Generic):
         if runtime is not None:
             options.extend(["--runtime", runtime])
         try:
-            response, _ = podman.run("edvgui/%s-network" % image, options=options, command=[])
+            response, _ = podman.run("edvgui/%s-ping" % image, options=options, command=[])
         except podman.PodmanApiException as e:
             print(e)
             return -1
@@ -53,7 +53,8 @@ class Ping(Generic):
                 return [float(response.split(" ")[3].split("/")[1]) / 1000]
 
     def lxc(self, image, runtime):
-        container, launching_time = lxc.launch("%s-network" % image, ["-e"])
+        container, launching_time = lxc.launch("%s-ping" % image, ["-e", "--profile", "default", "--profile",
+                                                                      "online"])
         for i in range(0, 10):
             try:
                 response, _ = lxc.exec(container, ["./ping.sh", "10"])
@@ -73,7 +74,7 @@ class Ping(Generic):
 
     def contingious(self, image, runtime):
         # TODO handle runtime
-        container, _ = contingious.create("%s-network" % image)
+        container, _ = contingious.create("%s-ping" % image)
         try:
             response, _ = contingious.run(container, [])
         except contingious.ContINGIousApiException as e:

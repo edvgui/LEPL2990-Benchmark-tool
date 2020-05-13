@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import getopt
 import sys
@@ -69,7 +69,7 @@ container_managers = {
             }
         }
     },
-    "lxc": {
+    "lxd": {
         "name": "LXD",
         "default-image": "alpine",
         "images": {
@@ -141,11 +141,15 @@ def measure(procedures, container_manager, base_image, runtime=None, warm_up=Tru
     measurements = {}
     for procedure in procedures:
         print("\t - " + procedure.name())
-        measurements[procedure.name()] = {
-            "name": procedure.name(),
-            "legend": procedure.response_legend(),
-            "data": execute(lambda: procedure.functions[container_manager](base_image, runtime), procedure.response_len(), 20, False)
-        }
+        try:
+            measurements[procedure.name()] = {
+                "name": procedure.name(),
+                "legend": procedure.response_legend(),
+                "data": execute(lambda: procedure.functions[container_manager](base_image, runtime),
+                                procedure.response_len(), 20, False)
+            }
+        except Exception as e:
+            print(e)
 
     return measurements
 

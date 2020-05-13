@@ -16,3 +16,21 @@ profiles:
   config:
     limits.memory: 1GB
     limits.cpu: 1
+  devices:
+    root:
+      path: /
+      pool: pool1
+      type: disk
+- name: online
+  devices:
+    eth0:
+      name: eth0
+      nictype: bridged
+      parent: lxdbr0
+      type: nic
+- name: server-3000
+  devices:
+    port-3000:
+      listen: "tcp:127.0.0.1:3000"
+      connect: "tcp:127.0.0.1:80"
+      type: proxy

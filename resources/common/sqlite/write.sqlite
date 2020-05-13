@@ -1,44 +1,35 @@
-DROP TABLE IF EXISTS Copy_Customer;
 CREATE TABLE Copy_Customer AS 
     SELECT *
     FROM C_Customer
 ;
-DROP TABLE IF EXISTS Copy_District;
 CREATE TABLE Copy_District AS 
     SELECT *
     FROM C_District
 ;
-DROP TABLE IF EXISTS Copy_History;
 CREATE TABLE Copy_History AS 
     SELECT *
     FROM C_History
 ;
-DROP TABLE IF EXISTS Copy_Item;
 CREATE TABLE Copy_Item AS 
     SELECT *
     FROM C_Item
 ;
-DROP TABLE IF EXISTS Copy_New_Order;
 CREATE TABLE Copy_New_Order AS 
     SELECT *
     FROM C_New_Order
 ;
-DROP TABLE IF EXISTS Copy_Order;
 CREATE TABLE Copy_Order AS 
     SELECT *
     FROM C_Order
 ;
-DROP TABLE IF EXISTS Copy_Order_Line;
 CREATE TABLE Copy_Order_Line AS 
     SELECT *
     FROM C_Order_Line
 ;
-DROP TABLE IF EXISTS Copy_Stock;
 CREATE TABLE Copy_Stock AS 
     SELECT *
     FROM C_Stock
 ;
-DROP TABLE IF EXISTS Copy_Warehouse;
 CREATE TABLE Copy_Warehouse AS 
     SELECT *
     FROM C_Warehouse

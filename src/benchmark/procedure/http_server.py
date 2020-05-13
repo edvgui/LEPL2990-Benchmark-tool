@@ -64,7 +64,7 @@ class HttpServer(Generic):
                 creation + start + execution + result] if result != -1 else -1
 
     def podman(self, image, runtime):
-        address = "127.0.0.1:3002"
+        address = "127.0.0.1:3000"
         options = ["--rm", "-p", address + ":80"]
         if runtime is not None:
             options.extend(["--runtime", runtime])
@@ -77,20 +77,18 @@ class HttpServer(Generic):
                 creation + start + execution + result] if result != -1 else -1
 
     def lxc(self, image, runtime):
-        address = "127.0.0.1:3003"
-        container, creation = lxc.init("%s-http-server" % image, ["-e"], [])
-        device = "device-" + container
-        configuration = lxc.config_proxy_add(container, device, address)
+        address = "127.0.0.1:3000"
+        container, creation = lxc.init("%s-http-server" % image, ["-e", "--profile", "default", "--profile", "online",
+                                                                  "--profile", "server-3000"])
         start = lxc.start(container)
         response, execution = lxc.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         result = server_get("http://" + address)
-        lxc.config_proxy_rm(container, device)
         lxc.stop(container)
-        return [creation + configuration, creation + configuration + start, creation + configuration + start + execution,
-                creation + configuration + start + execution + result] if result != -1 else -1
+        return [creation, creation + start, creation + start + execution,
+                creation + start + execution + result] if result != -1 else -1
 
     def contingious(self, image, runtime):
-        address = "127.0.0.1:3004"
+        address = "127.0.0.1:3000"
         # TODO handle runtime
         container, creation_duration = contingious.create("%s-http-server" % image)
 

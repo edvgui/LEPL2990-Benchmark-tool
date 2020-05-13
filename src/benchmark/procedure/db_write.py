@@ -24,7 +24,7 @@ class DatabaseWrite(Generic):
         return ["Create", "Start", "Exec"]
 
     def docker(self, image, runtime):
-        options = ["--rm"]
+        options = ["--rm", "--network", "none"]
         if runtime is not None:
             options.extend(["--runtime", runtime])
         container, creation = docker.create("edvgui/%s-db-%s-write" % (image, self.size), options=options)
@@ -36,7 +36,7 @@ class DatabaseWrite(Generic):
         return [creation, creation + start, creation + start + execution]
 
     def podman(self, image, runtime):
-        options = ["--rm"]
+        options = ["--rm", "--network", "none"]
         if runtime is not None:
             options.extend(["--runtime", runtime])
         container, creation = podman.create("edvgui/%s-db-%s-write" % (image, self.size), options=options)
@@ -48,7 +48,7 @@ class DatabaseWrite(Generic):
         return [creation, creation + start, creation + start + execution]
 
     def lxc(self, image, runtime):
-        container, creation = lxc.init("%s-db-%s-write" % (image, self.size), ["-e"])
+        container, creation = lxc.init("%s-db-%s-write" % (image, self.size), ["-e", "--profile", "default"])
         start = lxc.start(container)
         response, execution_time = lxc.exec(container, ["./sqlite.sh", "tpcc.db", "write.sqlite"])
         if 'Done' not in response:

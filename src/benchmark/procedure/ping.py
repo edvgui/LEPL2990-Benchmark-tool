@@ -1,7 +1,7 @@
 from procedure.generic import Generic
 import api.api_docker as docker
 import api.api_podman as podman
-import api.api_lxc as lxc
+import api.api_lxd as lxc
 import api.api_contingious as contingious
 import time
 
@@ -52,7 +52,7 @@ class Ping(Generic):
             else:
                 return [float(response.split(" ")[3].split("/")[1]) / 1000]
 
-    def lxc(self, image, runtime):
+    def lxd(self, image, runtime):
         container, launching_time = lxc.launch("%s-ping" % image, ["-e", "--profile", "default", "--profile",
                                                                       "online"])
         for i in range(0, 10):

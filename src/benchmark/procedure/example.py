@@ -33,7 +33,7 @@ class Example(Generic):
             results.append(acc)
         return results
 
-    def lxc(self, image, runtime):
+    def lxd(self, image, runtime):
         results = []
         acc = 0
         for _ in range(0, self.response_len()):

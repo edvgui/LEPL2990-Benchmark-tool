@@ -8,7 +8,7 @@ class Generic(ABC):
         self.functions = {
             'docker': self.docker,
             'podman': self.podman,
-            'lxc': self.lxc,
+            'lxd': self.lxd,
             'contingious': self.contingious
         }
 
@@ -33,7 +33,7 @@ class Generic(ABC):
         pass
 
     @abstractmethod
-    def lxc(self, image, runtime):
+    def lxd(self, image, runtime):
         pass
 
     @abstractmethod

@@ -7,7 +7,7 @@ from exceptions.api_exception import ApiException
 class LXCApiException(ApiException):
 
     def __init__(self, message, trace):
-        super().__init__("LXC", message, trace)
+        super().__init__("LXD", message, trace)
 
 
 def init(image, flags, log=False):
@@ -124,48 +124,6 @@ def rm(container, log=False):
     toc = time.time()
     if output.returncode != 0:
         raise LXCApiException("Error while trying to remove container " + container,
-                              output.stderr.decode('utf-8').strip())
-    if log:
-        print(output)
-    return toc - tic
-
-
-def config_proxy_add(container, device, address, log=False):
-    """
-    Attach a proxy to a running container with the command 'lxc config device add'
-    :param container: The container to attach the device to
-    :param device: The name to give to the device
-    :param address: The address of the device on the host
-    :param log: Whether to display some logs or not
-    :return: The command execution time
-    """
-    args = ["lxc", "config", "device", "add", container, device, "proxy", "listen=tcp:" + address,
-            "connect=tcp:127.0.0.1:80"]
-    tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    toc = time.time()
-    if output.returncode != 0:
-        raise LXCApiException("Error while trying to add proxy on container " + container,
-                              output.stderr.decode('utf-8').strip())
-    if log:
-        print(output)
-    return toc - tic
-
-
-def config_proxy_rm(container, device, log=False):
-    """
-    Detach a proxy from a running container with the command 'lxc config device remove'
-    :param container: The container to detach the device from
-    :param device: The device to detach from the container
-    :param log: Whether to display some logs or not
-    :return: The command execution time
-    """
-    args = ["lxc", "config", "device", "remove", container, device]
-    tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    toc = time.time()
-    if output.returncode != 0:
-        raise LXCApiException("Error while trying to remove proxy from container " + container,
                               output.stderr.decode('utf-8').strip())
     if log:
         print(output)

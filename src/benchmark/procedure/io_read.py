@@ -1,7 +1,7 @@
 from procedure.generic import Generic
 import api.api_docker as docker
 import api.api_podman as podman
-import api.api_lxc as lxc
+import api.api_lxd as lxc
 import api.api_contingious as contingious
 
 
@@ -47,7 +47,7 @@ class IORead(Generic):
         podman.kill(container)
         return [creation, creation + start, creation + start + execution]
 
-    def lxc(self, image, runtime):
+    def lxd(self, image, runtime):
         container, creation = lxc.init("%s-io-%s-read" % (image, self.size), ["-e", "--profile", "default"])
         start = lxc.start(container)
         response, execution_time = lxc.exec(container, ["/root/read.sh", "/root/%s" % self.size])

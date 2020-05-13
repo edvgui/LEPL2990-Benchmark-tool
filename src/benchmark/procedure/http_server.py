@@ -7,7 +7,7 @@ from io import BytesIO
 from procedure.generic import Generic
 import api.api_docker as docker
 import api.api_podman as podman
-import api.api_lxc as lxc
+import api.api_lxd as lxc
 import api.api_contingious as contingious
 
 
@@ -76,7 +76,7 @@ class HttpServer(Generic):
         return [creation, creation + start, creation + start + execution,
                 creation + start + execution + result] if result != -1 else -1
 
-    def lxc(self, image, runtime):
+    def lxd(self, image, runtime):
         address = "127.0.0.1:3000"
         container, creation = lxc.init("%s-http-server" % image, ["-e", "--profile", "default", "--profile", "online",
                                                                   "--profile", "server-3000"])

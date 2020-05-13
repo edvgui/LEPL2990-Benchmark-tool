@@ -1,7 +1,7 @@
 from procedure.generic import Generic
 import api.api_docker as docker
 import api.api_podman as podman
-import api.api_lxc as lxc
+import api.api_lxd as lxc
 import api.api_contingious as contingious
 
 
@@ -37,7 +37,7 @@ class WarmUp(Generic):
             print('Error (podman): wrong response: ' + response)
         return [duration]
 
-    def lxc(self, image, runtime):
+    def lxd(self, image, runtime):
         container, launching_time = lxc.launch("%s-hello-world" % image, ["-e"])
         response, execution_time = lxc.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:

@@ -1,0 +1,8 @@
+---
+
+- name: Making filesystem on device
+  filesystem:
+    dev: '{{ device }}'
+    fstype: lvm
+    force: yes
+

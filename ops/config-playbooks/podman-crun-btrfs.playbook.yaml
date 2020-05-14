@@ -1,0 +1,23 @@
+---
+- hosts: Benny
+  serial: 1
+    
+  roles:
+
+    - role: common
+      become: yes
+
+    - role: install-crun
+      become: yes
+
+    - role: create-btrfs
+      vars:
+        device: /dev/sdb1
+        mount: /mnt/btrfs
+      become: yes
+  
+    - role: install-podman
+      vars:
+        storage_driver: btrfs
+        storage_path: /mnt/btrfs/podman-storage
+      become: yes

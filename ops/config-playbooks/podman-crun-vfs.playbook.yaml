@@ -7,10 +7,17 @@
     - role: common
       become: yes
 
-    - role: install-runc
+    - role: install-crun
       become: yes
-  
+
+    - role: create-ext4
+      vars:
+        device: /dev/sdb1
+        mount: /mnt/ext4
+      become: yes
+
     - role: install-podman
       vars:
         storage_driver: vfs
+        storage_path: /mnt/ext4/podman-storage
       become: yes

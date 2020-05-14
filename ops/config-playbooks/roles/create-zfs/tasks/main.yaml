@@ -1,0 +1,20 @@
+---
+
+- name: Install zfsutils
+  apt:
+    name: zfsutils-linux
+    state: latest
+    update_cache: yes
+
+- name: Create zfs pool
+  command:
+    cmd: 'zpool create -f {{ zpool }} -m {{ mount }} {{ device }}'
+
+- name: Setting permission for mounted partition
+  file:
+    path: '{{ mount }}'
+    state: directory
+    recurse: yes
+    mode: '0777'
+    owner: 'root'
+    group: 'root'

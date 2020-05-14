@@ -2,7 +2,7 @@
 
 - name: Download crun v0.13 from github
   get_url:
-    url: https://github.com/containers/runc/releases/download/0.13/crun-0.13-static-x86_64
+    url: https://github.com/containers/crun/releases/download/0.13/crun-0.13-static-x86_64
     dest: /usr/bin/crun
     mode: '0755'
     owner: 'root'

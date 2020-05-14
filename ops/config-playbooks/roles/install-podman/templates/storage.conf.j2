@@ -94,7 +94,7 @@ autoextend_threshold = "80"
 
 # directlvm_device specifies a custom block storage device to use for the
 # thin pool. Required if you setup devicemapper.
-directlvm_device = "{{ storage_device }}"
+directlvm_device = "{{ lvm_device }}"
 
 # directlvm_device_force wipes device even if device already has a filesystem.
 directlvm_device_force = "True"
@@ -173,7 +173,7 @@ mountopt = "nodev"
 
 [storage.options.zfs]
 # File system name for the zfs driver
-# fsname = ""
+fsname = "zpool-podman"
 
 # mountopt specifies comma separated list of extra mount options
 mountopt = "nodev"

@@ -13,7 +13,7 @@
 
     - role: install-docker
       vars:
-        docker_version: 18.06.3~ce~3-0~ubuntu-bionic
+        docker_version: 18.06.3~ce~3-0~ubuntu
         default_runtime: kata-fc
         runtimes:
           kata-fc:

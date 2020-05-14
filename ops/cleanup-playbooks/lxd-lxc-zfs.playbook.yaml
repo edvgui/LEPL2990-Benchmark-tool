@@ -1,0 +1,18 @@
+---
+- hosts: Benny
+  serial: 1
+  vars:
+
+    pool: 'pool1'
+
+  tasks:
+
+    - name: Remove root device from default profile
+      command:
+        cmd: 'lxc profile device remove default root'
+      ignore_errors: yes
+
+    - name: Delete storage pool
+      command:
+        cmd: 'lxc storage delete {{ pool }}'
+      ignore_errors: yes

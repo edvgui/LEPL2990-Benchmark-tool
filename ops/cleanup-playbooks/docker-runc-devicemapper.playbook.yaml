@@ -1,0 +1,40 @@
+---
+- hosts: Benny
+  serial: 1
+  vars:
+
+    mount_point: '/mnt/ext4'
+
+  tasks:
+
+    - name: Stop docker
+      systemd:
+        name: docker.service
+        state: stopped
+      become: yes
+
+    - name: Deleting docker data root
+      file:
+        path: '{{ mount_point }}/docker'
+        state: absent
+      become: yes
+
+    - name: Remove logical volume
+      lvol:
+        vg: docker
+        lv: thinpool
+        state: absent
+        force: yes
+      become: yes
+
+    - name: Remove volume group
+      lvg:
+        vg: docker
+        state: absent
+      become: yes
+
+    - name: Unmount partition
+      mount:
+        path: '{{ mount_point }}'
+        state: unmounted
+      become: yes

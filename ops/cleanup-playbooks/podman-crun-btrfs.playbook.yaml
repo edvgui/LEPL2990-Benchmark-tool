@@ -1,0 +1,14 @@
+---
+- hosts: Benny
+  serial: 1
+  vars:
+
+    mount_point: '/mnt/btrfs'
+
+  tasks:
+
+    - name: Unmount partition
+      mount:
+        path: '{{ mount_point }}'
+        state: unmounted
+      become: yes

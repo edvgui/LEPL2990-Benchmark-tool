@@ -1,0 +1,13 @@
+---
+- hosts: Benny
+  serial: 1
+  vars:
+
+    zpool: zpool-podman
+
+  tasks:
+
+    - name: Destroy zfs pool
+      command:
+        cmd: 'zpool destroy -f {{ zpool }}'
+      become: yes

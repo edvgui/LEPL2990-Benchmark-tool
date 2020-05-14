@@ -1,11 +1,32 @@
 ---
 
+- name: Ensure configuration folder exists
+  file:
+    path: /etc/docker
+    state: directory
+    mode: '0755'
+
+- name: Apply configuration
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    mode: '0644'
+  notify:
+    - restart docker
+
 - name: Install required dependencies
   apt:
     name: '{{ item }}'
     state: latest
     update_cache: yes
   loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common' ]
+
+- name: Install additionnal dependency for devicemapper
+  apt:
+    name: 'thin-provisioning-tools'
+    state: latest
+    update_cache: yes
+  when: storage_driver == 'devicemapper'
 
 - name: Add Docker GPG apt key
   apt_key:
@@ -48,14 +69,6 @@
     state: latest
     update_cache: yes
   when: docker_version == 'latest'
-
-- name: Apply configuration
-  template:
-    src: daemon.json.j2
-    dest: /etc/docker/daemon.json
-    mode: '0644'
-  notify:
-    - restart docker
 
 - name: Add benchmark user to docker group
   user:

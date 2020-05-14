@@ -1,0 +1,28 @@
+---
+- hosts: Benny
+  serial: 1
+  vars:
+
+    device: /dev/sdb1
+    
+  roles:
+
+    - role: common
+      become: yes
+
+    - role: install-crun
+      become: yes
+
+    - role: create-zfs
+      vars:
+        device: '{{ device }}'
+        mount: /mnt/zfs
+        zpool: zpool-podman
+      become: yes
+  
+    - role: install-podman
+      vars:
+        storage_driver: zfs
+        storage_path: /mnt/zfs/podman-storage
+        zpool: zpool-podman
+      become: yes

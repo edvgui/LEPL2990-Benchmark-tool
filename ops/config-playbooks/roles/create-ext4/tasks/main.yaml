@@ -1,0 +1,23 @@
+---
+
+- name: Making filesystem on device
+  filesystem:
+    dev: '{{ device }}'
+    fstype: ext4
+    force: yes
+
+- name: Mounting new file system
+  mount:
+    path: '{{ mount }}'
+    src: '{{ device }}'
+    fstype: ext4
+    state: mounted
+
+- name: Setting permission for mounted partition
+  file:
+    path: '{{ mount }}'
+    state: directory
+    recurse: yes
+    mode: '0777'
+    owner: 'root'
+    group: 'root'

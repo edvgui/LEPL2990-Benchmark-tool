@@ -8,6 +8,9 @@ default_runtime: runc
 storage_driver: overlay
 
 # This is only required when using devicemapper
-storage_device: /dev/sdx
+lvm_device: /dev/sdx
+
+# This is only required when using zfs
+zpool: zpool-podman
 
 storage_path: /home/benny/.local/share/containers/storage

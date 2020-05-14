@@ -1,0 +1,20 @@
+---
+- hosts: Benny
+  serial: 1
+  vars:
+
+    mount_point: '/mnt/ext4'
+
+  tasks:
+
+    - name: Stop docker
+      systemd:
+        name: docker.service
+        state: stopped
+      become: yes
+
+    - name: Unmount partition
+      mount:
+        path: '{{ mount_point }}'
+        state: unmounted
+      become: yes

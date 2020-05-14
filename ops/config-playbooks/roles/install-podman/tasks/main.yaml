@@ -77,6 +77,20 @@
     name: net.ipv4.ping_group_range
     value: '0 2000000'
 
+- name: Installing additional dependenciy for aufs storage driver
+  apt:
+    name: aufs-tools
+    state: latest
+    update_cache: yes
+  when: storage_driver == "aufs"
+
+- name: Installing additional dependecy for devmapper storage driver
+  apt:
+    name: thin-provisioning-tools
+    state: latest
+    update_cache: yes
+  when: storage_driver == "devmapper"
+
 - name: Installing additionnal dependencies for overlay storage driver
   block:
 
@@ -98,9 +112,10 @@
       dest: /opt
       remote_src: yes
 
+  # Apparently this doesn't work, the command needs to be run manually
   - name: Building fuse-overlayfs, this can take a while
     command:
-      cmd: 'buildah bud -v $PWD:/build/fuse-overlayfs -t fuse-overlayfs -f ./Dockerfile.static.ubuntu .'
+      cmd: 'buildah bud -v /opt/fuse-overlayfs-1.0.0:/build/fuse-overlayfs -t fuse-overlayfs -f ./Dockerfile.static.ubuntu .'
       chdir: /opt/fuse-overlayfs-1.0.0
       creates: fuse-overlayfs
 

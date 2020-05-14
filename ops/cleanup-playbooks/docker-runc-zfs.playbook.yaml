@@ -1,0 +1,19 @@
+---
+- hosts: Benny
+  serial: 1
+  vars:
+
+    zpool: 'zpool-docker'
+
+  tasks:
+
+    - name: Stop docker
+      systemd:
+        name: docker.service
+        state: stopped
+      become: yes
+
+    - name: Destroy zfs pool
+      command:
+        cmd: 'zpool destroy -f {{ zpool }}'
+      become: yes

@@ -1,0 +1,28 @@
+---
+- hosts: Benny
+  serial: 1
+  vars:
+
+    lvm_device: /dev/sdb1
+    ext_device: /dev/sdb2
+    
+  roles:
+
+    - role: common
+      become: yes
+
+    - role: install-crun
+      become: yes
+
+    - role: create-ext4
+      vars:
+        device: '{{ ext_device }}'
+        mount: /mnt/ext4
+      become: yes
+  
+    - role: install-podman
+      vars:
+        storage_driver: devmapper
+        lvm_device: '{{ lvm_device }}'
+        storage_path: /mnt/ext4/podman-storage
+      become: yes

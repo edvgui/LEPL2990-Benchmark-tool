@@ -44,7 +44,7 @@ class HelloWorld(Generic):
         return [creation, creation + start, creation + start + execution]
 
     def lxd(self, image, runtime):
-        container, creation = lxc.init("%s-hello-world" % image, ["-e", "--profile", "default"])
+        container, creation = lxc.init("edvgui/%s-hello-world" % image, ["-e", "--profile", "default"])
         start = lxc.start(container)
         response, execution_time = lxc.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:

@@ -6,10 +6,12 @@ generate() {
     local name=$1
     local amount=$2
     
+    rm -rf $DIR/$name
     mkdir -p $DIR/$name
+
     for (( I=1; I<=amount; I++ ))
     do
-        cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4096 | head -n 1 > $DIR/$name/$I.txt
+        tr -dc 'a-zA-Z0-9' < /dev/urandom | fold -w 4095 | head -n 1 > $DIR/$name/$I.txt
         progress=$((I*100/amount))
         echo -ne "Generating $name ($progress %)\r"
     done
@@ -17,6 +19,10 @@ generate() {
     
     cd $DIR && tar -cf $name.tar $name
 }
+
+echo "Compiling read executable"
+gcc -o read read.c
+
 
 generate xs 10
 generate sm 100

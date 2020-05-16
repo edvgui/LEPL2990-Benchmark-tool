@@ -53,7 +53,7 @@ class Ping(Generic):
                 return [float(response.split(" ")[3].split("/")[1]) / 1000]
 
     def lxd(self, image, runtime):
-        container, launching_time = lxc.launch("%s-ping" % image, ["-e", "--profile", "default", "--profile",
+        container, launching_time = lxc.launch("edvgui/%s-ping" % image, ["-e", "--profile", "default", "--profile",
                                                                       "online"])
         for i in range(0, 10):
             try:

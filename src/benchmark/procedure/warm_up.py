@@ -38,7 +38,7 @@ class WarmUp(Generic):
         return [duration]
 
     def lxd(self, image, runtime):
-        container, launching_time = lxc.launch("%s-hello-world" % image, ["-e"])
+        container, launching_time = lxc.launch("edvgui/%s-hello-world" % image, ["-e"])
         response, execution_time = lxc.exec(container, ["/bin/echo", "Hello World"])
         if 'Hello World' not in response:
             print("Error (lxc): wrong response: " + response)

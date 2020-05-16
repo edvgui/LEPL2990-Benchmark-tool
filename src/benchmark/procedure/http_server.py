@@ -78,8 +78,8 @@ class HttpServer(Generic):
 
     def lxd(self, image, runtime):
         address = "127.0.0.1:3000"
-        container, creation = lxc.init("%s-http-server" % image, ["-e", "--profile", "default", "--profile", "online",
-                                                                  "--profile", "server-3000"])
+        container, creation = lxc.init("edvgui/%s-http-server" % image, ["-e", "--profile", "default", "--profile",
+                                                                         "online", "--profile", "server-3000"])
         start = lxc.start(container)
         response, execution = lxc.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         result = server_get("http://" + address)

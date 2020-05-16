@@ -27,7 +27,7 @@ class DatabaseRead(Generic):
         options = ["--rm", "--network", "none"]
         if runtime is not None:
             options.extend(["--runtime", runtime])
-        container, creation = docker.create("edvgui/%s-db-%s-read" % (image, self.size), options=options)
+        container, creation = docker.create("edvgui/%s-db-read-%s" % (image, self.size), options=options)
         _, start = docker.start(container)
         response, execution = docker.exec(container, ["/run/run.sh", "/run/tpcc.db", "/run/read.sqlite"])
         if 'Done' not in response:
@@ -39,7 +39,7 @@ class DatabaseRead(Generic):
         options = ["--rm", "--network", "none"]
         if runtime is not None:
             options.extend(["--runtime", runtime])
-        container, creation = podman.create("edvgui/%s-db-%s-read" % (image, self.size), options=options)
+        container, creation = podman.create("edvgui/%s-db-read-%s" % (image, self.size), options=options)
         _, start = podman.start(container)
         response, execution = podman.exec(container, ["/run/run.sh", "/run/tpcc.db", "/run/read.sqlite"])
         if 'Done' not in response:
@@ -48,7 +48,7 @@ class DatabaseRead(Generic):
         return [creation, creation + start, creation + start + execution]
 
     def lxd(self, image, runtime):
-        container, creation = lxc.init("%s-db-%s-read" % (image, self.size), ["-e", "--profile", "default"])
+        container, creation = lxc.init("edvgui/%s-db-read-%s" % (image, self.size), ["-e", "--profile", "default"])
         start = lxc.start(container)
         response, execution_time = lxc.exec(container, ["./sqlite.sh", "tpcc.db", "read.sqlite"])
         if 'Done' not in response:

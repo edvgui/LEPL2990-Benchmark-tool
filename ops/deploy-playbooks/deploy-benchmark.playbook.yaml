@@ -9,6 +9,8 @@
     benchmark_user: 'benny'
     benchmark_group: 'benny'
 
+    tarball_path: $HOME/Downloads/edvgui
+
   tasks:
 
     - name: Install dependencies
@@ -57,3 +59,16 @@
         name: pycurl
         executable: pip3
       become: yes
+
+    - name: Making sure that tarball folder exists for benchmark user
+      file:
+        name: '/home/{{ benchmark_user }}/Downloads/edvgui'
+        user: '{{ benchmark_user }}'
+        group: '{{ Benchmark_user }}'
+        state: directory
+      become: yes
+
+    - name: Copying images tarball
+      copy:
+        src: '{{ tarball_path }}'
+        dest: '/home/{{ benchmark_user }}/Downloads/edvgui/'

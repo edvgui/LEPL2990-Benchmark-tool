@@ -1,20 +1,31 @@
 ---
 - hosts: Benny
   serial: 1
+  vars:
+
+    device: /dev/sdb1
+
+    benchmark_user: benny
+    benchmark_group: benny
     
   roles:
 
     - role: common
+      vars:
+        user: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
       become: yes
 
     - role: create-lvm
       vars:
-        device: /dev/sdb1
+        device: '{{ device }}'
       become: yes
   
     - role: install-lxd
       vars:
+        user: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
         storage_driver: lvm
-        storage_path: /dev/sdb1
+        storage_path: '{{ device }}'
       become: yes
       become_method: sudo

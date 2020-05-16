@@ -1,10 +1,19 @@
 ---
 - hosts: Benny
   serial: 1
+  vars:
+
+    device: /dev/sdb1
+
+    benchmark_user: benny
+    benchrmak_group: benny
     
   roles:
 
     - role: common
+      vars:
+        user: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
       become: yes
 
     - role: install-crun
@@ -12,12 +21,14 @@
 
     - role: create-btrfs
       vars:
-        device: /dev/sdb1
+        device: '{{ device }}'
         mount: /mnt/btrfs
       become: yes
   
     - role: install-podman
       vars:
+        user: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
         storage_driver: btrfs
         storage_path: /mnt/btrfs/podman-storage
       become: yes

@@ -1,23 +1,39 @@
 ---
 - hosts: Benny
   serial: 1
+  vars:
+
+    device: /dev/sdb1
+
+    benchmark_user: benny
+    benchmark_group: benny
     
   roles:
 
     - role: common
+      vars:
+        user: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
       become: yes
 
     - role: install-kata
       become: yes
-      become_method: sudo
+
+    - role: create-ext4
+      vars:
+        device: '{{ device }}'
+        mount: /mnt/ext4
+      become: yes
 
     - role: install-docker
       vars:
         docker_version: 'latest'
+        user: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
+        data_root: /mnt/ext4/docker
+        storage_driver: vfs
         default_runtime: kata-runtime
         runtimes:
           kata-runtime:
             path: /usr/bin/kata-runtime
-        storage_driver: vfs
       become: yes
-      become_method: sudo

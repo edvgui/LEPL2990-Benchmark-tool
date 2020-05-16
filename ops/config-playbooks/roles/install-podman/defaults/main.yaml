@@ -1,16 +1,15 @@
-benchmark_user: 'benny'
-benchmark_group: 'benny'
+user: 'benny'
+group: 'benny'
 
 default_runtime: runc
 
 # Available storage driver values are
 # overlay, btrfs, aufs, zfs, vfs, devicemapper
 storage_driver: overlay
+storage_path: /var/lib/containers
 
 # This is only required when using devicemapper
 lvm_device: /dev/sdx
 
 # This is only required when using zfs
 zpool: zpool-podman
-
-storage_path: /home/benny/.local/share/containers/storage

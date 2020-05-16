@@ -72,6 +72,6 @@
 
 - name: Add benchmark user to docker group
   user:
-    name: '{{ benchmark_user }}'
+    name: '{{ user }}'
     groups: docker
     append: yes

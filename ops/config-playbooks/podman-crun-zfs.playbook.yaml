@@ -4,10 +4,16 @@
   vars:
 
     device: /dev/sdb1
+
+    benchmark_user: benny
+    benchmark_group: benny
     
   roles:
 
     - role: common
+      vars:
+        user: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
       become: yes
 
     - role: install-crun
@@ -22,6 +28,8 @@
   
     - role: install-podman
       vars:
+        user: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
         storage_driver: zfs
         storage_path: /mnt/zfs/podman-storage
         zpool: zpool-podman

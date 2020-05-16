@@ -17,7 +17,7 @@
         group: '{{ benchmark_group }}'
       become: yes
 
-    - role: install-runc
+    - role: install-crun
       become: yes
 
     - role: create-ext4
@@ -41,4 +41,8 @@
           "dm.thinp_autoextend_percent=20",
           "dm.directlvm_device_force=true"
         ]
+        default_runtime: crun
+        runtimes:
+          crun:
+            path: /usr/bin/crun
       become: yes

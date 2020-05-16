@@ -16,13 +16,13 @@
         group: '{{ benchmark_group }}'
       become: yes
 
-    - role: install-runc
+    - role: install-kata
       become: yes
 
-    - role: create-ext4
+    - role: create-btrfs
       vars:
         device: '{{ device }}'
-        mount: /mnt/ext4
+        mount: /mnt/btrfs
       become: yes
   
     - role: install-docker
@@ -30,6 +30,10 @@
         docker_version: 'latest'
         user: '{{ benchmark_user }}'
         group: '{{ benchmark_group }}'
-        data_root: /mnt/ext4/docker
-        storage_driver: overlay2
+        data_root: /mnt/btrfs/docker
+        storage_driver: btrfs
+        default_runtime: kata-runtime
+        runtimes:
+          kata-runtime:
+            path: /usr/bin/kata-runtime
       become: yes

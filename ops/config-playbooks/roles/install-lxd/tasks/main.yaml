@@ -16,6 +16,6 @@
 
 - name: Add benchmark user to lxd group
   user:
-    name: '{{ benchmark_user }}'
+    name: '{{ user }}'
     groups: lxd
     append: yes

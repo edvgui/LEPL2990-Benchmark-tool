@@ -77,7 +77,12 @@ container_managers = {
                 "name": "Alpine"
             }
         },
-        "runtimes": {}
+        "runtimes": {
+            "lxc": {
+                "name": "lxc",
+                "path": ""
+            }
+        }
     },
     "contingious": {
         "name": "ContINGIous",

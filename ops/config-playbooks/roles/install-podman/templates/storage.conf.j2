@@ -8,14 +8,11 @@
 driver = "{{ storage_driver }}"
 
 # Temporary storage location
-# runroot = "/var/run/containers/storage"
+runroot = "{{ storage_path }}/run"
 
 # Primary Read/Write location of container storage
-# graphroot = "/var/lib/containers/storage"
+graphroot = "{{ storage_path }}/storage"
 
-# Storage path for rootless users
-#
-rootless_storage_path = "{{ storage_path }}"
 
 [storage.options]
 # Storage options to be passed to underlying storage drivers

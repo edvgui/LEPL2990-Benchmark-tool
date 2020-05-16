@@ -1,0 +1,49 @@
+---
+- hosts: Benny
+  serial: 1
+  vars:
+
+    benchmark_path: /opt/container-benchmark
+
+    benchmark_user: 'benny'
+    benchmark_group: 'benny'
+
+    tests: --all
+    solution: docker
+    image: alpine
+    runtime: runc
+    tag: overlay
+
+  tasks:
+
+    - name: Load LXD images
+      command:
+        cmd: './import.py --all --directory /home/{{ benchmark_user }}/Downloads/edvgui'
+        chdir: '{{ benchmark_path }}/resources/lxd'
+      when: solution == 'lxd'
+      become: yes
+      become_user: '{{ benchmark_user }}'
+
+    - name: Load podman images
+      command:
+        cmd: './import.py --all'
+        chdir: '{{ benchmark_path }}/resources/podman'
+      when: solution == 'podman'
+      become: yes
+      become_user: '{{ benchmark_user }}'
+
+    - name: Load docker images
+      command:
+        cmd: './import.py --all'
+        chdir: '{{ benchmark_path }}/resources/docker'
+      when: solution == 'docker'
+      become: yes
+      become_user: '{{ benchmark_user }}'
+
+    - name: Execute test
+      command:
+        cmd: './main.py {{ tests }} {{ solution }} --image {{ image }} --runtime {{ runtime }} --tag {{ tag }}'
+        chdir: '{{ benchmark_path }}/src/benchmark'
+        creates: '../../measurements/{{ solution }}-{{ image }}-{{ runtime }}-{{ tag }}.json'
+      become: yes
+      become_user: '{{ benchmark_user }}'

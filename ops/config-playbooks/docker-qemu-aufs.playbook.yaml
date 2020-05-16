@@ -4,9 +4,6 @@
   vars:
 
     device: /dev/sdb1
-
-    benchmark_user: benny
-    benchmark_group: benny
     
   roles:
 
@@ -16,7 +13,7 @@
         group: '{{ benchmark_group }}'
       become: yes
 
-    - role: install-runc
+    - role: install-kata
       become: yes
 
     - role: create-ext4
@@ -31,5 +28,9 @@
         user: '{{ benchmark_user }}'
         group: '{{ benchmark_group }}'
         data_root: /mnt/ext4/docker
-        storage_driver: overlay2
+        storage_driver: aufs
+        default_runtime: kata-runtime
+        runtimes:
+          kata-runtime:
+            path: /usr/bin/kata-runtime
       become: yes

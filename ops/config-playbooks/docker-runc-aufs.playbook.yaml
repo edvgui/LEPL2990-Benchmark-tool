@@ -4,10 +4,16 @@
   vars:
 
     device: /dev/sdb1
+
+    benchmark_user: benny
+    benchmark_group: benny
     
   roles:
 
     - role: common
+      vars:
+        user: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
       become: yes
 
     - role: install-runc
@@ -22,6 +28,8 @@
     - role: install-docker
       vars:
         docker_version: 'latest'
+        user: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
         data_root: /mnt/ext4/docker
         storage_driver: aufs
       become: yes

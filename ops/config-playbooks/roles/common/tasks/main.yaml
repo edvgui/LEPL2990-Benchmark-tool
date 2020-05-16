@@ -2,18 +2,19 @@
 
 - name: Create benchmark group
   group:
-    name: '{{ benchmark_group }}'
+    name: '{{ group }}'
     state: present
 
 - name: Create benchmark user
   user:
-    name: '{{ benchmark_user }}'
+    name: '{{ user }}'
     state: present
-    group: '{{ benchmark_group }}'
+    group: '{{ group }}'
 
-- name: Create benchmark home directory
+- name: Create benchmark user home directory
   file:
-    path: '/home/{{ benchmark_user }}'
-    owner: '{{ benchmark_user }}'
-    group: '{{ benchmark_group }}'
+    path: '/home/{{ user }}'
+    owner: '{{ user }}'
+    group: '{{ group }}'
     state: directory
+  when: user != 'root'

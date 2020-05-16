@@ -16,7 +16,7 @@
         group: '{{ benchmark_group }}'
       become: yes
 
-    - role: install-runc
+    - role: install-crun
       become: yes
 
     - role: create-ext4
@@ -32,4 +32,8 @@
         group: '{{ benchmark_group }}'
         data_root: /mnt/ext4/docker
         storage_driver: overlay2
+        default_runtime: crun
+        runtimes:
+          crun:
+            path: /usr/bin/crun
       become: yes

@@ -1,5 +1,5 @@
-benchmark_user: benny
-benchmark_group: benny
+user: benny
+group: benny
 
 docker_version: latest
 

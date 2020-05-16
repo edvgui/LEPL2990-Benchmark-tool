@@ -29,26 +29,49 @@
 
 - name: Ensure configuration path exists
   file:
-    path: '/home/{{ benchmark_user }}/.config/containers/'
-    owner: '{{ benchmark_user }}'
-    group: '{{ benchmark_user }}'
+    path: '/home/{{ user }}/.config/containers/'
+    owner: '{{ user }}'
+    group: '{{ user }}'
     state: directory
+  when: user != 'root'
 
-- name: Apply libpod configuration
+- name: Apply libpod configuration non-root
   template:
     src: libpod.conf.j2
-    dest: '/home/{{ benchmark_user }}/.config/containers/libpod.conf'
-    owner: '{{ benchmark_user }}'
-    group: '{{ benchmark_group }}'
+    dest: '/home/{{ user }}/.config/containers/libpod.conf'
+    owner: '{{ user }}'
+    group: '{{ group }}'
     mode: '0644'
+  when: user != 'root'
 
-- name: Apply storage configuration
+- name: Apply libpod configuration root
+  template:
+    src: libpod.conf.j2
+    dest: '/etc/containers/libpod.conf'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0644'
+  when: user == 'root'
+
+- name: Apply storage configuration non-root
   template:
     src: 'storage.conf.j2'
-    dest: '/home/{{ benchmark_user }}/.config/containers/storage.conf'
-    owner: '{{ benchmark_user }}'
-    group: '{{ benchmark_group }}'
+    dest: '/home/{{ user }}/.config/containers/storage.conf'
+    owner: '{{ user }}'
+    group: '{{ group }}'
     mode: '0644'
+  when: user != 'root'
+  notify:
+    - clean up storage
+
+- name: Apply storage configuration root
+  template:
+    src: 'storage.conf.j2'
+    dest: '/etc/containers/storage.conf'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0644'
+  when: user == 'root'
   notify:
     - clean up storage
 

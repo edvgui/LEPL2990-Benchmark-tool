@@ -1,10 +1,20 @@
 ---
 - hosts: Benny
   serial: 1
+  vars:
+
+    device: /dev/sdb1
+    zpool: zpool-docker
+
+    benchmark_user: benny
+    benchmark_group: benny
     
   roles:
 
     - role: common
+      vars:
+        user: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
       become: yes
 
     - role: install-runc
@@ -12,14 +22,16 @@
 
     - role: create-zfs
       vars:
-        device: /dev/sdb1
+        device: '{{ device }}'
         mount: /mnt/zfs
-        zpool: zpool-docker
+        zpool: '{{ zpool }}'
       become: yes
   
     - role: install-docker
       vars:
         docker_version: 'latest'
+        user: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
         data_root: /mnt/zfs/docker
         storage_driver: zfs
       become: yes

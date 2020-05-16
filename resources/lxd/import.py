@@ -11,10 +11,10 @@ from images import get_images, get_image
 def usage():
     usage_msg = "Usage: python3 build.py [OPTIONS] IMAGE1 [IMAGE2 ..]\n" \
                 "\n" \
-                "Build docker images\n\n" \
+                "Import container images from tarball export\n\n" \
                 "Options:\n" \
                 "  -h, --help               Display this message\n" \
-                "  -d, --directory path     Base directory for the Dockerfile (default: ./)\n" \
+                "  -d, --directory path     Base directory in which the images a re stored (default: ./)\n" \
                 "  -a, --all                Build all the images\n" \
                 "  -m, --match string       Images that contains the string" \
                 "\n" \
@@ -24,16 +24,13 @@ def usage():
 
 
 def build(name, directory):
-    src, tag, build_args = get_image(name)
+    src, tag, _ = get_image(name)
 
-    command = ["docker", "build", "-t", tag]
-    if len(build_args) > 0:
-        command.append("--build-arg %s" % ",".join(["%s,%s" % (k, v) for k, v in build_args.items()]))
-    command.extend(["-f", os.path.join(directory, src), os.path.join(directory, "../")])
-    print("INFO: %s: Building" % tag)
+    command = ["lxc", "image", "import", os.path.join(directory, tag + ".tar.gz"), "--alias", tag]
+    print("INFO: %s: Importing" % tag)
     output = subprocess.run(args=command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if output.returncode != 0:
-        print("Error building container: %s" % output.stderr.decode('utf-8'))
+        print("Error importing image: %s" % output.stderr.decode('utf-8'))
         return
 
 
@@ -41,6 +38,10 @@ def main(argv):
     directory = "/".join(argv[0].split("/")[0:-1])
     all_images = False
     match = []
+
+    if len(argv) == 1:
+        usage()
+        sys.exit(0)
 
     try:
         opts, args = getopt.getopt(argv[1:], "hd:am:", ["help", "directory=", "all", "match="])

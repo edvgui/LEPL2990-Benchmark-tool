@@ -1,21 +1,19 @@
 #!/usr/bin/env python3
 
 import getopt
-import os
 import subprocess
 import sys
 
-from images import get_images, get_image
+from images import get_image, get_images
 
 
 def usage():
     usage_msg = "Usage: python3 build.py [OPTIONS] IMAGE1 [IMAGE2 ..]\n" \
                 "\n" \
-                "Build docker images\n\n" \
+                "Pull docker images\n\n" \
                 "Options:\n" \
                 "  -h, --help               Display this message\n" \
-                "  -d, --directory path     Base directory for the Dockerfile (default: ./)\n" \
-                "  -a, --all                Build all the images\n" \
+                "  -a, --all                Pull all the images\n" \
                 "  -m, --match string       Images that contains the string" \
                 "\n" \
                 "Images:\n  %s" % "\n  ".join(get_images())
@@ -23,27 +21,23 @@ def usage():
     print(usage_msg)
 
 
-def build(name, directory):
-    src, tag, build_args = get_image(name)
+def build(name):
+    _, tag, _ = get_image(name)
 
-    command = ["docker", "build", "-t", tag]
-    if len(build_args) > 0:
-        command.append("--build-arg %s" % ",".join(["%s,%s" % (k, v) for k, v in build_args.items()]))
-    command.extend(["-f", os.path.join(directory, src), os.path.join(directory, "../")])
-    print("INFO: %s: Building" % tag)
+    command = ["docker", "pull", tag]
+    print("INFO: %s: Pulling" % tag)
     output = subprocess.run(args=command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if output.returncode != 0:
-        print("Error building container: %s" % output.stderr.decode('utf-8'))
+        print("Error pulling container: %s" % output.stderr.decode('utf-8'))
         return
 
 
 def main(argv):
-    directory = "/".join(argv[0].split("/")[0:-1])
     all_images = False
     match = []
 
     try:
-        opts, args = getopt.getopt(argv[1:], "hd:am:", ["help", "directory=", "all", "match="])
+        opts, args = getopt.getopt(argv[1:], "ham:", ["help", "all", "match="])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -52,8 +46,6 @@ def main(argv):
         if opt in ("-h", "--help"):
             usage()
             sys.exit()
-        elif opt in ("-d", "--directory"):
-            directory = arg
         elif opt == "--all":
             all_images = True
         elif opt in ("-m", "--match"):
@@ -61,19 +53,19 @@ def main(argv):
 
     if all_images:
         for i in get_images():
-            build(i, directory)
+            build(i)
         sys.exit(0)
 
     for m in match:
         for i in get_images():
             if m in i:
-                build(i, directory)
+                build(i)
 
     for a in args:
         if a not in get_images():
             print("Can not find %s in available images" % a)
         else:
-            build(a, directory)
+            build(a)
 
 
 if __name__ == "__main__":

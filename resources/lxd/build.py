@@ -5,16 +5,16 @@ import os
 import subprocess
 import sys
 
-from images import get_images, get_image
+from images import get_image, get_images
 
 
 def usage():
     usage_msg = "Usage: python3 build.py [OPTIONS] IMAGE1 [IMAGE2 ..]\n" \
                 "\n" \
-                "Build docker images\n\n" \
+                "Build the lxc images\n\n" \
                 "Options:\n" \
                 "  -h, --help               Display this message\n" \
-                "  -d, --directory path     Base directory for the Dockerfile (default: ./)\n" \
+                "  -d, --directory path     Base directory for the building scripts (default: ./)\n" \
                 "  -a, --all                Build all the images\n" \
                 "  -m, --match string       Images that contains the string" \
                 "\n" \
@@ -26,10 +26,8 @@ def usage():
 def build(name, directory):
     src, tag, build_args = get_image(name)
 
-    command = ["docker", "build", "-t", tag]
-    if len(build_args) > 0:
-        command.append("--build-arg %s" % ",".join(["%s,%s" % (k, v) for k, v in build_args.items()]))
-    command.extend(["-f", os.path.join(directory, src), os.path.join(directory, "../")])
+    command = [os.path.join(directory, src), tag]
+    command.extend([v for v in build_args.values()])
     print("INFO: %s: Building" % tag)
     output = subprocess.run(args=command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if output.returncode != 0:
@@ -41,6 +39,10 @@ def main(argv):
     directory = "/".join(argv[0].split("/")[0:-1])
     all_images = False
     match = []
+
+    if len(argv) == 1:
+        usage()
+        sys.exit(0)
 
     try:
         opts, args = getopt.getopt(argv[1:], "hd:am:", ["help", "directory=", "all", "match="])

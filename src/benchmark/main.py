@@ -203,7 +203,7 @@ def main(argv):
     ping = False
 
     try:
-        opts, args = getopt.getopt(argv[1:], "ho:", ["help", "output=", "full", "warm-up", "hello-world",
+        opts, args = getopt.getopt(argv[1:], "ho:", ["help", "output=", "all", "warm-up", "hello-world",
                                                      "http-server", "database-read", "database-write", "io-read",
                                                      "io-write", "ping"])
     except getopt.GetoptError:

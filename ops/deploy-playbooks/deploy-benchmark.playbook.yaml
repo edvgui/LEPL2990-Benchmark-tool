@@ -46,8 +46,10 @@
     - name: Create benchmark directory
       file:
         path: '{{ benchmark_path }}'
+        owner: '{{ ansible_user_uid }}'
+        group: '{{ ansible_user_gid }}'
         state: directory
-        mode: '0777'
+        recursive: yes
       become: yes
 
     - name: Retrieve latest benchmark source from repo

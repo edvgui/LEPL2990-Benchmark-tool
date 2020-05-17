@@ -50,7 +50,7 @@ class IOWrite(Generic):
     def lxd(self, image, runtime):
         container, creation = lxc.init("edvgui/%s-io-write-%s" % (image, self.size), ["-e", "--profile", "default"])
         start = lxc.start(container)
-        response, execution_time = lxc.exec(container, ["/root/write.sh", "/root/%s.tar" % self.size, "/home"])
+        response, execution_time = lxc.exec(container, ["/root/write.sh", "/root/source.tar", "/home"])
         if 'Done' not in response:
             print("Error (lxc): wrong response: " + response)
             return -1

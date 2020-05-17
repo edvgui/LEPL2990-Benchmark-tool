@@ -2,12 +2,13 @@
 
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
 
+NETWORK="lxcbr0"
 BASE="images:alpine/3.11/i386"
 CONTAINER="tmp"
 SNAPSHOT="export"
 
 
-lxc launch -e ${BASE} ${CONTAINER}
+lxc launch -e -n ${NETWORK} ${BASE} ${CONTAINER}
 
 lxc exec ${CONTAINER} -- apk update
 lxc exec ${CONTAINER} -- apk add lighttpd

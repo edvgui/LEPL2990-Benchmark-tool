@@ -18,7 +18,7 @@
 
     - name: Load LXD images
       command:
-        cmd: './import.py --all --directory /home/{{ benchmark_user }}/Downloads/edvgui'
+        cmd: './import.py --all --directory /home/{{ benchmark_user }}/Downloads'
         chdir: '{{ benchmark_path }}/resources/lxd'
       when: solution == 'lxd'
       become: yes
@@ -41,8 +41,8 @@
       become_user: '{{ benchmark_user }}'
 
     - name: Execute test
-      command:
-        cmd: './main.py {{ tests }} {{ solution }} --image {{ image }} --runtime {{ runtime }} --tag {{ tag }}'
+      shell:
+        cmd: './main.py {{ tests }} {{ solution }} --image {{ image }} --runtime {{ runtime }} --tag {{ tag }} > /tmp/{{ solution }}-{{ image }}-{{ runtime }}-{{ tag }}.log'
         chdir: '{{ benchmark_path }}/src/benchmark'
         creates: '../../measurements/{{ solution }}-{{ image }}-{{ runtime }}-{{ tag }}.json'
       become: yes

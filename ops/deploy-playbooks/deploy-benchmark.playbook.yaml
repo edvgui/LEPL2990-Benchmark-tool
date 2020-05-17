@@ -49,7 +49,7 @@
         owner: '{{ ansible_user_uid }}'
         group: '{{ ansible_user_gid }}'
         state: directory
-        recursive: yes
+        recurse: yes
       become: yes
 
     - name: Retrieve latest benchmark source from repo
@@ -66,8 +66,8 @@
         path: '{{ benchmark_path }}'
         owner: '{{ benchmark_user }}'
         group: '{{ benchmark_group }}'
-        recurse: yes
         state: directory
+        recurse: yes
       become: yes
 
     - name: Install pip dependencies

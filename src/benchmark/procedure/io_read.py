@@ -29,7 +29,7 @@ class IORead(Generic):
             options.extend(["--runtime", runtime])
         container, creation = docker.create("edvgui/%s-io-read-%s" % (image, self.size), options=options)
         _, start = docker.start(container)
-        response, execution = docker.exec(container, ["/run/read.sh", "/run/source" % self.size])
+        response, execution = docker.exec(container, ["/run/read", "/run/source"])
         if 'Done' not in response:
             print("Error (docker_alpine): wrong response: " + response)
         docker.kill(container)
@@ -41,7 +41,7 @@ class IORead(Generic):
             options.extend(["--runtime", runtime])
         container, creation = podman.create("edvgui/%s-io-read-%s" % (image, self.size), options=options)
         _, start = podman.start(container)
-        response, execution = podman.exec(container, ["/run/read.sh", "/run/source" % self.size])
+        response, execution = podman.exec(container, ["/run/read", "/run/source"])
         if 'Done' not in response:
             print("Error (podman): wrong response: " + response)
         podman.kill(container)
@@ -50,7 +50,7 @@ class IORead(Generic):
     def lxd(self, image, runtime):
         container, creation = lxc.init("edvgui/%s-io-read-%s" % (image, self.size), ["-e", "--profile", "default"])
         start = lxc.start(container)
-        response, execution_time = lxc.exec(container, ["/root/read.sh", "/root/%s" % self.size])
+        response, execution_time = lxc.exec(container, ["/root/read", "/root/%s" % self.size])
         if 'Done' not in response:
             print("Error (lxc): wrong response: " + response)
             return -1

@@ -29,7 +29,7 @@ class IOWrite(Generic):
             options.extend(["--runtime", runtime])
         container, creation = docker.create("edvgui/%s-io-write-%s" % (image, self.size), options=options)
         _, start = docker.start(container)
-        response, execution = docker.exec(container, ["/run/write.sh", "/run/source.tar" % self.size, "/home"])
+        response, execution = docker.exec(container, ["/run/write.sh", "/run/source.tar", "/home"])
         if 'Done' not in response:
             print("Error (docker): wrong response: " + response)
         docker.kill(container)
@@ -41,7 +41,7 @@ class IOWrite(Generic):
             options.extend(["--runtime", runtime])
         container, creation = podman.create("edvgui/%s-io-write-%s" % (image, self.size), options=options)
         _, start = podman.start(container)
-        response, execution = podman.exec(container, ["/run/write.sh", "/run/source.tar" % self.size, "/home"])
+        response, execution = podman.exec(container, ["/run/write.sh", "/run/source.tar", "/home"])
         if 'Done' not in response:
             print("Error (podman): wrong response: " + response)
         podman.kill(container)

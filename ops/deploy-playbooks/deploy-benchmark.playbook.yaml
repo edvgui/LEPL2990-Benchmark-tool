@@ -59,6 +59,15 @@
         force: yes
       become: no  # Can not become any other user as I am using a private key from my controller
 
+    - name: Give ownership to benchmark user
+      file:
+        path: '{{ benchmark_path }}'
+        owner: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
+        recurse: yes
+        state: directory
+      become: yes
+
     - name: Install pip dependencies
       pip:
         name: pycurl

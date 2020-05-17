@@ -18,24 +18,39 @@
 
     - name: Load LXD images
       command:
-        cmd: './import.py --all --directory /home/{{ benchmark_user }}/Downloads'
+        cmd: './import.py --directory /home/{{ benchmark_user }}/Downloads {{ image }}-{{ item }}'
         chdir: '{{ benchmark_path }}/resources/lxd'
+      loop: ['hello-world', 'http-server', 'ping',
+             'db-read-xs', 'db-read-sm', 'db-read-md', 'db-read-lg', 'db-read-xl',
+             'db-write-xs', 'db-write-sm', 'db-write-md', 'db-write-lg', 'db-write-xl',
+             'io-read-xs', 'io-read-sm', 'io-read-md', 'io-read-lg', 'io-read-xl',
+             'io-write-xs', 'io-write-sm', 'io-write-md', 'io-write-lg', 'io-write-xl']
       when: solution == 'lxd'
       become: yes
       become_user: '{{ benchmark_user }}'
 
     - name: Load podman images
       command:
-        cmd: './import.py --all'
+        cmd: './import.py {{ image }}-{{ item }}'
         chdir: '{{ benchmark_path }}/resources/podman'
+      loop: ['hello-world', 'http-server', 'ping',
+             'db-read-xs', 'db-read-sm', 'db-read-md', 'db-read-lg', 'db-read-xl',
+             'db-write-xs', 'db-write-sm', 'db-write-md', 'db-write-lg', 'db-write-xl',
+             'io-read-xs', 'io-read-sm', 'io-read-md', 'io-read-lg', 'io-read-xl',
+             'io-write-xs', 'io-write-sm', 'io-write-md', 'io-write-lg', 'io-write-xl']
       when: solution == 'podman'
       become: yes
       become_user: '{{ benchmark_user }}'
 
     - name: Load docker images
       command:
-        cmd: './import.py --all'
+        cmd: './import.py {{ image }}-{{ item }}'
         chdir: '{{ benchmark_path }}/resources/docker'
+      loop: ['hello-world', 'http-server', 'ping',
+             'db-read-xs', 'db-read-sm', 'db-read-md', 'db-read-lg', 'db-read-xl',
+             'db-write-xs', 'db-write-sm', 'db-write-md', 'db-write-lg', 'db-write-xl',
+             'io-read-xs', 'io-read-sm', 'io-read-md', 'io-read-lg', 'io-read-xl',
+             'io-write-xs', 'io-write-sm', 'io-write-md', 'io-write-lg', 'io-write-xl']
       when: solution == 'docker'
       become: yes
       become_user: '{{ benchmark_user }}'

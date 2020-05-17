@@ -12,3 +12,6 @@
     src: https://github.com/kata-containers/runtime/releases/download/1.5.0/kata-static-1.5.0-x86_64.tar.xz
     dest: /
     remote_src: yes
+
+- name: Modprobe vhost_vsock
+  command: modprobe vhost_vsock

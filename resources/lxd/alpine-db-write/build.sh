@@ -2,7 +2,7 @@
 
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
 
-NETWORK="lxcbr0"
+NETWORK="lxdbr0"
 BASE="images:alpine/3.11/i386"
 CONTAINER="tmp"
 SNAPSHOT="export"

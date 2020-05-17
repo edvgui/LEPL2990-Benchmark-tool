@@ -22,7 +22,7 @@ def usage():
 
 
 def build(name):
-    _, tag, _ = get_image(name)
+    tag = get_image(name)
 
     command = ["podman", "pull", tag]
     print("INFO: %s: Pulling" % tag)

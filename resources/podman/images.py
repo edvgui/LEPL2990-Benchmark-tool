@@ -120,9 +120,12 @@ def get_image(name):
         possibilities = args[arg]
         if part in possibilities:
             build_args[arg] = part
+        else:
+            print("Error matching args, %s in not in %s" % (part, possibilities))
+            return
 
     parts = list(build_args.values())
 
     tag = image["tag"] % ("-".join(parts)) if len(parts) > 0 else image["tag"]
 
-    return image["src"], tag, build_args
+    return tag

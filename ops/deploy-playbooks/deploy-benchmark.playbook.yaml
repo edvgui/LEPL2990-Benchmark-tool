@@ -9,9 +9,31 @@
     benchmark_user: 'benny'
     benchmark_group: 'benny'
 
-    tarball_path: $HOME/Downloads/edvgui
+    tarball_path: ~/Downloads/edvgui
 
   tasks:
+
+    - name: Create benchmark group
+      group:
+        name: '{{ benchmark_group }}'
+        state: present
+      become: yes
+
+    - name: Create benchmark user
+      user:
+        name: '{{ benchmark_user }}'
+        state: present
+        group: '{{ benchmark_group }}'
+      become: yes
+
+    - name: Create benchmark user home directory
+      file:
+        path: '/home/{{ benchmark_user }}'
+        owner: '{{ benchmark_user }}'
+        group: '{{ benchmark_group }}'
+        state: directory
+      when: benchmark_user != 'root'
+      become: yes
 
     - name: Install dependencies
       apt:
@@ -26,7 +48,6 @@
         path: '{{ benchmark_path }}'
         state: directory
         mode: '0777'
-        recurse: yes
       become: yes
 
     - name: Retrieve latest benchmark source from repo
@@ -38,22 +59,6 @@
         force: yes
       become: no  # Can not become any other user as I am using a private key from my controller
 
-    - name: Reduce benchmark directory access
-      file:
-        path: '{{ benchmark_path }}'
-        state: directory
-        mode: '0644'
-      become: yes
-
-    - name: Overwrite benchmark directory owner
-      file:
-        path: '{{ benchmark_path }}'
-        state: directory
-        owner: '{{ benchmark_user }}'
-        group: '{{ benchmark_group }}'
-        recurse: yes
-      become: yes
-
     - name: Install pip dependencies
       pip:
         name: pycurl
@@ -62,13 +67,21 @@
 
     - name: Making sure that tarball folder exists for benchmark user
       file:
-        name: '/home/{{ benchmark_user }}/Downloads/edvgui'
-        user: '{{ benchmark_user }}'
-        group: '{{ Benchmark_user }}'
+        path: '/home/{{ benchmark_user }}/Downloads/'
+        owner: '{{ benchmark_user }}'
+        group: '{{ benchmark_user }}'
         state: directory
       become: yes
 
-    - name: Copying images tarball
+    - name: Copying images tarball, this can take some time
       copy:
-        src: '{{ tarball_path }}'
-        dest: '/home/{{ benchmark_user }}/Downloads/edvgui/'
+        src: '{{ tarball_path }}/{{ item }}.tar.gz'
+        dest: '/home/{{ benchmark_user }}/Downloads/edvgui/{{ item }}.tar.gz'
+        owner: '{{ benchmark_user }}'
+        group: '{{ benchmark_user }}'
+      become: yes
+      loop: ['alpine-hello-world', 'alpine-http-server', 'alpine-ping',
+             'alpine-db-read-xs', 'alpine-db-read-sm', 'alpine-db-read-md', 'alpine-db-read-lg', 'alpine-db-read-xl',
+             'alpine-db-write-xs', 'alpine-db-write-sm', 'alpine-db-write-md', 'alpine-db-write-lg', 'alpine-db-write-xl',
+             'alpine-io-read-xs', 'alpine-io-read-sm', 'alpine-io-read-md', 'alpine-io-read-lg', 'alpine-io-read-xl',
+             'alpine-io-write-xs', 'alpine-io-write-sm', 'alpine-io-write-md', 'alpine-io-write-lg', 'alpine-io-write-xl']

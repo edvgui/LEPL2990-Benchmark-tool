@@ -28,7 +28,7 @@ def build(name, directory):
 
     command = ["docker", "build", "-t", tag]
     if len(build_args) > 0:
-        command.append("--build-arg %s" % ",".join(["%s,%s" % (k, v) for k, v in build_args.items()]))
+        command.extend(["--build-arg", ",".join(["%s=%s" % (k, v) for k, v in build_args.items()])])
     command.extend(["-f", os.path.join(directory, src), os.path.join(directory, "../")])
     print("INFO: %s: Building" % tag)
     output = subprocess.run(args=command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

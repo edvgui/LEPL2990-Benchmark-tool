@@ -4,7 +4,7 @@
   vars:
 
     lvm_device: /dev/sdb1
-    ext_device: /dev/sdb2
+    device: /dev/sdb2
 
     benchmark_user: benny
     benchmark_group: benny

@@ -67,7 +67,7 @@
 
     - name: Making sure that tarball folder exists for benchmark user
       file:
-        path: '/home/{{ benchmark_user }}/Downloads/'
+        path: '/home/{{ benchmark_user }}/Downloads/edvgui'
         owner: '{{ benchmark_user }}'
         group: '{{ benchmark_user }}'
         state: directory

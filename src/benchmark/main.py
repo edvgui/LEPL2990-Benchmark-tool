@@ -37,15 +37,11 @@ container_managers = {
                 "name": "crun",
                 "path": "/usr/bin/crun"
             },
-            "kata-qemu": {
-                "name": "kata-qemu",
-                "path": "/opt/kata/bin/kata-qemu"
-            },
-            "kata-fc": {
+            "firecracker": {
                 "name": "kata-fc",
                 "path": "/opt/kata/bin/kata-fc"
             },
-            "kata-runtime": {
+            "qemu": {
                 "name": "kata-runtime",
                 "path": "/usr/bin/kata-runtime"
             }
@@ -166,7 +162,7 @@ def usage():
                 "Options:\n" \
                 "  -h, --help               Display this message\n" \
                 "  -o, --output PATH        The directory in which save the results\n" \
-                "      --full               Execute all the tests\n" \
+                "      --all                Execute all the tests\n" \
                 "      --warm-up            Execute the warm up phase\n" \
                 "      --hello-world        Execute hello world tests\n" \
                 "      --http-server        Execute http server tests\n" \
@@ -236,7 +232,7 @@ def main(argv):
             io_write = True
         elif opt == "--ping":
             ping = True
-        elif opt == "--full":
+        elif opt == "--all":
             warm_up = True
             hello_world = True
             http_server = True

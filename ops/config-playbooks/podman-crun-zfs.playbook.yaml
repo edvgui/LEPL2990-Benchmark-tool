@@ -4,6 +4,7 @@
   vars:
 
     device: /dev/sdb1
+    zpool: zpool-podman
 
     benchmark_user: benny
     benchmark_group: benny
@@ -23,7 +24,7 @@
       vars:
         device: '{{ device }}'
         mount: /mnt/zfs
-        zpool: zpool-podman
+        pool: '{{ zpool }}'
       become: yes
   
     - role: install-podman

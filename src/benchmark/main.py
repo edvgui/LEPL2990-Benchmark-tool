@@ -292,7 +292,7 @@ def main(argv):
                     print("ERROR: this runtime is not available: %s\nPick one from: %s\nuse --help for help"
                           % (arg, ", ".join(container_managers[solution]["runtimes"].keys())))
                     sys.exit(2)
-                runtime = arg
+                runtime = container_managers[solution]["runtimes"][arg]["name"]
             elif opt in ('-t', '--tag'):
                 tag = arg
             else:

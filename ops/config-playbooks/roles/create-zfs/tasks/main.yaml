@@ -8,7 +8,7 @@
 
 - name: Create zfs pool
   command:
-    cmd: 'zpool create -f {{ zpool }} -m {{ mount }} {{ device }}'
+    cmd: 'zpool create -f {{ pool }} -m {{ mount }} {{ device }}'
 
 - name: Setting permission for mounted partition
   file:

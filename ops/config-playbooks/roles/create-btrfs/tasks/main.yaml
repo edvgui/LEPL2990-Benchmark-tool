@@ -1,5 +1,15 @@
 ---
 
+- name: Installing dependency
+  apt:
+    name: btrfs-tools
+    state: latest
+    update_cache: yes
+
+- name: Activate btrfs for kernel
+  command:
+    cmd: modprobe btrfs
+
 - name: Making filesystem on device
   filesystem:
     dev: '{{ device }}'

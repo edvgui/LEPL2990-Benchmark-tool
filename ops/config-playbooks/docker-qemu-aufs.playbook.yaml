@@ -4,6 +4,9 @@
   vars:
 
     device: /dev/sdb1
+
+    benchmark_user: benny
+    benchmark_group: benny
     
   roles:
 

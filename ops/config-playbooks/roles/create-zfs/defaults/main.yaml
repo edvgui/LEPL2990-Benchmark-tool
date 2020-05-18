@@ -2,4 +2,4 @@ device: 0
 
 mount: 0
 
-zpool: zpool
+pool: zpool

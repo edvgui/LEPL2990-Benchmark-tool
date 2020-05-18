@@ -24,7 +24,7 @@
       vars:
         device: '{{ device }}'
         mount: /mnt/zfs
-        zpool: '{{ zpool }}'
+        pool: '{{ zpool }}'
       become: yes
   
     - role: install-docker

@@ -20,7 +20,7 @@
       vars:
         device: '{{ device }}'
         mount: /mnt/zfs
-        zpool: zpool-lxd
+        pool: zpool-lxd
       become: yes
   
     - role: install-lxd

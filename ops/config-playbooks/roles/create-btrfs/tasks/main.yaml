@@ -5,6 +5,7 @@
     name: btrfs-tools
     state: latest
     update_cache: yes
+  ignore_errors: yes
 
 - name: Activate btrfs for kernel
   command:

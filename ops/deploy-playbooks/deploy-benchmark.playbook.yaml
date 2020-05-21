@@ -95,4 +95,9 @@
              'alpine-db-read-xs', 'alpine-db-read-sm', 'alpine-db-read-md', 'alpine-db-read-lg', 'alpine-db-read-xl',
              'alpine-db-write-xs', 'alpine-db-write-sm', 'alpine-db-write-md', 'alpine-db-write-lg', 'alpine-db-write-xl',
              'alpine-io-read-xs', 'alpine-io-read-sm', 'alpine-io-read-md', 'alpine-io-read-lg', 'alpine-io-read-xl',
-             'alpine-io-write-xs', 'alpine-io-write-sm', 'alpine-io-write-md', 'alpine-io-write-lg', 'alpine-io-write-xl']
+             'alpine-io-write-xs', 'alpine-io-write-sm', 'alpine-io-write-md', 'alpine-io-write-lg', 'alpine-io-write-xl',
+             'centos-hello-world', 'centos-http-server', 'centos-ping',
+             'centos-db-read-xs', 'centos-db-read-sm', 'centos-db-read-md', 'centos-db-read-lg', 'centos-db-read-xl',
+             'centos-db-write-xs', 'centos-db-write-sm', 'centos-db-write-md', 'centos-db-write-lg', 'centos-db-write-xl',
+             'centos-io-read-xs', 'centos-io-read-sm', 'centos-io-read-md', 'centos-io-read-lg', 'centos-io-read-xl',
+             'centos-io-write-xs', 'centos-io-write-sm', 'centos-io-write-md', 'centos-io-write-lg', 'centos-io-write-xl']

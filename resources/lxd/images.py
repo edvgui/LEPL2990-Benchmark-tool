@@ -43,6 +43,49 @@ __images = {
         "args": {
             "size": ["xs", "sm", "md", "lg", "xl"]
         }
+    },
+    "centos-hello-world": {
+        "src": "centos-hello-world/build.sh",
+        "tag": "edvgui/centos-hello-world",
+        "args": {}
+    },
+    "centos-http-server": {
+        "src": "centos-http-server/build.sh",
+        "tag": "edvgui/centos-http-server",
+        "args": {}
+    },
+    "centos-ping": {
+        "src": "centos-ping/build.sh",
+        "tag": "edvgui/centos-ping",
+        "args": {}
+    },
+    "centos-io-read": {
+        "src": "centos-io-read/build.sh",
+        "tag": "edvgui/centos-io-read-%s",
+        "args": {
+            "size": ["xs", "sm", "md", "lg", "xl"]
+        }
+    },
+    "centos-io-write": {
+        "src": "centos-io-write/build.sh",
+        "tag": "edvgui/centos-io-write-%s",
+        "args": {
+            "size": ["xs", "sm", "md", "lg", "xl"]
+        }
+    },
+    "centos-db-read": {
+        "src": "centos-db-read/build.sh",
+        "tag": "edvgui/centos-db-read-%s",
+        "args": {
+            "size": ["xs", "sm", "md", "lg", "xl"]
+        }
+    },
+    "centos-db-write": {
+        "src": "centos-db-write/build.sh",
+        "tag": "edvgui/centos-db-write-%s",
+        "args": {
+            "size": ["xs", "sm", "md", "lg", "xl"]
+        }
     }
 }
 __image_list = []

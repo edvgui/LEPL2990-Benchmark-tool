@@ -3,7 +3,7 @@
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
 
 NETWORK="lxdbr0"
-BASE="images:alpine/3.11/i386"
+BASE="images:alpine/3.11/amd64"
 CONTAINER="tmp"
 SNAPSHOT="export"
 
@@ -11,6 +11,8 @@ TAG=$1
 SIZE=$2
 
 lxc launch -e -n ${NETWORK} ${BASE} ${CONTAINER}
+
+sleep 10
 
 lxc exec ${CONTAINER} -- apk update
 lxc exec ${CONTAINER} -- apk add sqlite

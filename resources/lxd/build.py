@@ -31,7 +31,7 @@ def build(name, directory):
     print("INFO: %s: Building" % tag)
     output = subprocess.run(args=command, stdout=subprocess.PIPE)
     if output.returncode != 0:
-        print("Error building container: %s" % output.stderr.decode('utf-8'))
+        print("Error building container %s" % name)
         return
 
 

@@ -3,7 +3,7 @@
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
 
 NETWORK="lxdbr0"
-BASE="images:alpine/3.11/amd64"
+BASE="images:centos/7/amd64"
 CONTAINER="tmp"
 SNAPSHOT="export"
 
@@ -14,9 +14,11 @@ lxc launch -e -n ${NETWORK} ${BASE} ${CONTAINER}
 
 sleep 10
 
-lxc exec ${CONTAINER} -- apk update
-lxc exec ${CONTAINER} -- apk add sqlite
-lxc exec ${CONTAINER} -- mkdir /root/src
+lxc exec ${CONTAINER} -- yum -y install glibc.i686 zlib.i686
+lxc exec ${CONTAINER} -- rm -rf /usr/bin/sqlite3
+
+lxc file push "${DIR}/../../common/sqlite/sqlite3" ${CONTAINER}/usr/bin/sqlite3
+
 lxc file push "${DIR}/../../common/sqlite/tpcc-${SIZE}.db" ${CONTAINER}/root/tpcc.db
 lxc file push "${DIR}/../../common/sqlite/write.sqlite" ${CONTAINER}/root/write.sqlite
 lxc file push "${DIR}/../../common/sqlite/sqlite.sh" ${CONTAINER}/root/sqlite.sh

@@ -71,6 +71,9 @@ container_managers = {
         "images": {
             "alpine": {
                 "name": "Alpine"
+            },
+            "centos": {
+                "name": "Centos"
             }
         },
         "runtimes": {

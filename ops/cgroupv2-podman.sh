@@ -30,7 +30,7 @@ for runtime in crun; do
       -e device=$DEVICE > $logfile
     if [ $? -eq 0 ]; then
       echo -ne "CONF_OK... "
-      for image in alpine; do
+      for image in alpine centos; do
         ansible-playbook -i target.ini run-playbooks/run-benchmark.playbook.yaml \
           --extra-vars "ansible_become_pass=$PASSWORD" \
           -e tests="--all" \

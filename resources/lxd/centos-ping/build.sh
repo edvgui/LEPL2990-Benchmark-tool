@@ -2,7 +2,7 @@
 
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
 
-BASE="images:alpine/3.11/amd64"
+BASE="images:centos/7/amd64"
 CONTAINER="tmp"
 SNAPSHOT="export"
 
@@ -13,4 +13,4 @@ lxc exec ${CONTAINER} -- chmod +x /root/ping.sh
 
 lxc snapshot ${CONTAINER} ${SNAPSHOT}
 lxc publish ${CONTAINER}/${SNAPSHOT} --alias $1
-lxc stop ${CONTAINER}
+lxc stop --force ${CONTAINER}

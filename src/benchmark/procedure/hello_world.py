@@ -26,9 +26,10 @@ class HelloWorld(Generic):
         container, creation = docker.create("edvgui/%s-hello-world" % image, options=options)
         _, start = docker.start(container)
         response, execution = docker.exec(container, ["/bin/echo", "Hello World"])
+        docker.kill(container)
         if 'Hello World' not in response:
             print('Error (docker_alpine): wrong response: ' + response)
-        docker.kill(container)
+            return -1
         return [creation, creation + start, creation + start + execution]
 
     def podman(self, image, runtime):
@@ -38,25 +39,28 @@ class HelloWorld(Generic):
         container, creation = podman.create("edvgui/%s-hello-world" % image, options=options)
         _, start = podman.start(container)
         response, execution = podman.exec(container, ["/bin/echo", "Hello World"])
+        podman.kill(container)
         if 'Hello World' not in response:
             print('Error (podman_alpine): wrong response: ' + response)
-        podman.kill(container)
+            return -1
         return [creation, creation + start, creation + start + execution]
 
     def lxd(self, image, runtime):
         container, creation = lxc.init("edvgui/%s-hello-world" % image, ["-e", "--profile", "default"])
         start = lxc.start(container)
         response, execution_time = lxc.exec(container, ["/bin/echo", "Hello World"])
+        lxc.kill(container)
         if 'Hello World' not in response:
             print("Error (lxc): wrong response: " + response)
-        lxc.kill(container)
+            return -1
         return [creation, creation + start, creation + start + execution_time]
 
     def contingious(self, image, runtime):
         # TODO handle runtime
         container, creation_time = contingious.create("%s-hello-world" % image)
         response, execution_time = contingious.run(container, ["-o"])
+        contingious.clean(container)
         if 'Hello World' not in response:
             print("Error (runc): wrong response: " + response)
-        contingious.clean(container)
+            return -1
         return [creation_time, creation_time + execution_time, creation_time + execution_time]

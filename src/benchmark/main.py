@@ -156,7 +156,7 @@ def measure(procedures, container_manager, base_image, runtime=None, warm_up=Tru
 
 
 def usage():
-    usage_msg = "Usage: python3 main.py [OPTIONS] SOLUTION1 [ARGS] [SOLUTION2 [ARGS]..]\n" \
+    usage_msg = "Usage: python3 plots.py [OPTIONS] SOLUTION1 [ARGS] [SOLUTION2 [ARGS]..]\n" \
                 "\n" \
                 "Execute all the tests minus those specified in flags for the solutions passed in argument\n\n" \
                 "Options:\n" \

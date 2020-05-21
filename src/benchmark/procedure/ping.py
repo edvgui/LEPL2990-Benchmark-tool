@@ -12,7 +12,7 @@ class Ping(Generic):
         super().__init__()
 
     def name(self):
-        return 'Network'
+        return 'Ping'
 
     def response_len(self):
         return 1
@@ -61,11 +61,11 @@ class Ping(Generic):
             except lxc.LXCApiException:
                 pass
             else:
+                lxc.kill(container)
                 if '=' not in response:
                     print('Error (lxc): wrong response: ' + response)
                     return -1
                 else:
-                    lxc.kill(container)
                     return [float(response.split(" ")[3].split("/")[1]) / 1000]
             time.sleep(1)
         lxc.kill(container)

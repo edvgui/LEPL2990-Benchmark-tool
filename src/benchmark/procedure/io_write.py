@@ -30,9 +30,10 @@ class IOWrite(Generic):
         container, creation = docker.create("edvgui/%s-io-write-%s" % (image, self.size), options=options)
         _, start = docker.start(container)
         response, execution = docker.exec(container, ["/run/write.sh", "/run/source.tar", "/home"])
+        docker.kill(container)
         if 'Done' not in response:
             print("Error (docker): wrong response: " + response)
-        docker.kill(container)
+            return -1
         return [creation, creation + start, creation + start + execution]
 
     def podman(self, image, runtime):
@@ -42,27 +43,28 @@ class IOWrite(Generic):
         container, creation = podman.create("edvgui/%s-io-write-%s" % (image, self.size), options=options)
         _, start = podman.start(container)
         response, execution = podman.exec(container, ["/run/write.sh", "/run/source.tar", "/home"])
+        podman.kill(container)
         if 'Done' not in response:
             print("Error (podman): wrong response: " + response)
-        podman.kill(container)
+            return -1
         return [creation, creation + start, creation + start + execution]
 
     def lxd(self, image, runtime):
         container, creation = lxc.init("edvgui/%s-io-write-%s" % (image, self.size), ["-e", "--profile", "default"])
         start = lxc.start(container)
         response, execution_time = lxc.exec(container, ["/root/write.sh", "/root/source.tar", "/home"])
+        lxc.kill(container)
         if 'Done' not in response:
             print("Error (lxc): wrong response: " + response)
             return -1
-        lxc.kill(container)
         return [creation, creation + start, creation + start + execution_time]
 
     def contingious(self, image, runtime):
         # TODO handle runtime
         container, creation_time = contingious.create("%s-db-%s-write" % (image, self.size))
         response, execution_time = contingious.run(container, ["-o"])
+        contingious.clean(container)
         if 'Done' not in response:
             print("Error (runc): wrong response: " + response)
             return -1
-        contingious.clean(container)
         return [creation_time, creation_time + execution_time, creation_time + execution_time]

@@ -37,13 +37,14 @@ class IORead(Generic):
         return [creation, creation + start, creation + start + execution]
 
     def podman(self, image, runtime):
-        options = ["--rm", "--network", "none"]
+        options = ["--network", "none"]
         if runtime is not None:
             options.extend(["--runtime", runtime])
         container, creation = podman.create("edvgui/%s-io-read-%s" % (image, self.size), options=options)
         _, start = podman.start(container)
         response, execution = podman.exec(container, ["/run/read", "/run/source"])
         podman.kill(container)
+        podman.rm(container)
         if 'Done' not in response:
             print("Error (podman): wrong response: " + response)
             return -1

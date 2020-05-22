@@ -37,13 +37,14 @@ class DatabaseWrite(Generic):
         return [creation, creation + start, creation + start + execution]
 
     def podman(self, image, runtime):
-        options = ["--rm", "--network", "none"]
+        options = ["--network", "none"]
         if runtime is not None:
             options.extend(["--runtime", runtime])
         container, creation = podman.create("edvgui/%s-db-write-%s" % (image, self.size), options=options)
         _, start = podman.start(container)
         response, execution = podman.exec(container, ["/run/run.sh", "/home/tpcc.db", "/run/write.sqlite"])
         podman.kill(container)
+        podman.rm(container)
         if 'Done' not in response:
             print("Error (podman): wrong response: " + response)
             return -1

@@ -65,7 +65,7 @@ class HttpServer(Generic):
 
     def podman(self, image, runtime):
         address = "127.0.0.1:3000"
-        options = ["--rm", "-p", address + ":80"]
+        options = ["-p", address + ":80"]
         if runtime is not None:
             options.extend(["--runtime", runtime])
         container, creation = podman.create("edvgui/%s-http-server" % image, options=options)
@@ -73,6 +73,7 @@ class HttpServer(Generic):
         _, execution = podman.exec(container, ["/usr/sbin/lighttpd", "-f", "/etc/lighttpd/lighttpd.conf"])
         result = server_get("http://" + address)
         podman.kill(container)
+        podman.rm(container)
         return [creation, creation + start, creation + start + execution,
                 creation + start + execution + result] if result != -1 else -1
 

@@ -9,6 +9,8 @@ SNAPSHOT="export"
 TAG=$1
 SIZE=$2
 
+set -e
+
 lxc launch -e ${BASE} ${CONTAINER}
 
 lxc file push "${DIR}/../../common/io/${SIZE}.tar" ${CONTAINER}/root/source.tar

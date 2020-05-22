@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import os
 
+from exceptions.api_exception import ApiException
 from procedure.hello_world import HelloWorld
 from procedure.http_server import HttpServer
 from procedure.db_read import DatabaseRead
@@ -118,13 +119,20 @@ def execute(function, response_len, repetition=5, parallelize=False):
     :param parallelize: Whether to parallelize the execution or not
     :return: An array of size response_len*repetition, which contains each return value of the execution
     """
+    def safe_func(f):
+        try:
+            return f()
+        except ApiException as e:
+            print(e, file=sys.stderr)
+            return -1
+
     results = [[] for _ in range(0, response_len)]
     if parallelize:
         with ThreadPoolExecutor(max_workers=repetition) as executor:
             threads = [executor.submit(function) for i in range(0, repetition)]
             result = list(filter(lambda i: i != -1, [future.result() for future in as_completed(threads)]))
     else:
-        result = list(filter(lambda i: i != -1, [function() for i in range(0, repetition)]))
+        result = list(filter(lambda i: i != -1, [safe_func(function) for i in range(0, repetition)]))
 
     for res in result:
         for i in range(0, response_len):

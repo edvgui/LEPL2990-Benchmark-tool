@@ -6,6 +6,8 @@ BASE="images:centos/7/amd64"
 CONTAINER="tmp"
 SNAPSHOT="export"
 
+set -e
+
 lxc launch -e ${BASE} ${CONTAINER}
 
 lxc file push "${DIR}/../../common/network/ping.sh" ${CONTAINER}/root/ping.sh

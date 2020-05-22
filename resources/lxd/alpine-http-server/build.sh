@@ -7,6 +7,7 @@ BASE="images:alpine/3.11/amd64"
 CONTAINER="tmp"
 SNAPSHOT="export"
 
+set -e
 
 lxc launch -e -n ${NETWORK} ${BASE} ${CONTAINER}
 

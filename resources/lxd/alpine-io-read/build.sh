@@ -10,6 +10,8 @@ SNAPSHOT="export"
 TAG=$1
 SIZE=$2
 
+set -e
+
 lxc launch -e -n ${NETWORK} ${BASE} ${CONTAINER}
 
 sleep 10

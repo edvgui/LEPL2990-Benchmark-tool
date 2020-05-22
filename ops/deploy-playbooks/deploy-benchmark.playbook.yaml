@@ -11,6 +11,8 @@
 
     tarball_path: ~/Downloads/edvgui
 
+    skip_lxd_images: 0
+
   tasks:
 
     - name: Create benchmark group
@@ -101,3 +103,4 @@
              'centos-db-write-xs', 'centos-db-write-sm', 'centos-db-write-md', 'centos-db-write-lg', 'centos-db-write-xl',
              'centos-io-read-xs', 'centos-io-read-sm', 'centos-io-read-md', 'centos-io-read-lg', 'centos-io-read-xl',
              'centos-io-write-xs', 'centos-io-write-sm', 'centos-io-write-md', 'centos-io-write-lg', 'centos-io-write-xl']
+      when: skip_lxd_images == 1

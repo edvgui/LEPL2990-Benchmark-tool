@@ -11,7 +11,8 @@ mkdir -p logs
 # Deploy benchmark tool
 echo -ne "[$(date)] Deploying benchmark tool... "
 ansible-playbook -i target.ini deploy-playbooks/deploy-benchmark.playbook.yaml \
-  --extra-vars "ansible_become_pass=$PASSWORD" > logs/cgroupv1-podman.log
+  --extra-vars "ansible_become_pass=$PASSWORD" \
+  -e skip_lxd_images=1 > logs/cgroupv1-podman.log
 if [ "$?" -eq "0" ]; then
   echo "OK"
 else

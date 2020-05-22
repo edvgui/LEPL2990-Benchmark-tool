@@ -23,7 +23,7 @@ fi
 # Podman tests
 for runtime in crun; do
   for driver in btrfs overlay vfs; do
-    logfile="logs/podman-${runtime}-${driver}.log"
+    logfile="logs/podman-${runtime}-${driver}-rootless.log"
     echo -ne "[$(date)] Podman $runtime $driver... "
 
     ansible-playbook -i target.ini config-playbooks/podman-${runtime}-${driver}.playbook.yaml \
@@ -37,8 +37,8 @@ for runtime in crun; do
           -e tests="--all" \
           -e solution=podman \
           -e image=${image} \
-          -e runtime=${runtime}-rootless \
-          -e tag=${driver} >> $logfile
+          -e runtime=${runtime} \
+          -e tag=${driver}-rootless >> $logfile
       done
       if [ $? -eq 0 ]; then
         echo -ne "RUN_OK... "

@@ -107,6 +107,10 @@
     update_cache: yes
   when: storage_driver == "aufs"
 
+- name: Activating aufs kernel module
+  command: modprobe aufs
+  when: storage_driver == "aufs"
+
 - name: Installing additional dependency for devmapper storage driver
   apt:
     name: thin-provisioning-tools

@@ -18,8 +18,8 @@ def main(plots_f, sols):
          "docker-alpine-kata-runtime-zfs"]
     t = ["Hello World", "Http server", "Network", "Ping"]
     benchmark_solutions = {key: value for (key, value) in sols.items() if key in s}
-    # plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
-    # plots.plot_ios(sols, s, tag, plots_f)
+    plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
+    plots.plot_ios(sols, s, tag, plots_f)
     plots.plot_dbs(sols, s, tag, plots_f)
 
     # # #
@@ -33,11 +33,11 @@ def main(plots_f, sols):
          "docker-centos-kata-runtime-zfs"]
     t = ["Hello World", "Http server", "Network", "Ping"]
     benchmark_solutions = {key: value for (key, value) in sols.items() if key in s}
-    # plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
-    # plots.plot_ios(sols, s, tag, plots_f)
-    plots.plot_dbs(sols, s, tag, plots_f)
+    plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
+    plots.plot_ios(sols, s, tag, plots_f)
+    # plots.plot_dbs(sols, s, tag, plots_f)
 
-    plt.show()
+    # plt.show()
 
 
 if __name__ == "__main__":

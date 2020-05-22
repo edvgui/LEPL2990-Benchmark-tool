@@ -56,9 +56,9 @@
       become_user: '{{ benchmark_user }}'
 
     - name: Execute test
-      shell:
-        cmd: './main.py {{ tests }} {{ solution }} --image {{ image }} --runtime {{ runtime }} --tag {{ tag }} > /tmp/{{ solution }}-{{ image }}-{{ runtime }}-{{ tag }}.log'
+      shell: './main.py {{ tests }} {{ solution }} --image {{ image }} --runtime {{ runtime }} --tag {{ tag }} > /tmp/{{ solution }}-{{ image }}-{{ runtime }}-{{ tag }}.log'
+      args:
         chdir: '{{ benchmark_path }}/src/benchmark'
-        creates: '../../measurements/{{ solution }}-{{ image }}-{{ runtime }}-{{ tag }}.json'
+        # creates: '../../measurements/{{ solution }}-{{ image }}-{{ runtime }}-{{ tag }}.json'
       become: yes
       become_user: '{{ benchmark_user }}'

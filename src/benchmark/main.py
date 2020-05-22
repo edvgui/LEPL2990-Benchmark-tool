@@ -123,7 +123,7 @@ def execute(function, response_len, repetition=5, parallelize=False):
         try:
             return f()
         except ApiException as e:
-            print(e, file=sys.stderr)
+            print(e)
             return -1
 
     results = [[] for _ in range(0, response_len)]

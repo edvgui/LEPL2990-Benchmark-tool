@@ -27,7 +27,7 @@ def main(plots_f, sols):
     plots.plot_ios(sols, s, tag, plots_f)
     plots.plot_dbs(sols, s, tag, plots_f)
 
-    plt.show()
+    # plt.show()
 
 
 if __name__ == "__main__":

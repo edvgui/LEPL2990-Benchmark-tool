@@ -62,6 +62,10 @@ container_managers = {
             "crun": {
                 "name": "crun",
                 "path": "/usr/bin/crun"
+            },
+            "runc": {
+                "name": "runc",
+                "path": "/usr/bin/runc"
             }
         }
     },

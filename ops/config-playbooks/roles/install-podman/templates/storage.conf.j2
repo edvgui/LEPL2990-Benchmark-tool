@@ -151,7 +151,9 @@ use_deferred_deletion = "True"
 
 # Path to an helper program to use for mounting the file system instead of mounting it
 # directly.
+{% if user != 'root' %}
 mount_program = "/usr/bin/fuse-overlayfs"
+{% endif %}
 
 # mountopt specifies comma separated list of extra mount options
 mountopt = "nodev"

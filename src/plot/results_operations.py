@@ -14,7 +14,7 @@ def benchmark_means(solutions):
     for solution in solutions:
         means.append({
             "name": solution["name"],
-            "means": [good_median(l) for l in solution["data"]]
+            "means": [good_mean(l) for l in solution["data"]]
         })
 
     return means
@@ -60,8 +60,10 @@ def io_means(plots, phase=-1):
         means.append({
             "name": plot["name"],
             "x": plot["x"],
-            "y": [good_median(l[phase]) for l in plot["y"]]
+            "y": [good_mean(l[phase]) for l in plot["y"]]
         })
+
+    print(means)
 
     return means
 

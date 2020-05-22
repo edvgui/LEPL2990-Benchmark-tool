@@ -10,7 +10,7 @@ mkdir -p logs
 # Deploy benchmark tool
 echo -ne "[$(date)] Deploying benchmark tool... "
 ansible-playbook -i target.ini deploy-playbooks/deploy-benchmark.playbook.yaml \
-  --extra-vars "ansible_become_pass=$PASSWORD" > logs/cgroupv1-lxd.log
+  --extra-vars "ansible_become_pass=$PASSWORD" > logs/cgroupv2-podman.log
 if [ "$?" -eq "0" ]; then
   echo "OK"
 else
@@ -60,7 +60,7 @@ done
 
 for runtime in crun; do
   for driver in aufs btrfs overlay vfs zfs; do
-    logfile="logs/docker-${runtime}-${driver}.log"
+    logfile="logs/podman-${runtime}-${driver}.log"
     echo -ne "[$(date)] Podman $runtime $driver... "
 
     ansible-playbook -i target.ini config-playbooks/podman-${runtime}-${driver}.playbook.yaml \
@@ -76,7 +76,7 @@ for runtime in crun; do
           -e benchmark_user='root' \
           -e benchmark_group='root' \
           -e tests="--all" \
-          -e solution=docker \
+          -e solution=podman \
           -e image=${image} \
           -e runtime=${runtime}-root \
           -e tag=${driver} >> $logfile

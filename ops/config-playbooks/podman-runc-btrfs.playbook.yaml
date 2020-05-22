@@ -6,7 +6,7 @@
     device: /dev/sdb1
 
     benchmark_user: benny
-    benchrmak_group: benny
+    benchmark_group: benny
     
   roles:
 

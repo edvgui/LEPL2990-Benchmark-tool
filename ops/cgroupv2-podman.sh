@@ -37,7 +37,7 @@ for runtime in crun; do
           -e tests="--all" \
           -e solution=podman \
           -e image=${image} \
-          -e runtime=${runtime} \
+          -e runtime=${runtime}-rootless \
           -e tag=${driver} >> $logfile
       done
       if [ $? -eq 0 ]; then
@@ -79,7 +79,7 @@ for runtime in crun; do
           -e tests="--all" \
           -e solution=podman \
           -e image=${image} \
-          -e runtime=${runtime}-root \
+          -e runtime=${runtime} \
           -e tag=${driver} >> $logfile
       done
       if [ $? -eq 0 ]; then

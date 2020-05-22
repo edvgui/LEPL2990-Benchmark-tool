@@ -63,8 +63,6 @@ def io_means(plots, phase=-1):
             "y": [good_mean(l[phase]) for l in plot["y"]]
         })
 
-    print(means)
-
     return means
 
 

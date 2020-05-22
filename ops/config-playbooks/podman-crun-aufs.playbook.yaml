@@ -24,6 +24,10 @@
         device: '{{ device }}'
         mount: /mnt/ext4
       become: yes
+
+    - name: Modprobe aufs
+      command: modprobe aufs
+      become: yes
   
     - role: install-podman
       vars:

@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	countFiles(d, path);
-	
+	closedir(d);
 	printf("Done\n%d lines in %d files in directory %s\n", lineCounter, fileCounter, path);
 
 	return 0; 

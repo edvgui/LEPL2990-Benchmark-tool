@@ -13,6 +13,7 @@ void countLines(FILE *file) {
 	while(getline(&line, &len, file) != -1) {
 		lineCounter++;
 	}
+	free(line);
 }
 
 void countFiles(DIR *directory, char* path) {

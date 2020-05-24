@@ -31,9 +31,9 @@ def build(name, directory):
         command.extend(["--build-arg", ",".join(["%s=%s" % (k, v) for k, v in build_args.items()])])
     command.extend(["-f", os.path.join(directory, src), os.path.join(directory, "../")])
     print("INFO: %s: Building" % tag)
-    output = subprocess.run(args=command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output = subprocess.run(args=command, stdout=subprocess.PIPE)
     if output.returncode != 0:
-        print("Error building container: %s" % output.stderr.decode('utf-8'))
+        print("Error building container %s" % name)
         return
 
 

@@ -92,7 +92,8 @@ for runtime in crun; do
     fi
 
     ansible-playbook -i target.ini cleanup-playbooks/podman-${driver}.playbook.yaml \
-      --extra-vars "ansible_become_pass=$PASSWORD" >> $logfile
+      --extra-vars "ansible_become_pass=$PASSWORD" \
+      -e benchmark_user='root' >> $logfile
     if [ $? -eq 0 ]; then
       echo "CLEAN_OK"
     else

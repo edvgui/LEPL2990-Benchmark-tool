@@ -5,7 +5,15 @@
 
     mount_point: '/mnt/ext4'
 
+    benchmark_user: benny
+
   tasks:
+
+    - name: Reset podman
+      command:
+        cmd: podman system reset --force
+      become: yes
+      become_user: '{{ benchmark_user }}'
 
     - name: Unmount partition
       mount:

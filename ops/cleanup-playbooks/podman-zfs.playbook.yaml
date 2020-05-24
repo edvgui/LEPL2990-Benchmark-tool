@@ -5,7 +5,15 @@
 
     zpool: zpool-podman
 
+    benchmark_user: benny
+
   tasks:
+
+    - name: Reset podman
+      command:
+        cmd: podman system reset --force
+      become: yes
+      become_user: '{{ benchmark_user }}'
 
     - name: Destroy zfs pool
       command:

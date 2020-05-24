@@ -152,4 +152,6 @@
       mode: '0755'
       remote_src: yes
 
-  when: storage_driver == "overlay"
+  when:
+    - storage_driver == "overlay"
+    - user != 'root'

@@ -12,14 +12,14 @@ def main(plots_f, sols):
     tag = 'Podman alpine runc'
     s = [
         "podman-alpine-runc-aufs",
-        # "podman-alpine-runc-btrfs",
+        "podman-alpine-runc-btrfs",
         "podman-alpine-runc-overlay",
         "podman-alpine-runc-vfs",
         "podman-alpine-runc-zfs"
     ]
     t = ["Hello World", "Http server", "Network", "Ping"]
     benchmark_solutions = {key: value for (key, value) in sols.items() if key in s}
-    plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
+    # plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
     plots.plot_ios(sols, s, tag, plots_f)
     plots.plot_dbs(sols, s, tag, plots_f)
 
@@ -30,14 +30,14 @@ def main(plots_f, sols):
         "podman-centos-runc-aufs",
         "podman-centos-runc-btrfs",
         "podman-centos-runc-overlay",
-        # "podman-centos-runc-vfs",
+        "podman-centos-runc-vfs",
         "podman-centos-runc-zfs"
     ]
     t = ["Hello World", "Http server", "Network", "Ping"]
     benchmark_solutions = {key: value for (key, value) in sols.items() if key in s}
-    plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
-    plots.plot_ios(sols, s, tag, plots_f)
-    plots.plot_dbs(sols, s, tag, plots_f)
+    # plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
+    # plots.plot_ios(sols, s, tag, plots_f)
+    # plots.plot_dbs(sols, s, tag, plots_f)
 
     plt.show()
 

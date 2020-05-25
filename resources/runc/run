@@ -45,7 +45,7 @@ if [ ${VALID} -eq 1 ]; then
 fi
 
 # Build execution command
-RUN="runc run ${DETACHED} -b ${POOL}/${CONTAINER} ${CONTAINER}"
+RUN="crun --systemd-cgroup --cgroup-manager=systemd  run ${DETACHED} -b ${POOL}/${CONTAINER} ${CONTAINER}"
 
 # Run the container
 if [ ${NETWORK} -eq 0 ]; then
@@ -55,7 +55,7 @@ elif [ ${NETWORK} -eq 1 ]; then
 else
     STATE=${POOL}/${CONTAINER}/state-dir
     CTL="rootlessctl --socket=${STATE}/api.sock add-ports ${PORT} > /dev/null"
-    RUN="runc run -b ${POOL}/${CONTAINER} ${CONTAINER}"
+    RUN="crun --systemd-cgroup --cgroup-manager=systemd run -b ${POOL}/${CONTAINER} ${CONTAINER}"
     if [ "${DETACHED}" == "-d" ]; then
         rootlesskit --state-dir=${STATE} --net=slirp4netns --disable-host-loopback --copy-up=/etc --port-driver=builtin /bin/bash -c "${CTL} && ${RUN}" & disown
     else

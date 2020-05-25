@@ -121,6 +121,26 @@
 		}
 	],
 	"linux": {
+	    "resources": {  
+	        "devices": [
+	            {
+	                "allow": false,
+	                "access": "rwm"
+	            }
+	        ],
+	        "memory": {
+	            "limit": 1000000,
+	            "disableOOMKiller": false
+	        },
+	        "cpu": {
+	            "quota": 50000,
+	            "period": 100000
+	        },
+	        "pids": {
+	            "limit": 2048
+	        }
+	    },
+	    "cgroupsPath": "user.slice:crun:test",
 		"uidMappings": [
 			{
 				"containerID": 0,

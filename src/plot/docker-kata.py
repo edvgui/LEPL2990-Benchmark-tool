@@ -10,15 +10,18 @@ def main(plots_f, sols):
     # # #
     # Docker alpine kata-runtime
     tag = 'Docker alpine kata-runtime'
-    s = ["docker-alpine-kata-runtime-aufs",
-         "docker-alpine-kata-runtime-btrfs",
-         "docker-alpine-kata-runtime-devicemapper",
-         "docker-alpine-kata-runtime-overlay",
-         "docker-alpine-kata-runtime-vfs",
-         "docker-alpine-kata-runtime-zfs"]
+    s = [
+        "docker-alpine-kata-runtime-aufs",
+        "docker-alpine-kata-runtime-btrfs",
+        "docker-alpine-kata-runtime-devicemapper",
+        "docker-alpine-kata-fc-devicemapper",
+        "docker-alpine-kata-runtime-overlay",
+        "docker-alpine-kata-runtime-vfs",
+        "docker-alpine-kata-runtime-zfs"
+    ]
     t = ["Hello World", "Http server", "Network", "Ping"]
     benchmark_solutions = {key: value for (key, value) in sols.items() if key in s}
-    plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
+    # plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
     plots.plot_ios(sols, s, tag, plots_f)
     plots.plot_dbs(sols, s, tag, plots_f)
 
@@ -28,16 +31,17 @@ def main(plots_f, sols):
     s = ["docker-centos-kata-runtime-aufs",
          "docker-centos-kata-runtime-btrfs",
          "docker-centos-kata-runtime-devicemapper",
+         "docker-centos-kata-fc-devicemapper",
          "docker-centos-kata-runtime-overlay",
          "docker-centos-kata-runtime-vfs",
          "docker-centos-kata-runtime-zfs"]
     t = ["Hello World", "Http server", "Network", "Ping"]
     benchmark_solutions = {key: value for (key, value) in sols.items() if key in s}
-    plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
-    plots.plot_ios(sols, s, tag, plots_f)
+    # plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
+    # plots.plot_ios(sols, s, tag, plots_f)
     # plots.plot_dbs(sols, s, tag, plots_f)
 
-    # plt.show()
+    plt.show()
 
 
 if __name__ == "__main__":

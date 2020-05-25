@@ -263,13 +263,13 @@ def main(argv):
     if http_server:
         procedures.append(HttpServer())
     if database_read:
-        procedures.extend([DatabaseRead(x) for x in ['xs', 'sm', 'md', 'lg', 'xl']])
+        procedures.extend([DatabaseRead(x) for x in ['xl', 'lg', 'md', 'sm', 'xs']])
     if database_write:
-        procedures.extend([DatabaseWrite(x) for x in ['xs', 'sm', 'md', 'lg', 'xl']])
+        procedures.extend([DatabaseWrite(x) for x in ['xl', 'lg', 'md', 'sm', 'xs']])
     if io_read:
-        procedures.extend([IORead(x) for x in ['xs', 'sm', 'md', 'lg', 'xl']])
+        procedures.extend([IORead(x) for x in ['xl', 'lg', 'md', 'sm', 'xs']])
     if io_write:
-        procedures.extend([IOWrite(x) for x in ['xs', 'sm', 'md', 'lg', 'xl']])
+        procedures.extend([IOWrite(x) for x in ['xl', 'lg', 'md', 'sm', 'xs']])
     if ping:
         procedures.append(Ping())
 

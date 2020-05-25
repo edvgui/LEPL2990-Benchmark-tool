@@ -13,7 +13,7 @@ def main(plots_f, sols):
     s = ["lxd-alpine-lxc-btrfs", "lxd-alpine-lxc-dir", "lxd-alpine-lxc-lvm", "lxd-alpine-lxc-zfs"]
     t = ["Hello World", "Http server", "Network", "Ping"]
     benchmark_solutions = {key: value for (key, value) in sols.items() if key in s}
-    plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
+    # plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
     plots.plot_ios(sols, s, tag, plots_f)
     plots.plot_dbs(sols, s, tag, plots_f)
 
@@ -23,11 +23,11 @@ def main(plots_f, sols):
     s = ["lxd-centos-lxc-btrfs", "lxd-centos-lxc-dir", "lxd-centos-lxc-lvm", "lxd-centos-lxc-zfs"]
     t = ["Hello World", "Http server", "Network", "Ping"]
     benchmark_solutions = {key: value for (key, value) in sols.items() if key in s}
-    plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
-    plots.plot_ios(sols, s, tag, plots_f)
-    plots.plot_dbs(sols, s, tag, plots_f)
+    # plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
+    # plots.plot_ios(sols, s, tag, plots_f)
+    # plots.plot_dbs(sols, s, tag, plots_f)
 
-    # plt.show()
+    plt.show()
 
 
 if __name__ == "__main__":

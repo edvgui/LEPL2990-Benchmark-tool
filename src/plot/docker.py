@@ -10,11 +10,18 @@ def main(plots_f, sols):
     # # #
     # Docker alpine crun
     tag = 'Docker alpine crun+runc+ kata'
-    s = ["docker-alpine-crun-aufs", "docker-alpine-crun-overlay", "docker-alpine-runc-aufs",
-         "docker-alpine-runc-overlay", "docker-alpine-kata-runtime-overlay", "docker-alpine-kata-runtime-devicemapper"]
+    s = [
+        "docker-alpine-crun-aufs",
+        "docker-alpine-crun-overlay",
+        "docker-alpine-runc-aufs",
+        "docker-alpine-runc-overlay",
+        "docker-alpine-kata-runtime-overlay",
+        "docker-alpine-kata-runtime-devicemapper",
+        "docker-alpine-kata-fc-devicemapper",
+    ]
     t = ["Hello World", "Http server", "Network", "Ping"]
     benchmark_solutions = {key: value for (key, value) in sols.items() if key in s}
-    plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
+    # plots.plot_benchmarks(results_operations.group_benchmarks(benchmark_solutions, t), tag, plots_f)
     plots.plot_ios(sols, s, tag, plots_f)
     plots.plot_dbs(sols, s, tag, plots_f)
 

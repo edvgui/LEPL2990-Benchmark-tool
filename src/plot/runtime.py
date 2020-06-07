@@ -129,12 +129,12 @@ def main(plots_f, sols):
     ]
     plot_container_execution(solutions, io_images, y_label='Database size (KB)', tag=tag)
 
-    # plt.show()
+    plt.show()
 
 
 if __name__ == "__main__":
     measurements_folder = '/home/guillaume/Desktop/measurements'
-    plots_folder = '../../../LEPL2990-Manuscript/images/runtime'
+    plots_folder = '../../plots'
 
     __solutions = {}
 

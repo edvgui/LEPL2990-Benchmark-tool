@@ -39,7 +39,7 @@ def plot_benchmark(solutions, image, tag):
     plt.barh(left, height, tick_label=tick_label, color=color, align='center')
     plt.boxplot([solution["measurements"][image]["data"][0] for solution in sols], manage_ticks=False, showfliers=True, vert=False)
     plt.xlabel('Time (s)')
-    plt.title('Manager comparison - %s\n(Docker alpine)' % image)
+    plt.title('Manager comparison - %s\n(%s)' % (image, tag))
     plt.savefig(os.path.join(plots_folder, "manager-%s-%s.png" % ("-".join(image.split(" ")), "-".join(tag.split(" ")))))
 
 
@@ -107,12 +107,16 @@ def main(plots_f, sols):
     tag = "alpine"
     s = [
         "podman-alpine-crun-overlay",
+        "podman-alpine-crun-overlay-rootless",
         "docker-alpine-crun-overlay",
+        "podman-alpine-crun-btrfs",
+        "podman-alpine-crun-btrfs-rootless",
+        "docker-alpine-crun-btrfs",
         "lxd-alpine-lxc-btrfs",
     ]
     solutions = {key: value for (key, value) in sols.items() if key in s}
     plot_benchmark(solutions, "Hello World", tag)
-    plot_benchmark(solutions, "Http server", tag)
+    # plot_benchmark(solutions, "Http server", tag)
 
     tag = 'alpine - IO read'
     io_images = [
@@ -123,7 +127,7 @@ def main(plots_f, sols):
         {"name": "IO read xl", "size": 100000}
     ]
     plot_container_execution(solutions, io_images, y_label='Number of files (n)', tag=tag)
-    plot_container_full(solutions, io_images, y_label='Number of files (n)', tag=tag)
+    # plot_container_full(solutions, io_images, y_label='Number of files (n)', tag=tag)
 
     tag = 'alpine - IO write'
     io_images = [
@@ -134,7 +138,7 @@ def main(plots_f, sols):
         {"name": "IO write xl", "size": 100000}
     ]
     plot_container_execution(solutions, io_images, y_label='Number of files (n)', tag=tag)
-    plot_container_full(solutions, io_images, y_label='Number of files (n)', tag=tag)
+    # plot_container_full(solutions, io_images, y_label='Number of files (n)', tag=tag)
 
     tag = 'alpine - Database read'
     io_images = [
@@ -145,7 +149,7 @@ def main(plots_f, sols):
         {"name": "Database read xl", "size": 111558.656}
     ]
     plot_container_execution(solutions, io_images, y_label='Database size (KB)', tag=tag)
-    plot_container_full(solutions, io_images, y_label='Database size (KB)', tag=tag)
+    # plot_container_full(solutions, io_images, y_label='Database size (KB)', tag=tag)
 
     tag = 'alpine - Database write'
     io_images = [
@@ -156,14 +160,14 @@ def main(plots_f, sols):
         {"name": "Database write xl", "size": 111558.656}
     ]
     plot_container_execution(solutions, io_images, y_label='Database size (KB)', tag=tag)
-    plot_container_full(solutions, io_images, y_label='Database size (KB)', tag=tag)
+    # plot_container_full(solutions, io_images, y_label='Database size (KB)', tag=tag)
 
-    # plt.show()
+    plt.show()
 
 
 if __name__ == "__main__":
     measurements_folder = '/home/guillaume/Desktop/measurements'
-    plots_folder = '../../../LEPL2990-Manuscript/images/manager'
+    plots_folder = '../../plots'
 
     __solutions = {}
 

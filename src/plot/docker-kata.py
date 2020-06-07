@@ -11,13 +11,12 @@ def main(plots_f, sols):
     # Docker alpine kata-runtime
     tag = 'Docker alpine kata-runtime'
     s = [
-        "docker-alpine-kata-runtime-aufs",
+        "docker-alpine-kata-runtime-overlay",
         "docker-alpine-kata-runtime-btrfs",
         "docker-alpine-kata-runtime-devicemapper",
-        "docker-alpine-kata-fc-devicemapper",
-        "docker-alpine-kata-runtime-overlay",
-        "docker-alpine-kata-runtime-vfs",
-        "docker-alpine-kata-runtime-zfs"
+        "docker-centos-kata-runtime-overlay",
+        "docker-centos-kata-runtime-btrfs",
+        "docker-centos-kata-runtime-devicemapper"
     ]
     t = ["Hello World", "Http server", "Network", "Ping"]
     benchmark_solutions = {key: value for (key, value) in sols.items() if key in s}

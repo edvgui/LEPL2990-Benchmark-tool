@@ -210,7 +210,7 @@ def main(plots_f, sols):
         {"name": "Database write xl", "size": 111558.656}
     ]
     plt.subplot(1, 3, 1)
-    plot_container_creation(io_solutions, io_images, "Virtualization inpact", y_label='Database size (KB)', tag=tag, label=label)
+    plot_container_creation(io_solutions, io_images, "Virtualization impact", y_label='Database size (KB)', tag=tag, label=label)
     plt.subplot(1, 3, 2)
     plot_container_execution(io_solutions, io_images, "Virtualization impact", y_label='Database size (KB)', tag=tag, label=label)
 

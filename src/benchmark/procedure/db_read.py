@@ -61,12 +61,13 @@ class DatabaseRead(Generic):
         return [creation, creation + start, creation + start + execution_time]
 
     def contingious(self, image, runtime):
-        # TODO handle runtime
-        container, creation_time = contingious.create("%s-db-%s-read" % (image, self.size))
-        response, execution_time = contingious.run(container, ["-o"])
-        contingious.clean(container)
-        if 'Done' not in response:
-            print("Error (runc): wrong response: " + response)
+        container, creation = contingious.create("edvgui/%s-db-read-%s" % (image, self.size))
+        _, start = contingious.start(container)
+        response, execution = contingious.exec(container, "/run/run.sh /run/tpcc.db /run/read.sqlite")
+        if "Done" not in response:
+            print("Error (contingious): wrong response: " + response)
             return -1
-        return [creation_time, creation_time + execution_time, creation_time + execution_time]
+        contingious.kill(container)
+        contingious.clean(container)
+        return [creation, creation + start, creation + start + execution]
 

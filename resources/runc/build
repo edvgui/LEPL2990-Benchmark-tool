@@ -2,6 +2,9 @@
 
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit ; pwd -P )
 
+cd $DIR || exit
+source runc.config
+
 build() {
 	local image=$1
 	echo "INFO: ${image}: Building"
@@ -13,13 +16,13 @@ build() {
 		return 1
 	fi
 	
-	local rootfs=${DIR}/${image}/rootfs/
-	local ro_rootfs=${DIR}/${image}/ro-rootfs/
+	local rootfs=${IMAGES}/edvgui/${image}/rootfs/
+	local ro_rootfs=${IMAGES}/edvgui/${image}/ro-rootfs/
 	
 	# Cleaning previous build
 	echo "INFO: ${image}: Removing previous build if any"
 	rm -rf ${rootfs} ${ro_rootfs}
-	mkdir ${rootfs} ${ro_rootfs}
+	mkdir -p ${rootfs} ${ro_rootfs}
 	
 	# Export from docker
 	local base=$(docker run -d edvgui/${image}:latest /bin/echo "Hello World")

@@ -41,6 +41,7 @@ setup(
     install_requires=[
         'matplotlib',
         'pycurl',
+        'pyinotify',
         'docker'
     ],
     entry_points={

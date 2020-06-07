@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import getopt
+import json
 import os
 import shutil
 import subprocess
@@ -30,9 +31,20 @@ def pull(tag):
     print("INFO: Pulling from docker %s" % tag)
     output = subprocess.run(args=command.split(" "), stdout=subprocess.PIPE)
     if output.returncode != 0:
-        print("Error pulling %s" % tag)
+        print("Error pulling %s" % tag, file=sys.stderr)
         return None
     return output.stdout.decode('utf-8').strip()
+
+
+def get_info(tag):
+    command = "buildah --storage-driver vfs --root /tmp/contingious-build --runroot /tmp/contingious-build inspect %s" \
+              % tag
+    print("INFO: Retrieving image info")
+    output = subprocess.run(args=command.split(" "), stdout=subprocess.PIPE)
+    if output.returncode != 0:
+        print("Error retrieving info from image %s" % tag, file=sys.stderr)
+        return None
+    return json.loads(output.stdout.decode('utf-8'))
 
 
 def mount(container):
@@ -42,7 +54,7 @@ def mount(container):
     print("INFO: Mounting container %s" % container)
     output = subprocess.run(args=command.split(" "), stdout=subprocess.PIPE)
     if output.returncode != 0:
-        print("Error mounting %s" % container)
+        print("Error mounting %s" % container, file=sys.stderr)
         return None
     return output.stdout.decode('utf-8').strip()
 
@@ -54,7 +66,7 @@ def umount(container):
     print("INFO: Unmounting container %s" % container)
     output = subprocess.run(args=command.split(" "), stdout=subprocess.PIPE)
     if output.returncode != 0:
-        print("Error unmounting %s" % container)
+        print("Error unmounting %s" % container, file=sys.stderr)
         return False
     return True
 
@@ -65,7 +77,18 @@ def rm(container):
     print("INFO: Cleaning container %s" % container)
     output = subprocess.run(args=command.split(" "), stdout=subprocess.PIPE)
     if output.returncode != 0:
-        print("Error cleaning %s" % container)
+        print("Error cleaning %s" % container, file=sys.stderr)
+        return None
+    return output.stdout.decode('utf-8')
+
+
+def clean(tag):
+    command = "buildah --storage-driver vfs --root /tmp/contingious-build --runroot /tmp/contingious-build rmi %s" \
+              % tag
+    print("INFO: Cleaning image %s" % tag)
+    output = subprocess.run(args=command.split(" "), stdout=subprocess.PIPE)
+    if output.returncode != 0:
+        print("Error cleaning %s" % tag, file=sys.stderr)
         return None
     return output.stdout.decode('utf-8')
 
@@ -77,9 +100,15 @@ def build(name, directory):
     container = pull(tag)
     if container is None:
         return
+
+    image_info = get_info(tag)
+    if image_info is None:
+        return
+
     mount_path = mount(container)
     if mount_path is None:
         rm(container)
+        clean(tag)
         return
 
     image_dir = os.path.join(directory, tag)
@@ -104,6 +133,9 @@ def build(name, directory):
 
             print("INFO: Removing temporary container")
             rm(container)
+
+            print("INFO: Removing temporary container image")
+            clean(tag)
             return
 
     print("INFO: Copying read-only rootfs")
@@ -122,14 +154,27 @@ def build(name, directory):
 
             print("INFO: Removing temporary container")
             rm(container)
+
+            print("INFO: Removing temporary container image")
+            clean(tag)
             return
         os.symlink(os.path.join('mnt', d), os.path.join(rootfs, d))
+
+    print("INFO: Saving command")
+    cmd = image_info["OCIv1"]["config"]["Cmd"][2]
+    cmd_path = os.path.join(image_dir, 'CMD')
+    with open(cmd_path, 'w+') as f:
+        f.write(cmd)
+        f.close()
 
     print("INFO: Unmounting container filesystem")
     umount(container)
 
     print("INFO: Removing temporary container")
     rm(container)
+
+    print("INFO: Removing temporary container image")
+    clean(tag)
 
 
 def main(argv):

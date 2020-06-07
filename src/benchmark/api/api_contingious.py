@@ -1,98 +1,108 @@
-import subprocess
 import time
 import os
 
+import contingious.create
+import contingious.start
+import contingious.exec
+import contingious.kill
+import contingious.rm
 from exceptions.api_exception import ApiException
 
 
-class ContINGIousApiException(ApiException):
+class ContingiousApiException(ApiException):
 
     def __init__(self, message, trace):
         super().__init__("Custom", message, trace)
 
 
-directory = os.path.dirname(os.path.abspath(__file__))
-runc_folder = os.path.join(directory, '../../../resources/runc')
+images_path = os.path.join(os.path.expanduser("~"), '.local/share/contingious/storage/images')
+pool_path = os.path.join(os.path.expanduser("~"), '/tmp/contingious-benchmark')
 
 
-def create(image, log=False):
+def create(image, network=False, port=None):
     """
-    Create all the component required to run a container with runc
+    Create all the components required to run a container with runc
     :param image: The custom image to take as basis
-    :param log: Whether to display logs or not
+    :param network: Whether to container needs a tap network interface
+    :param port: The port to map in the network interface
     :return: The output of the command, the command execution time
     """
-    path = os.path.join(runc_folder, 'create')
-    args = [path, image]
+    image_path = os.path.join(images_path, image)
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    container = contingious.create.create(
+        image_path,
+        pool_path,
+        contingious.create.generate_safe_id(pool_path),
+        cmd="sleep infinity",
+        network=network,
+        port=port
+    )
     toc = time.time()
-    if output.returncode != 0:
-        raise ContINGIousApiException("Error while trying to create container from image " + image,
-                                      output.stderr.decode('utf-8').strip())
-    if log:
-        print(output)
-    return output.stdout.decode('utf-8').strip(), toc - tic
+    if container is None:
+        raise ContingiousApiException("Error while creating container", "Unknown error")
+
+    return container, toc - tic
 
 
-def run(container, options, log=False):
+def start(container, network=False):
     """
     Run a previously created container with them command 'runc run'
-    :param options: Options to be passed for the container run
     :param container: The name of the container to run
-    :param log: Whether to display some logs or not
+    :param network: Whether the container has a network interface attached
     :return: The execution output, the command execution time
     """
-    path = os.path.join(runc_folder, 'run')
-    args = [path]
-    args.extend(options)
-    args.append(container)
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    result = contingious.start.start(pool_path, container, True, network=network)
     toc = time.time()
-    if output.returncode != 0:
-        raise ContINGIousApiException("Error while trying to run container " + container,
-                                      output.stderr.decode('utf-8').strip())
-    if log:
-        print(output)
-    return output.stdout.decode('utf-8').strip(), toc - tic
+    if result != 0:
+        raise ContingiousApiException("Error while starting container", "Unknown error")
+
+    return result, toc - tic
 
 
-def stop(container, log=False):
+def exec(container, command, network=False):
+    """
+    Execute a command in a running container
+    :param container: The name of the container
+    :param command: The command to execute in the container
+    :param network: Whether the container has a network interface attached
+    :return: The output of the command, the command execution time
+    """
+    tic = time.time()
+    output = contingious.exec.exec(pool_path, container, command, network=network)
+    toc = time.time()
+    if output is None:
+        raise ContingiousApiException("Error while executing command in container", "Unknown error")
+
+    return output, toc - tic
+
+
+def kill(container):
     """
     Stop a running container
     :param container: The container to stop
-    :param log: Whether to display some logs or not
     :return: The command execution time
     """
-    path = os.path.join(runc_folder, 'stop')
-    args = [path, container]
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    result = contingious.kill.kill(container)
     toc = time.time()
-    if log:
-        print(output)
-    if output.returncode != 0:
-        raise ContINGIousApiException("Error while trying to stop container " + container,
-                                      output.stderr.decode('utf-8').strip())
+    if result != 0:
+        raise ContingiousApiException("Error while killing container", "Unknown error")
+
     return toc - tic
 
 
-def clean(container, log=False):
+def clean(container, network=False):
     """
     Clean all the components created for a given container
     :param container: The container to clean
-    :param log: Whether to display some logs or not
+    :param network: Whether the container has a network interface attached
     :return: The command execution time
     """
-    path = os.path.join(runc_folder, 'clean')
-    args = [path, container]
     tic = time.time()
-    output = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    result = contingious.rm.rm(pool_path, container, network=network)
     toc = time.time()
-    if output.returncode != 0:
-        raise ContINGIousApiException("Error while trying to clean container " + container,
-                                      output.stderr.decode('utf-8').strip())
-    if log:
-        print(output)
+    if not result:
+        raise ContingiousApiException("Error while killing container", "Unknown error")
+
     return toc - tic

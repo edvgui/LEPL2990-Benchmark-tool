@@ -1,0 +1,46 @@
+---
+
+- name: Install required dependencies
+  apt:
+    name: '{{ item }}'
+    state: latest
+    update_cache: yes
+  loop: [ 'unzip', 'tar', 'uidmap' ]
+
+- name: Check ubuntu version id
+  command: /usr/bin/lsb_release -rs
+  register: version_id
+
+- name: Add libcontainers release apt key
+  apt_key:
+    url: 'https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ version_id.stdout }}/Release.key'
+    state: present
+
+- name: Add libcontainers repository
+  apt_repository:
+    repo: 'deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ version_id.stdout }} /'
+    filename: download_opensuse_org_libcontainers
+    state: present
+
+- name: Install slirp4netns
+  apt:
+    name: slirp4netns
+    state: latest
+    update_cache: yes
+
+- name: Install buildah
+  apt:
+    name: buildah
+    state: latest
+    update_cache: yes
+
+- name: Install rootlesskit v0.9.4 from github
+  unarchive:
+    src: https://github.com/rootless-containers/rootlesskit/releases/download/v0.9.4/rootlesskit-x86_64.tar.gz
+    dest: /usr/bin
+    remote_src: yes
+
+- name: Configure ping group range
+  sysctl:
+    name: net.ipv4.ping_group_range
+    value: '0 2000000'

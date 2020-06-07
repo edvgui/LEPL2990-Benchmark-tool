@@ -73,18 +73,20 @@ class Ping(Generic):
         return -1
 
     def contingious(self, image, runtime):
-        # TODO handle runtime
-        container, _ = contingious.create("%s-ping" % image)
+        container, creation = contingious.create("edvgui/%s-ping" % image, network=True)
+        _, start = contingious.start(container, network=True)
         try:
-            response, _ = contingious.run(container, [])
-        except contingious.ContINGIousApiException as e:
+            response, execution = contingious.exec(container, "/run/run.sh", network=True)
+        except contingious.ContingiousApiException as e:
             print(e)
+            contingious.kill(container)
+            contingious.clean(container)
             return -1
         else:
+            contingious.kill(container)
+            contingious.clean(container)
             if '=' not in response:
-                print('Error (custom): wrong response: ' + response)
+                print('Error (contingious): wrong response: ' + response)
                 return -1
             else:
                 return [float(response.split(" ")[3].split("/")[1]) / 1000]
-        finally:
-            contingious.clean(container)

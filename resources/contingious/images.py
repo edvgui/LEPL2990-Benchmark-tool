@@ -3,50 +3,50 @@
 __images = {
     "alpine-hello-world": {
         "tag": "edvgui/alpine-hello-world",
-        "ro": ["bin", "dev", "etc", "lib", "run", "sbin", "usr", "var"],
-        "wr": ["home", "media", "mnt", "opt", "root", "srv", "sys", "tmp"],
+        "ro": ["bin", "etc", "lib", "run", "sbin", "usr", "var"],
+        "wr": ["dev", "home", "media", "mnt", "opt", "root", "srv", "sys", "tmp"],
         "args": {}
     },
     "alpine-http-server": {
         "tag": "edvgui/alpine-http-server",
-        "ro": ["bin", "dev", "etc", "lib", "sbin", "usr"],
-        "wr": ["home", "media", "mnt", "opt", "root", "run", "srv", "sys", "tmp", "var"],
+        "ro": ["bin", "etc", "lib", "sbin", "usr"],
+        "wr": ["dev", "home", "media", "mnt", "opt", "root", "run", "srv", "sys", "tmp", "var"],
         "args": {}
     },
     "alpine-ping": {
         "tag": "edvgui/alpine-ping",
-        "ro": ["bin", "dev", "etc", "lib", "run", "sbin", "usr", "var"],
-        "wr": ["home", "media", "mnt", "opt", "root", "srv", "sys", "tmp"],
+        "ro": ["bin", "etc", "lib", "run", "sbin", "usr", "var"],
+        "wr": ["dev", "home", "media", "mnt", "opt", "root", "srv", "sys", "tmp"],
         "args": {}
     },
     "alpine-io-read": {
         "tag": "edvgui/alpine-io-read-%s",
-        "ro": ["bin", "dev", "etc", "lib", "run", "sbin", "usr", "var"],
-        "wr": ["home", "media", "mnt", "opt", "root", "srv", "sys", "tmp"],
+        "ro": ["bin", "etc", "lib", "run", "sbin", "usr", "var"],
+        "wr": ["dev", "home", "media", "mnt", "opt", "root", "srv", "sys", "tmp"],
         "args": {
             "size": ["xs", "sm", "md", "lg", "xl"]
         }
     },
     "alpine-io-write": {
         "tag": "edvgui/alpine-io-write-%s",
-        "ro": ["bin", "dev", "etc", "lib", "run", "sbin", "usr", "var"],
-        "wr": ["home", "media", "mnt", "opt", "root", "srv", "sys", "tmp"],
+        "ro": ["bin", "etc", "lib", "run", "sbin", "usr", "var"],
+        "wr": ["dev", "home", "media", "mnt", "opt", "root", "srv", "sys", "tmp"],
         "args": {
             "size": ["xs", "sm", "md", "lg", "xl"]
         }
     },
     "alpine-db-read": {
         "tag": "edvgui/alpine-db-read-%s",
-        "ro": ["bin", "dev", "etc", "lib", "run", "sbin", "usr", "var"],
-        "wr": ["home", "media", "mnt", "opt", "root", "srv", "sys", "tmp"],
+        "ro": ["bin", "etc", "lib", "run", "sbin", "usr", "var"],
+        "wr": ["dev", "home", "media", "mnt", "opt", "root", "srv", "sys", "tmp"],
         "args": {
             "size": ["xs", "sm", "md", "lg", "xl"]
         }
     },
     "alpine-db-write": {
         "tag": "edvgui/alpine-db-write-%s",
-        "ro": ["bin", "dev", "etc", "lib", "run", "sbin", "usr", "var"],
-        "wr": ["home", "media", "mnt", "opt", "root", "srv", "sys", "tmp"],
+        "ro": ["bin", "etc", "lib", "run", "sbin", "usr", "var"],
+        "wr": ["dev", "home", "media", "mnt", "opt", "root", "srv", "sys", "tmp"],
         "args": {
             "size": ["xs", "sm", "md", "lg", "xl"]
         }

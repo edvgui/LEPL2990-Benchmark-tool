@@ -46,10 +46,12 @@ class WarmUp(Generic):
         return [launching_time + execution_time]
 
     def contingious(self, image, runtime):
-        # TODO handle runtime
-        container, creation_time = contingious.create("%s-hello-world" % image)
-        response, execution_time = contingious.run(container, ["-o"])
-        if 'Hello World' not in response:
-            print("Error (runc): wrong response: " + response)
+        container, creation = contingious.create("edvgui/%s-hello-world" % image)
+        _, start = contingious.start(container)
+        response, execution = contingious.exec(container, "/bin/echo Hello World")
+        if "Hello World" not in response:
+            print("Error (contingious): wrong response: " + response)
+            return -1
+        contingious.kill(container)
         contingious.clean(container)
-        return [creation_time + execution_time]
+        return [creation + start + execution]

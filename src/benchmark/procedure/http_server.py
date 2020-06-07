@@ -90,26 +90,11 @@ class HttpServer(Generic):
 
     def contingious(self, image, runtime):
         address = "127.0.0.1:3000"
-        # TODO handle runtime
-        container, creation_duration = contingious.create("%s-http-server" % image)
-
-        directory = os.path.dirname(os.path.abspath(__file__))
-        runc_folder = os.path.join(directory, '../../../resources/runc')
-        path = os.path.join(runc_folder, 'run')
-
-        execution_time = 0
-        tic = time.time()
-        proc = subprocess.Popen([path, "-p", address + ":80/tcp", "-d", container],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
-
-        result = -1
-        for line in iter(proc.stdout.readline, b''):
-            if line.decode('utf-8').strip() == container:
-                execution_time = time.time() - tic
-                result = server_get("http://" + address)
-                contingious.stop(container)
-                contingious.clean(container)
-
-        return [creation_duration, creation_duration + execution_time, creation_duration + execution_time,
-                creation_duration + execution_time + result] if result != -1 else -1
+        container, creation = contingious.create("edvgui/%s-http-server" % image, network=True, port=(address + ":80/tcp"))
+        _, start = contingious.start(container, network=True)
+        response, execution = contingious.exec(container, "/usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf", network=True)
+        result = server_get("http://" + address)
+        contingious.kill(container)
+        contingious.clean(container, network=True)
+        return [creation, creation + start, creation + start + execution,
+                creation + start + execution + result] if result != -1 else -1

@@ -28,7 +28,7 @@ class HelloWorld(Generic):
         response, execution = docker.exec(container, ["/bin/echo", "Hello World"])
         docker.kill(container)
         if 'Hello World' not in response:
-            print('Error (docker_alpine): wrong response: ' + response)
+            print('Error (docker): wrong response: ' + response)
             return -1
         return [creation, creation + start, creation + start + execution]
 
@@ -42,7 +42,7 @@ class HelloWorld(Generic):
         podman.kill(container)
         podman.rm(container)
         if 'Hello World' not in response:
-            print('Error (podman_alpine): wrong response: ' + response)
+            print('Error (podman): wrong response: ' + response)
             return -1
         return [creation, creation + start, creation + start + execution]
 
@@ -57,11 +57,12 @@ class HelloWorld(Generic):
         return [creation, creation + start, creation + start + execution_time]
 
     def contingious(self, image, runtime):
-        # TODO handle runtime
-        container, creation_time = contingious.create("%s-hello-world" % image)
-        response, execution_time = contingious.run(container, ["-o"])
-        contingious.clean(container)
-        if 'Hello World' not in response:
-            print("Error (runc): wrong response: " + response)
+        container, creation = contingious.create("edvgui/%s-hello-world" % image)
+        _, start = contingious.start(container)
+        response, execution = contingious.exec(container, "/bin/echo Hello World")
+        if "Hello World" not in response:
+            print("Error (contingious): wrong response: " + response)
             return -1
-        return [creation_time, creation_time + execution_time, creation_time + execution_time]
+        contingious.kill(container)
+        contingious.clean(container)
+        return [creation, creation + start, creation + start + execution]

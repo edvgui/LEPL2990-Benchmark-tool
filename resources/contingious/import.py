@@ -11,7 +11,7 @@ from images import get_image, get_images
 
 
 def usage():
-    usage_msg = "Usage: python3 build.py [OPTIONS] IMAGE1 [IMAGE2 ..]\n" \
+    usage_msg = "Usage: python3 import.py [OPTIONS] IMAGE1 [IMAGE2 ..]\n" \
                 "\n" \
                 "Build the lxc images\n\n" \
                 "Options:\n" \

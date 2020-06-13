@@ -28,7 +28,7 @@ def plot_benchmark(solutions, image, title, tag, label=lambda x: "\n".join(x.spl
         count += 1
         for d in data:
             list.sort(d)
-            height.append(statistics.mean(d))
+            height.append(statistics.mean(d[:-5]))
 
             left.append(count)
 
@@ -59,7 +59,7 @@ def plot_container_creation(io_solutions, images, title, y_label='Image size (XB
         for image in images:
             x.append(image["size"])
             measurement = solution["measurements"][image["name"]]
-            data = measurement["data"][0]
+            data = copy.deepcopy(measurement["data"][0])
             list.sort(data)
             y.append(statistics.mean(data[0:-5]))
 

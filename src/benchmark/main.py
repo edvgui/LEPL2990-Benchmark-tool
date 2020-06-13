@@ -97,10 +97,6 @@ container_managers = {
             }
         },
         "runtimes": {
-            "runc": {
-                "name": "runc",
-                "path": "/usr/bin/runc"
-            },
             "crun": {
                 "name": "crun",
                 "path": "/usr/bin/crun"

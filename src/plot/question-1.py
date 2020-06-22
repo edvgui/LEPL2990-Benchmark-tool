@@ -207,7 +207,7 @@ def main(plots_f, sols):
         return labels[-1] + "\n" + labels[1]
 
     tag = 'Docker alpine'
-    plot_benchmark(io_solutions, "Hello World", 'Runtime comaprison', tag, label=label)
+    plot_benchmark(io_solutions, "Hello World", 'Runtime comparison', tag, label=label)
 
     plt.savefig(os.path.join(plots_folder, "question-1-runtime.png"))
 
@@ -250,7 +250,26 @@ def main(plots_f, sols):
 
     plt.savefig(os.path.join(plots_folder, "question-1-manager.png"))
 
-    # plt.show()
+    # # #
+    # Comparing current solution to best solution
+    plt.figure(figsize=(14, 3.5), dpi=150)
+    s = [
+        "docker-alpine-crun-overlay",
+        "docker-centos-runc-overlay",
+        "docker-centos-kata-fc-devicemapper"
+    ]
+    io_solutions = {key: value for (key, value) in sols.items() if key in s}
+
+    def label(name_array):
+        labels = name_array.split("\n")
+        return labels[0].split(" - ")[1] + "\n" + labels[1] + "\n" + labels[2]
+
+    tag = 'Docker'
+    plot_benchmark(io_solutions, "Hello World", "Complete comparison", tag, label=label)
+
+    plt.savefig(os.path.join(plots_folder, "question-1-final.png"))
+
+    plt.show()
 
 
 if __name__ == "__main__":

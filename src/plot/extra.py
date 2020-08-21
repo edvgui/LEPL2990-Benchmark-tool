@@ -219,7 +219,7 @@ def plot_db_read(io_solutions, tag, label):
         {"name": "Database read xl", "size": 111558.656}
     ]
 
-    y_label = "Number of files"
+    y_label = "Database size (MB)"
     title = "Database read"
 
     plt.figure(figsize=(20, 5), dpi=150)
@@ -243,7 +243,7 @@ def plot_db_write(io_solutions, tag, label):
         {"name": "Database write xl", "size": 111558.656}
     ]
 
-    y_label = "Number of files"
+    y_label = "Database size (MB)"
     title = "Database write"
 
     plt.figure(figsize=(20, 5), dpi=150)
